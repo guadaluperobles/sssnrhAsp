@@ -1,0 +1,20 @@
+# Carpetas de compilación
+bin/
+obj/
+
+# Visual Studio
+.vs/
+
+# Archivos de usuario
+*.user
+*.suo
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Paquetes (si aplica)
+packages/
+
+# Archivos de publicación
+publish/
