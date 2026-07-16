@@ -1,14 +1,24 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RecursosHumanos.Data;
+using System.Data;
 
 namespace RecursosHumanos.Controllers
 {
     public class ReciboNominaController : Controller
     {
+
+        private readonly ConeccionService _coneccionService;
+
+        public ReciboNominaController(ConeccionService coneccionService) {
+            _coneccionService = coneccionService;
+        }
         // GET: ReciboNominaController
         public ActionResult Index()
         {
-            return View();
+            DataTable BasesDatos = _coneccionService.CargarBasesDatosOperativas();
+
+            return View(BasesDatos);
         }
 
         // GET: ReciboNominaController/Details/5
