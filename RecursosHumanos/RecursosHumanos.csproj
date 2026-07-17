@@ -21,6 +21,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms" Version="150.1652.0" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.33" />
   </ItemGroup>
 
 </Project>
