@@ -14,11 +14,16 @@ namespace RecursosHumanos.Controllers
             _coneccionService = coneccionService;
         }
         // GET: ReciboNominaController
-        public ActionResult Index()
-        {
+        public ActionResult Index() {
             DataTable BasesDatos = _coneccionService.CargarBasesDatosOperativas();
 
             return View(BasesDatos);
+        }
+        [HttpPost]
+        public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) { 
+            DataTable recibos = new DataTable();
+
+            return View(recibos);
         }
 
         // GET: ReciboNominaController/Details/5
@@ -67,6 +72,12 @@ namespace RecursosHumanos.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult ReciboNomina(string numeroEmpleado, string e) { 
+            DataTable recibos = new DataTable();
+
+            return View(recibos);
         }
 
         // GET: ReciboNominaController/Delete/5
