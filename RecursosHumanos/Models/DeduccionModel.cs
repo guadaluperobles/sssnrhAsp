@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GeneradorRecursosHumanos.Models
 {
-    class DeduccionModel {
+    public class DeduccionModel {
         private string _Clave;
         private string _Concepto;
         private string _TextImporte;

@@ -1,6 +1,8 @@
 ﻿using GeneradorRecursosHumanos.Model;
-using System.Text;
 using Microsoft.Reporting.NETCore;
+using System.Drawing;
+using System.Text;
+using QRCoder;
 
 namespace GeneradorRecursosHumanos.Controller {
     class ArchivoController {
@@ -24,10 +26,25 @@ namespace GeneradorRecursosHumanos.Controller {
 
             var recibos = new List<ReciboModel> { row };
             report.DataSources.Add(new ReportDataSource("dsReciboNomina", recibos));
-            report.DataSources.Add(new ReportDataSource("dsPercepciones", row.percepciones));
-            report.DataSources.Add(new ReportDataSource("dsDeducciones", row.deducciones));
+            report.DataSources.Add(new ReportDataSource("dsPercepciones", row.Percepciones));
+            report.DataSources.Add(new ReportDataSource("dsDeducciones", row.Deducciones));
 
             return report.Render("PDF");
+        }
+
+        public byte[] GenerarQR(string texto) {
+            QRCodeGenerator qrGenerator = new QRCodeGenerator();
+
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(texto, QRCodeGenerator.ECCLevel.Q);
+
+            QRCode qrCode = new QRCode(qrCodeData);
+
+            using (Bitmap bitmap = qrCode.GetGraphic(20)) {
+                using (MemoryStream ms = new MemoryStream()) {
+                    bitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                    return ms.ToArray();
+                }
+            }
         }
 
         /*

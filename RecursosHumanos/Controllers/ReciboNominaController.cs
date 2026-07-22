@@ -14,6 +14,8 @@ namespace RecursosHumanos.Controllers
     {
 
         private readonly ConeccionService _coneccionService;
+        private readonly IWebHostEnvironment _env;
+
 
         public ReciboNominaController(ConeccionService coneccionService) {
             _coneccionService = coneccionService;
@@ -110,8 +112,8 @@ namespace RecursosHumanos.Controllers
             string myXML = vXml;
 
             XmlDocument xmlDoc = new XmlDocument();
-            Global global = new Global();
-            ArchivoController archivoController = new ArchivoController();
+            Global global = new Global(); 
+            var archivo = new ArchivoController(_env);
 
             int c;
 
@@ -336,7 +338,7 @@ namespace RecursosHumanos.Controllers
 
 
             string NombreArchivo = vNombreArchivo + "_" + reciboNomina.rfc + "_" + reciboNomina.nombre;
-            reciboNomina.CodigoQR = archivoController.GenerarQR(reciboNomina.qrVerificador);
+            reciboNomina.CodigoQR = archivo.GenerarQR(reciboNomina.qrVerificador);
             reciboNomina.importeLetras = Global.Letras(reciboNomina.totalPagar);
 
             string Clave = "";
@@ -489,8 +491,8 @@ namespace RecursosHumanos.Controllers
 
             }
 
-            reciboNomina.deducciones = Deducciones;
-            reciboNomina.percepciones = Percepciones;
+            reciboNomina.Deducciones = Deducciones;
+            reciboNomina.Percepciones = Percepciones;
             return reciboNomina;
         }
         public string obtenerAntiguedad(string antiguedad) {
