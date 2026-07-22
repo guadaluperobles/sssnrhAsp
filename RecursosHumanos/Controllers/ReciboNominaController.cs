@@ -166,6 +166,9 @@ namespace RecursosHumanos.Controllers
 
         [HttpPost]
         public IActionResult DescargarXML( string uuid) {
+            string nombreArchivo = string.Empty;
+            string xml = string.Empty;
+
             byte[] bytes = Encoding.UTF8.GetBytes(xml);
 
             return File(
