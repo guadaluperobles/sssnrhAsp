@@ -1,3 +1,4 @@
+using GeneradorRecursosHumanos.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
@@ -5,8 +6,7 @@ using RecursosHumanos.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("ConnectionRecursosHumanos") ?? throw new InvalidOperationException("Cadena de Coneccion string (DefaultConnection) no se encuentra");
-
+var connectionString = builder.Configuration.GetConnectionString("RecursosHumanos") ?? throw new InvalidOperationException("Cadena de Coneccion string (DefaultConnection) no se encuentra");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -14,7 +14,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddScoped<ConeccionService>();
+builder.Services.AddScoped<Global>();
 
 var app = builder.Build();
 
