@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using RecursosHumanos.Data;
 using RecursosHumanos.Models;
 using System.Data;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
@@ -21,14 +22,30 @@ namespace RecursosHumanos.Controllers
         }
         // GET: ReciboNominaController
         public ActionResult Index() {
-            DataTable BasesDatos = _coneccionService.CargarBasesDatosOperativas();
+            var model = new ConsultaRecibosViewModel {
+                //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
+                Recibos = null,
+                NumeroEmpleado = "",
+                EjercicioInicio = "",
+                EjercicioFin = "",
+                QuincenaInicio = "",
+                QuincenaFin = ""
+            };
 
-            return View(BasesDatos);
+            return View(model);
         }
-        [HttpPost]
         [HttpPost]
         public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) {
             DataTable recibos = new DataTable();
+            var model = new ConsultaRecibosViewModel {
+                //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
+                Recibos = null,
+                NumeroEmpleado = numeroEmpleado,
+                EjercicioInicio = ejercicioInicio,
+                EjercicioFin = ejercicioFin,
+                QuincenaInicio = quincenaInicio,
+                QuincenaFin = quincenaFin
+            };
 
             string ComplementarConsulta = string.Empty;
             string anios = "";
@@ -128,7 +145,7 @@ namespace RecursosHumanos.Controllers
                         ComplementarConsulta += " AND ";
                     }
 
-                    ComplementarConsulta += $" (pd.ClkDet IN ( {numeroEmpleado} )) OR (emp.MeRfc IN ( {numeroEmpleado}  )) ";
+                    ComplementarConsulta += $" (pd.ClkDet IN( {numeroEmpleado} )) ";
                 }
             }
 
@@ -137,17 +154,25 @@ namespace RecursosHumanos.Controllers
                     ComplementarConsulta += " AND ";
                 }
 
-                ComplementarConsulta += " (pd.ClkDet IN(" + numeroEmpleado + ")) ";
+                ComplementarConsulta += $" (pd.ClkDet IN( {numeroEmpleado})) ";
             }
 
 
             Global global = new Global(_coneccionService);
-            recibos = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta);
+            model.Recibos = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta + " ORDER BY pc.PrQna DESC");
 
-            return View(recibos);
+            return View(model);
         }
 
+        [HttpPost]
+        public IActionResult DescargarXML( string uuid) {
+            byte[] bytes = Encoding.UTF8.GetBytes(xml);
 
+            return File(
+                bytes,
+                "application/xml",
+                $"{nombreArchivo}.xml");
+        }
         // GET: ReciboNominaController/Details/5
         public ActionResult Details(int id)
         {

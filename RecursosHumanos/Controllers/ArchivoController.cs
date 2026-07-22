@@ -13,6 +13,12 @@ namespace GeneradorRecursosHumanos.Controller {
             _env = env;
         }
         public void EscribirXMLNomina(string nombreArchivo, string textoArchivo) {
+            string? carpeta = Path.GetDirectoryName(nombreArchivo);
+
+            if (!string.IsNullOrEmpty(carpeta)) {
+                Directory.CreateDirectory(carpeta);
+            }
+
             File.WriteAllText(nombreArchivo, textoArchivo, Encoding.UTF8);
         }
 

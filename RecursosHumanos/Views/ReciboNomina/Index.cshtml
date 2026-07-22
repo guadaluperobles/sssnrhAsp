@@ -1,67 +1,86 @@
 ﻿@using System.Data
-@model System.Data.DataTable
+@model RecursosHumanos.Models.ConsultaRecibosViewModel
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using (Html.BeginForm("Index", "ReciboNomina", FormMethod.Post))
 {
-<div class="container">
-    <div class="row">
-        <div class="col-3">
-            <label>Número de Empleado / RFC</label>
-            <input class="form-control" type="text" name="numeroEmpleado"/>
-        </div>
-        <div class="col-4" style="text-align:center">
-            <label style ="text-align: center">Ejercicio</label>
-            <div class="row">
-                <div class="col-6">
-                    <label>Desde</label>
-                    <input class="form-control" type="text" name="ejercicioInicio"/>
-                </div>
-                <div class="col-6">
-                    <label>Hasta</label>
-                    <input class="form-control" type="text" name="ejercicioFin"/>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <label>Número de Empleado / RFC</label>
+                <input class="form-control" type="text" name="numeroEmpleado" value="@Model.NumeroEmpleado" />
+            </div>
+            <div class="col-4" style="text-align:center">
+                <label style="text-align: center">Ejercicio</label>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Desde</label>
+                        <input class="form-control" type="text" name="ejercicioInicio" value="@Model.EjercicioInicio" />
+                    </div>
+                    <div class="col-6">
+                        <label>Hasta</label>
+                        <input class="form-control" type="text" name="ejercicioFin" value="@Model.EjercicioFin" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-4" style="text-align:center">
-            <label style="text-align: center">Quincena</label>
-            <div class="row">
-                <div class="col-6">
-                    <label>Desde</label>
-                    <input class="form-control" type="text" name="quincenaInicio"/>
-                </div>
-                <div class="col-6">
-                    <label>Hasta</label>
-                    <input class="form-control" type="text" name="quincenaFin"/>
+            <div class="col-4" style="text-align:center">
+                <label style="text-align: center">Quincena</label>
+                <div class="row">
+                    <div class="col-6">
+                        <label>Desde</label>
+                        <input class="form-control" type="text" name="quincenaInicio" value="@Model.QuincenaInicio" />
+                    </div>
+                    <div class="col-6">
+                        <label>Hasta</label>
+                        <input class="form-control" type="text" name="quincenaFin" value="@Model.QuincenaFin" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-1">
-            <button type="submit" class="form-control btn-primary">Buscar</button>
+            <div class="col-1">
+                <button type="submit" class="form-control btn-primary">Buscar</button>
+            </div>
         </div>
     </div>
-</div>
 }
-@if (Model != null)
+
+@if (Model.Recibos != null)
 {
     <table class="table">
         <thead>
             <tr>
-                @foreach (DataColumn col in Model.Columns)
-                {
-                    <th>@col.ColumnName</th>
-                }
+                <th>Base de Datos</th>
+                <th>ClkPr_ClkDet</th>
+                <th>PrAno</th>
+                <th>PrQna</th>
+                <th>UUID</th>
+                <th>PrNeto</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (DataRow row in Model.Rows)
+            @foreach (DataRow row in Model.Recibos.Rows)
             {
                 <tr>
-                    @foreach (var item in row.ItemArray)
-                    {
-                        <td>@item</td>
-                    }
+                    <td>@row["BaseDatos"]</td>
+                    <td>@row["ClkPr_ClkDet"]</td>
+                    <td>@row["PrAno"]</td>
+                    <td>@row["PrQna"]</td>
+                    <td>@row["PrUUID"]</td>
+                    <td>@row["PrNeto"]</td>
+                    <td>
+                        <button type="button"
+                                class="btn btn-primary btn-sm"
+                                onclick="DescargarXML('@row["PrUUID"]')">
+                            Ver
+                        </button>
+
+                        <a asp-action="Descargar"
+                           asp-route-id="@row["PrXML"]"
+                           class="btn btn-success btn-sm">
+                            Descargar
+                        </a>
+                    </td>
                 </tr>
             }
         </tbody>
