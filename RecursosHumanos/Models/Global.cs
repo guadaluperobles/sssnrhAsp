@@ -1,12 +1,21 @@
-﻿using System;
+﻿using GeneradorRecursosHumanos.Controller;
+using Microsoft.Data.SqlClient;
+using RecursosHumanos.Data;
+using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GeneradorRecursosHumanos.Model {
-    class Global {
-        public static string Letras( string numero ) {
+    public class Global {
+        private readonly ConeccionService _coneccionService;
+
+        public Global(ConeccionService coneccionService) {
+            _coneccionService = coneccionService;
+        }
+        public static string Letras(string numero) {
             string palabras = "";
             string entero = "";
             string dec = "";
@@ -14,15 +23,15 @@ namespace GeneradorRecursosHumanos.Model {
 
             numero = numero.Replace(",", "");
             int num, x, y;
-            
+
             if (numero.Substring(0, 1) == "-") {
                 numero = numero.Substring(1);
                 palabras = "menos ";
             }
-            
+
             for (x = 1; x <= numero.Length; x++) {
                 if (numero.Substring(0, 1) == "0") {
-                    numero = numero.Substring(1).Trim( );
+                    numero = numero.Substring(1).Trim();
 
                     if (numero.Length == 0)
                         palabras = "";
@@ -210,11 +219,54 @@ namespace GeneradorRecursosHumanos.Model {
                 }
 
                 return dec != ""
-                    ? (palabras + "peso(s) " + dec + "/100 M.N.").ToUpper( )
-                    : (palabras + "peso(s) 00/100 M.N.").ToUpper( );
+                    ? (palabras + "peso(s) " + dec + "/100 M.N.").ToUpper()
+                    : (palabras + "peso(s) 00/100 M.N.").ToUpper();
             }
 
             return "";
+        }
+
+        public DataTable ConsultaGeneral(string consulta, string baseDatos = "") {
+            DataTable dataTable = new DataTable();
+            DataTable BasesDatos = _coneccionService.CargarBasesDatosOperativas();
+
+            if (baseDatos != "") {
+
+                dataTable = _coneccionService.EjecutarConsulta(baseDatos, consulta);
+
+                if (!dataTable.Columns.Contains("BaseDatos")) {
+                    DataColumn col = new DataColumn("BaseDatos", typeof(string));
+                    col.DefaultValue = baseDatos;
+                    dataTable.Columns.Add(col);
+                }
+            }
+            else {
+                foreach (DataRow row in BasesDatos.Rows) {
+                    string descripcion = row["Descripcion"].ToString();
+                    baseDatos = row["BaseDatos"].ToString();
+
+                    if (baseDatos == "" || baseDatos == "LUFEN")
+                        continue;
+
+                    DataTable dtTemp = _coneccionService.EjecutarConsulta(baseDatos, consulta);
+
+                    if (dataTable == null) {
+                        dataTable = dtTemp.Clone();
+                        dataTable.Columns.Add("BaseDatos", typeof(string));
+                    }
+
+                    dtTemp.Columns.Add("BaseDatos", typeof(string));
+
+                    foreach (DataRow r in dtTemp.Rows)
+                        r["BaseDatos"] = baseDatos;
+
+                    dataTable.Merge(dtTemp);
+                }
+
+            }
+
+            return dataTable;
+
         }
     }
 }

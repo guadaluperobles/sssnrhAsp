@@ -4,6 +4,7 @@ using GeneradorRecursosHumanos.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecursosHumanos.Data;
+using RecursosHumanos.Models;
 using System.Data;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -12,10 +13,8 @@ namespace RecursosHumanos.Controllers
 {
     public class ReciboNominaController : Controller
     {
-
         private readonly ConeccionService _coneccionService;
         private readonly IWebHostEnvironment _env;
-
 
         public ReciboNominaController(ConeccionService coneccionService) {
             _coneccionService = coneccionService;
@@ -27,11 +26,127 @@ namespace RecursosHumanos.Controllers
             return View(BasesDatos);
         }
         [HttpPost]
-        public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) { 
+        [HttpPost]
+        public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) {
             DataTable recibos = new DataTable();
+
+            string ComplementarConsulta = string.Empty;
+            string anios = "";
+
+            if (!String.IsNullOrWhiteSpace(ejercicioInicio) && String.IsNullOrWhiteSpace(ejercicioFin)) {
+                if (ComplementarConsulta != "") {
+                    ComplementarConsulta += " AND ";
+                }
+                ComplementarConsulta = " (pc.PrAno = " + ejercicioInicio + ") ";
+            }
+
+
+            if (!String.IsNullOrWhiteSpace(ejercicioFin)) {
+                if (ComplementarConsulta != "") {
+                    ComplementarConsulta += " AND ";
+                }
+
+                if (String.IsNullOrWhiteSpace(ejercicioInicio)) {
+                    ComplementarConsulta += " (pc.PrAno = " + ejercicioFin + ") ";
+                    anios = ejercicioFin;
+                }
+                else {
+                    string inicio = ejercicioInicio;
+                    string fin = ejercicioFin;
+
+                    int intInicio = Convert.ToInt32(inicio);
+                    int intFin = Convert.ToInt32(fin);
+
+                    int recorrer = (intInicio - intFin);
+
+                    int incrementar = intInicio;
+
+                    string consultarVariosA = "";
+
+                    if (intInicio > intFin) {
+                        incrementar = intFin;
+                    }
+
+                    for (int i = 0; i <= Math.Abs(recorrer); i++) {
+                        if (consultarVariosA != "") {
+                            consultarVariosA += " OR ";
+                        }
+                        consultarVariosA += " pc.PrAno = " + (incrementar + i) + " ";
+                    }
+
+                    anios = ejercicioInicio + "-" + ejercicioFin;
+                    ComplementarConsulta += " (" + consultarVariosA + ") ";
+                }
+            }
+
+            if (!String.IsNullOrWhiteSpace(quincenaInicio) && String.IsNullOrWhiteSpace(quincenaFin)) {
+                if (ComplementarConsulta != "") {
+                    ComplementarConsulta += " AND ";
+                }
+                ComplementarConsulta = " (pc.PrQna = " + quincenaInicio + ") ";
+            }
+
+
+            if (!String.IsNullOrWhiteSpace(quincenaFin)) {
+                if (ComplementarConsulta != "") {
+                    ComplementarConsulta += " AND ";
+                }
+
+                if (String.IsNullOrWhiteSpace(quincenaInicio)) {
+                    ComplementarConsulta += " (pc.PrQna = " + quincenaFin + ") ";
+                    anios = quincenaFin;
+                }
+                else {
+                    string inicio = quincenaInicio;
+                    string fin = quincenaFin;
+
+                    int intInicio = Convert.ToInt32(inicio);
+                    int intFin = Convert.ToInt32(fin);
+
+                    int recorrer = (intInicio - intFin);
+
+                    int incrementar = intInicio;
+
+                    string consultarVariosQ = "";
+
+                    if (intInicio > intFin) {
+                        incrementar = intFin;
+                    }
+
+                    for (int i = 0; i <= Math.Abs(recorrer); i++) {
+                        if (consultarVariosQ != "") {
+                            consultarVariosQ += " OR ";
+                        }
+                        consultarVariosQ += " pc.PrQna = " + (incrementar + i) + " ";
+                    }
+
+                    anios = quincenaInicio + "-" + quincenaFin;
+                    ComplementarConsulta += " (" + consultarVariosQ + ") ";
+                }
+                if (!String.IsNullOrWhiteSpace(numeroEmpleado)) {
+                    if (ComplementarConsulta != "") {
+                        ComplementarConsulta += " AND ";
+                    }
+
+                    ComplementarConsulta += $" (pd.ClkDet IN ( {numeroEmpleado} )) OR (emp.MeRfc IN ( {numeroEmpleado}  )) ";
+                }
+            }
+
+            if (!String.IsNullOrWhiteSpace(numeroEmpleado)) {
+                if (ComplementarConsulta != "") {
+                    ComplementarConsulta += " AND ";
+                }
+
+                ComplementarConsulta += " (pd.ClkDet IN(" + numeroEmpleado + ")) ";
+            }
+
+
+            Global global = new Global(_coneccionService);
+            recibos = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta);
 
             return View(recibos);
         }
+
 
         // GET: ReciboNominaController/Details/5
         public ActionResult Details(int id)
@@ -112,7 +227,7 @@ namespace RecursosHumanos.Controllers
             string myXML = vXml;
 
             XmlDocument xmlDoc = new XmlDocument();
-            Global global = new Global(); 
+            Global global = new Global(_coneccionService); 
             var archivo = new ArchivoController(_env);
 
             int c;
