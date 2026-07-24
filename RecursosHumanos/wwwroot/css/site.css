@@ -29,3 +29,33 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/**
+    Clases agregadas
+*/
+html,
+body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container-rows {
+    height: calc(100vh - 24vh); /* 70px = altura aproximada del navbar */
+    overflow- y: auto;
+    overflow - x: hidden;
+}
+
+.container-principal {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+main {
+    overflow-y: auto !important;
+}

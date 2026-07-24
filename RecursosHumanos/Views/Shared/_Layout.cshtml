@@ -5,50 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Recursos Humanos</title>
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-5.0.2/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/sidebars.css" asp-append-version="true" />
+    <script src="~/lib/bootstrap/dist/js/sidebar.js"></script>
     <link rel="stylesheet" href="~/RecursosHumanos.styles.css" asp-append-version="true" />
+    <script src="../assets/js/color-modes.js"></script>
+    <link href="../assets/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <meta name="theme-color" content="#712cf9" />
+    <link href="sidebars.css" rel="stylesheet" />
 </head>
 <body>
 
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/LogoSalud.png" asp-append-version="true" style="width:15em"/>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ReciboNomina" asp-action="Index">Recibos de Nomina</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <img src="~/images/LogoSalud.png"
+                     asp-append-version="true"
+                     style="width:250px" />
+            </a>
+
+            
+            <nav aria-label="breadcrumb" style="text-align:start">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <h4> @ViewData["Title"]</h4>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Transparencia" asp-action="Index">Transparencia</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+                </ol>
+            </nav>
+            <partial name="_LoginPartial" />
+        </div>
+    </nav>
+
+    <!-- Contenido -->
+    <div class="d-flex container-principal">
+
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <partial name="_Sidebar" />
+        </div>
+
+        <!-- Página -->
+        <main class="flex-grow-1 p-4 container-rows ">
             @RenderBody()
         </main>
+
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - SSSS Recursos Humanos
+    <footer class="border-top footer text-muted" style="background:#44152c">
+        <div class="container-fluid text-center" style="color: #efc4a3;">
+            &copy; 2026 | Secretaría de Salud Publica del Estado de Sonora - Recursos Humanos
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

@@ -3,47 +3,10 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@using (Html.BeginForm("Index", "ReciboNomina", FormMethod.Post))
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-3">
-                <label>Número de Empleado / RFC</label>
-                <input class="form-control" type="text" name="numeroEmpleado" value="@Model.NumeroEmpleado" />
-            </div>
-            <div class="col-4" style="text-align:center">
-                <label style="text-align: center">Ejercicio</label>
-                <div class="row">
-                    <div class="col-6">
-                        <label>Desde</label>
-                        <input class="form-control" type="text" name="ejercicioInicio" value="@Model.EjercicioInicio" />
-                    </div>
-                    <div class="col-6">
-                        <label>Hasta</label>
-                        <input class="form-control" type="text" name="ejercicioFin" value="@Model.EjercicioFin" />
-                    </div>
-                </div>
-            </div>
-            <div class="col-4" style="text-align:center">
-                <label style="text-align: center">Quincena</label>
-                <div class="row">
-                    <div class="col-6">
-                        <label>Desde</label>
-                        <input class="form-control" type="text" name="quincenaInicio" value="@Model.QuincenaInicio" />
-                    </div>
-                    <div class="col-6">
-                        <label>Hasta</label>
-                        <input class="form-control" type="text" name="quincenaFin" value="@Model.QuincenaFin" />
-                    </div>
-                </div>
-            </div>
-            <div class="col-1">
-                <button type="submit" class="form-control btn-primary">Buscar</button>
-            </div>
-        </div>
-    </div>
+@{
+    ViewData["Title"] = "Impresión de Recibos de Nomina";
 }
-
+<partial name="_Form" />
 @if (Model.Recibos != null)
 {
     <table class="table">
