@@ -1,0 +1,20 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using (Html.BeginForm("Index", "TransparenciaIX", FormMethod.Post)) {
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <label>Año</label>
+                <input class="form-control" type="text" name="ejercicio" />
+            </div>
+            <div class="col-3">
+                <label>Trimestre</label>
+                <input class="form-control" type="text" name="trimestre" />
+            </div>
+            <div class="col-1">
+                <button type="submit" class="form-control btn-primary">Buscar</button>
+            </div>
+        </div>
+    </div>
+}

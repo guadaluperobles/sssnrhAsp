@@ -1,0 +1,140 @@
+﻿@model RecursosHumanos.Models.Cheque
+
+<form asp-action="Edit">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label">Número de Empleado</label>
+                <input asp-for="ClkDet" class="form-control" />
+                <span asp-validation-for="ClkDet" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label">Número cheque</label>
+                <input asp-for="NumeroCheque" class="form-control" />
+                <span asp-validation-for="NumeroCheque" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="Ejercicio" class="control-label"></label>
+                <input asp-for="Ejercicio" class="form-control" />
+                <span asp-validation-for="Ejercicio" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="Quincena" class="control-label"></label>
+                <input asp-for="Quincena" class="form-control" />
+                <span asp-validation-for="Quincena" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Empleado</label>
+                <input asp-for="NombreEmpleado" class="form-control" />
+                <span asp-validation-for="NombreEmpleado" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">RFC</label>
+                <input asp-for="RfcEmpleado" class="form-control" />
+                <span asp-validation-for="RfcEmpleado" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label class="control-label">Beneficiario</label>
+                <input asp-for="NombreBeneficiario" class="form-control" />
+                <span asp-validation-for="NombreBeneficiario" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label">CVEPPTAL empleado</label>
+                <input asp-for="ClavePresupuestal" class="form-control" />
+                <span asp-validation-for="ClavePresupuestal" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group">
+                <label class="control-label">CVEUBI empleado</label>
+                <input asp-for="ClaveUbicacion" class="form-control" />
+                <span asp-validation-for="ClaveUbicacion" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                <label  class="control-label">Inicio del Periodo</label>
+                <input asp-for="InicioPeriodo" class="form-control" />
+                <span asp-validation-for="InicioPeriodo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">Fin del Periodo</label>
+                <input asp-for="FinPeriodo" class="form-control" />
+                <span asp-validation-for="FinPeriodo" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">Fecha de pago</label>
+                <input asp-for="FechaPago" class="form-control" />
+                <span asp-validation-for="FechaPago" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-group">
+                <label class="control-label">Descripción</label>
+                <input asp-for="Descripcion" class="form-control" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label  class="control-label">Neto</label>
+                <input asp-for="Neto" class="form-control" />
+                <span asp-validation-for="Neto" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">Deducciones</label>
+                <input asp-for="Deducciones" class="form-control" />
+                <span asp-validation-for="Deducciones" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="control-label">Valor VPA</label>
+                <input asp-for="VPA" class="form-control" />
+                <span asp-validation-for="VPA" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="clearfix">
+            <hr />
+        </div>
+
+        <div class="col-md-12" style="text-align:end">
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+</form>

@@ -2,23 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace RecursosHumanos.Controllers {
-    public class TransparenciaController : Controller {
-        // GET: TransparenciaController
+    public class TransparenciaIXController : Controller {
+        // GET: TransparenciaIXController
         public ActionResult Index() {
             return View();
         }
 
-        // GET: TransparenciaController/Details/5
+        // GET: TransparenciaIXController/Details/5
         public ActionResult Details(int id) {
             return View();
         }
 
-        // GET: TransparenciaController/Create
+        // GET: TransparenciaIXController/Create
         public ActionResult Create() {
             return View();
         }
 
-        // POST: TransparenciaController/Create
+        // POST: TransparenciaIXController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection) {
@@ -30,12 +30,12 @@ namespace RecursosHumanos.Controllers {
             }
         }
 
-        // GET: TransparenciaController/Edit/5
+        // GET: TransparenciaIXController/Edit/5
         public ActionResult Edit(int id) {
             return View();
         }
 
-        // POST: TransparenciaController/Edit/5
+        // POST: TransparenciaIXController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection) {
@@ -47,12 +47,12 @@ namespace RecursosHumanos.Controllers {
             }
         }
 
-        // GET: TransparenciaController/Delete/5
+        // GET: TransparenciaIXController/Delete/5
         public ActionResult Delete(int id) {
             return View();
         }
 
-        // POST: TransparenciaController/Delete/5
+        // POST: TransparenciaIXController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection) {

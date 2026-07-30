@@ -6,7 +6,7 @@ using RecursosHumanos.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("RecursosHumanos") ?? throw new InvalidOperationException("Cadena de Coneccion string (DefaultConnection) no se encuentra");
+var connectionString = builder.Configuration.GetConnectionString("IESYST") ?? throw new InvalidOperationException("Cadena de Coneccion string (DefaultConnection) no se encuentra");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

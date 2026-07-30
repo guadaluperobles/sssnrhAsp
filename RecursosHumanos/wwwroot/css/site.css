@@ -59,3 +59,19 @@ body {
 main {
     overflow-y: auto !important;
 }
+
+.btn-edit {
+    color: #fff;
+    background-color: #2a8713;
+    border-color: #1f4a1b;
+}
+
+.btn-delete {
+    color: #fff;
+    background-color: #890000;
+    border-color: #480419;
+}
+
+.td-actions {
+    min-width:180px
+}

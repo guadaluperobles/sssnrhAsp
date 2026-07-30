@@ -1,0 +1,71 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model CustomTable
+
+@if (Model?.Datos != null && Model.Columnas != null && Model.Columnas.Any())
+{
+    var llave = Model.Columnas.FirstOrDefault(x => x.Pk);
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach (var columna in Model.Columnas)
+                {
+                    if (columna.Visible){
+                        <th>@columna.Titulo</th>
+                    }
+                }
+                @if(llave != null)
+                {
+                    <th></th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model.Datos)
+            {
+                var id = llave == null ? null : item.GetType().GetProperty(llave.Propiedad)?.GetValue(item);
+                <tr>
+                    @foreach (var columna in Model.Columnas)
+                    {
+                        var valor = item.GetType().GetProperty(columna.Propiedad)?.GetValue(item);
+                        if (columna.Visible)
+                        {
+                            <td>@valor</td>
+                        }
+                    }
+
+                    @if (id != null)
+                    {
+                        <td class="td-actions">
+                            <a  class="btn btn-edit" asp-action="Edit" asp-route-id="@id">
+                                <i class="bi bi-pencil"></i>Editar
+                            </a>
+                            <a  class="btn btn-delete" asp-action="Delete" asp-route-id="@id">
+                                <i class="bi bi-trash"></i> Eliminar
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="mt-3">
+        @if (Model.PaginaActual > 1)
+        {
+            <a asp-route-pagina="@(Model.PaginaActual - 1)">
+                Anterior
+            </a>
+        }
+        <span>
+            Página @Model.PaginaActual de @Model.TotalPaginas
+        </span>
+        @if (Model.PaginaActual < Model.TotalPaginas)
+        {
+            <a asp-route-pagina="@(Model.PaginaActual + 1)">
+                Siguiente
+            </a>
+        }
+    </div>
+}

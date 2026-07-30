@@ -13,9 +13,9 @@
         <thead>
             <tr>
                 <th>Base de Datos</th>
-                <th>ClkPr_ClkDet</th>
                 <th>PrAno</th>
                 <th>PrQna</th>
+                <th>ClkPr</th>
                 <th>UUID</th>
                 <th>PrNeto</th>
                 <th>Acciones</th>
@@ -26,21 +26,17 @@
             {
                 <tr>
                     <td>@row["BaseDatos"]</td>
-                    <td>@row["ClkPr_ClkDet"]</td>
                     <td>@row["PrAno"]</td>
                     <td>@row["PrQna"]</td>
+                    <td>@row["ClkPr"]</td>
                     <td>@row["PrUUID"]</td>
                     <td>@row["PrNeto"]</td>
                     <td>
-                        <button type="button"
-                                class="btn btn-primary btn-sm"
-                                onclick="DescargarXML('@row["PrUUID"]')">
+                        <button type="button" class="btn btn-primary btn-sm" onclick="DescargarXML('@row["PrUUID"]')">
                             Ver
                         </button>
 
-                        <a asp-action="Descargar"
-                           asp-route-id="@row["PrXML"]"
-                           class="btn btn-success btn-sm">
+                        <a asp-action="Descargar" asp-route-id="@row["PrXML"]" class="btn btn-success btn-sm">
                             Descargar
                         </a>
                     </td>

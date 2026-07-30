@@ -1,0 +1,60 @@
+@{/*model IEnumerable<RecursosHumanos.Models.Cheque>*/}
+
+@{
+    ViewData["Title"] = "Impresión de Cheques";
+
+    var datos = ((IEnumerable<object>)Model.Datos);
+
+    var Pendientes = new CustomTable
+    {
+        Datos = datos.Where(x =>
+        {
+            var valor = x.GetType()
+                         .GetProperty("impreso")
+                         ?.GetValue(x);
+
+            return Convert.ToInt32(valor) == 0;
+        }),
+        Columnas = Model.Columnas
+    };
+
+    var Impresos = new CustomTable
+    {
+        Datos = datos.Where(x =>
+        {
+            var valor = x.GetType()
+                         .GetProperty("impreso")
+                         ?.GetValue(x);
+
+            return Convert.ToInt32(valor) == 1;
+        }),
+        Columnas = Model.Columnas
+    };
+}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12" style="text-align: end">
+            <button type="button" class="btn btn-secondary" asp-action="Create">Agregar</button>
+            <button type="button" class="btn btn-secondary" asp-action="Import">Importar</button>
+        </div>
+        <div class="col-md-12">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Pendientes</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Impresos</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+                    <partial name="_CustomTabla" model="Pendientes" /> @{/*filtrar solos los que imprimir = 0*/}
+                </div>
+                <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+                    <partial name="_CustomTabla" model="Impresos" /> @{/*filtrar solos los que imprimir = 1*/}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

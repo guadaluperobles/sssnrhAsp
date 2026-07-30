@@ -10,13 +10,35 @@
             Vista = "Recibo de Nómina",Controlador = "ReciboNomina"
         },
         new MenuItem
-        { 
-            Vista = "Transparencia LGT65 ",Controlador = "Transparencia",
+        {
+            Vista = "Cheques",Controlador = "Cheque"
+        },
+        new MenuItem
+        {
+            Vista = "Reportes Nomina",  Controlador = "ReporteNomina",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Plazas Vacantes",                Controlador = "LGT65PlazasVacantesOcupadas" },
-                new MenuItem    {   Vista = "Remuneraciones Brutas y Netas",        Controlador = "LGT65RemuredacionesBrutasNetas"},
-                new MenuItem    {   Vista = "Personas Jubiladas y Pensionadas",     Controlador = "LGT65PersonasJuviladasPensionadas"}
+                new MenuItem    {   Vista = "ISRTP",                                                            Controlador = "TransparenciaIX" },
+                new MenuItem    {   Vista = "Detalle de percepciones y deducciones por tipo de nomina",         Controlador = "TransparenciaVII"},
+                new MenuItem    {   Vista = "Plantilla Sindicalizados",                                         Controlador = "TransparenciaXL"}
+            }
+        },
+        new MenuItem
+        {
+            Vista = "Transparencia LGT65 ", Controlador = "Transparencia",
+            SubModulos = new List<MenuItem>
+            {
+                new MenuItem    {   Vista = "Plazas Vacantes",                                                   Controlador = "TransparenciaIX" },
+                new MenuItem    {   Vista = "Remuneraciones Brutas y Netas",                                     Controlador = "TransparenciaVII"},
+                new MenuItem    {   Vista = "Personas Jubiladas y Pensionadas",                                  Controlador = "TransparenciaXL"}
+            }
+        },
+        new MenuItem
+        {
+            Vista = "Administración", Controlador = "Administracion",
+            SubModulos = new List<MenuItem>
+            {
+                new MenuItem    {   Vista = "Notas",                                                   Controlador = "Nota" },
             }
         }
     };

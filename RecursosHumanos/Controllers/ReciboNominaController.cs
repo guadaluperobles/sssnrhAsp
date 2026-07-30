@@ -145,7 +145,7 @@ namespace RecursosHumanos.Controllers
                         ComplementarConsulta += " AND ";
                     }
 
-                    ComplementarConsulta += $" (pd.ClkDet IN( {numeroEmpleado} )) ";
+                    ComplementarConsulta += $" CONCAT(emp.MeRfc, CAST(pd.ClkDet AS VARCHAR)) like '%{numeroEmpleado}%'";
                 }
             }
 
@@ -154,7 +154,7 @@ namespace RecursosHumanos.Controllers
                     ComplementarConsulta += " AND ";
                 }
 
-                ComplementarConsulta += $" (pd.ClkDet IN( {numeroEmpleado})) ";
+                ComplementarConsulta += $" CONCAT(emp.MeRfc, CAST(pd.ClkDet AS VARCHAR)) like '%{numeroEmpleado}%'";
             }
 
 

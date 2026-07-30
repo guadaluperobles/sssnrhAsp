@@ -1,0 +1,20 @@
+@model RecursosHumanos.Models.Cheque
+
+@{
+    ViewData["Title"] = $"Editar Cheque #{Model.NumeroCheque}";
+}
+<div class="container">
+    <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4" style="text-align: end"><a class="btn btn-light" asp-action="Index">Volver</a></div>
+    </div>
+   
+    <hr />
+    <partial name="_Form" model="Model" />
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</div>
