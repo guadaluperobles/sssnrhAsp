@@ -1,7 +1,7 @@
-using GeneradorRecursosHumanos.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
+using RecursosHumanos.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 

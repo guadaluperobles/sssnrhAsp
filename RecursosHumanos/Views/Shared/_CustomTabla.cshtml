@@ -1,6 +1,6 @@
 ﻿@using System.Data
 @*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    Tabla generica que manda los datos con paginador
 *@
 @model CustomTable
 
@@ -25,23 +25,25 @@
         </thead>
 
         <tbody>
+            @{
+                var pk = Model.Columnas.FirstOrDefault(c => c.Pk);
+            }
+
             @if (Model.Datos.First() is DataRow)
             {
-
                 @foreach (DataRow fila in Model.Datos)
                 {
-                    <tr>
+                    <tr onclick="seleccionarRegistro('@fila[pk.Propiedad]')" style="cursor:pointer">
                         @foreach (var columna in Model.Columnas.Where(c => c.Visible))
                         {
                             <td>@fila[columna.Propiedad]</td>
                         }
                     </tr>
                 }
-
             }
             else
             {
-                @foreach (var item in Model.Datos) @foreach(DataRow fila in Model.Datos)
+                @foreach (var item in Model.Datos)
                 {
                     var id = llave == null ? null : item.GetType().GetProperty(llave.Propiedad)?.GetValue(item);
                     <tr>
@@ -59,6 +61,11 @@
                             <td class="td-actions">
                                 <a class="btn btn-edit" asp-action="Edit" asp-route-id="@id">
                                     <i class="bi bi-pencil"></i>Editar
+                                </a>
+                                <a class="btn btn-edit"
+                                   href="javascript:void(0);"
+                                   onclick="verModalImpresion(@id)">
+                                    <i class="bi bi-pencil"></i> Imprimir
                                 </a>
                                 <a class="btn btn-delete" asp-action="Delete" asp-route-id="@id">
                                     <i class="bi bi-trash"></i> Eliminar
@@ -90,7 +97,12 @@
 }
 else
 {
-    <div class="col-12">
-        <h4>No se encontraron datos</h4>
+    <div class="col-12" style="
+        padding: 26px;
+        margin-top: 15vh;
+        ">
+        <div class="alert alert-info" role="alert">
+            No se encontraron datos
+        </div>
     </div>
 }

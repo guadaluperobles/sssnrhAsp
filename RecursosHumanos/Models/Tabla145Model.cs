@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Model {
+namespace RecursosHumanos.Model {
     //primas
     class Tabla145Model {
         string id { get; set; }

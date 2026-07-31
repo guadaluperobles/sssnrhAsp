@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Model {
+namespace RecursosHumanos.Model {
     //prestaciones en especie
     class Tabla150Model {
         string id { get; set; }

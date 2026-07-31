@@ -1,6 +1,6 @@
-﻿using GeneradorRecursosHumanos.Controller;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using RecursosHumanos.Data;
+using RecursosHumanos.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Model {
+namespace RecursosHumanos.Model {
     public class Global {
         private readonly ConeccionService _coneccionService;
 
@@ -264,9 +264,25 @@ namespace GeneradorRecursosHumanos.Model {
                 }
 
             }
-
             return dataTable;
+        }
 
+        public static List<CustomTableColumn> GenerarColumnas( DataTable tabla, Dictionary<string, (string Titulo, bool PK)> columnasVisibles) {
+            var columnas = tabla.Columns.Cast<DataColumn>().Select(c => new CustomTableColumn {
+                    Propiedad = c.ColumnName,
+                    Titulo = c.ColumnName,
+                    Visible = false
+                }).ToList();
+
+            foreach (var columna in columnas) {
+                if (columnasVisibles.TryGetValue(columna.Propiedad, out var cfg)) {
+                    columna.Titulo = cfg.Titulo;
+                    columna.Visible = true;
+                    columna.Pk = cfg.PK;
+                }
+            }
+
+            return columnas;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Model {
+namespace RecursosHumanos.Model {
     //percepciones adicionales en especie
     class Tabla141Model {
         string id { get; set; }

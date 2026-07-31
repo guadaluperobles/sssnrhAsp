@@ -1,46 +1,59 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-RecursosHumanos-2d080643-e215-451d-a94a-8b9de17ceb27</UserSecretsId>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>aspnet-RecursosHumanos-2d080643-e215-451d-a94a-8b9de17ceb27</UserSecretsId>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\CODEOWNERS" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\CONTRIBUTING.md" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\dependabot.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\ISSUE_TEMPLATE\bug_report.md" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\ISSUE_TEMPLATE\config.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\ISSUE_TEMPLATE\feature_request.md" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\release-drafter.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\SUPPORT.md" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\browserstack.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\bundlewatch.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\codeql.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\css.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\docs.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\js.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\lint.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\node-sass.yml" />
-    <None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\release-notes.yml" />
-    <None Include="wwwroot\images\logoSalud.png" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\CODEOWNERS" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\CONTRIBUTING.md" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\dependabot.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\ISSUE_TEMPLATE\bug_report.md" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\ISSUE_TEMPLATE\config.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\ISSUE_TEMPLATE\feature_request.md" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\release-drafter.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\SUPPORT.md" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\browserstack.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\bundlewatch.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\codeql.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\css.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\docs.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\js.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\lint.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\node-sass.yml" />
+		<None Include="wwwroot\lib\bootstrap-5.0.2\.github\workflows\release-notes.yml" />
+		<None Include="wwwroot\images\logoSalud.png" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.ReportingServices.ReportViewerControl.WebForms" Version="150.1652.0" />
-    <PackageReference Include="QRCoder" Version="1.8.0" />
-    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.33" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9">
+			<IncludeAssets>
+				runtime;
+				build;
+				native;
+				contentfiles;
+				analyzers;
+				buildtransitive
+			</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+
+		<PackageReference Include="QRCoder" Version="1.8.0" />
+		<PackageReference Include="ReportViewerCore.NETCore" Version="15.1.33" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Reportes\**\*.rdlc">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
 </Project>

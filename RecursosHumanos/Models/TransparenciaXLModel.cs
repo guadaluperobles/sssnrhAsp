@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Model {
+namespace RecursosHumanos.Model {
     class TransparenciaXLModel {
         public string ejercicio { get; set; }
         public string fechaInicioPeriodo { get; set; }

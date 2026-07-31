@@ -1,11 +1,12 @@
-﻿using GeneradorRecursosHumanos.Model;
-using Microsoft.Reporting.NETCore;
+﻿using Microsoft.Reporting.NETCore;
+using Microsoft.AspNetCore.Mvc;
+using QRCoder;
+using RecursosHumanos.Model;
 using System.Drawing;
 using System.Text;
-using QRCoder;
 
-namespace GeneradorRecursosHumanos.Controller {
-    class ArchivoController {
+namespace RecursosHumanos.Controllers {
+    class ArchivoController : Controller {
         private static string rutaLog = @"C:\LogsGenerador";
         private readonly IWebHostEnvironment _env;
 
@@ -19,7 +20,7 @@ namespace GeneradorRecursosHumanos.Controller {
                 Directory.CreateDirectory(carpeta);
             }
 
-            File.WriteAllText(nombreArchivo, textoArchivo, Encoding.UTF8);
+            System.IO.File.WriteAllText(nombreArchivo, textoArchivo, Encoding.UTF8);
         }
 
         public byte[] EscribirPDFNomina(ReciboModel row) {
@@ -38,7 +39,7 @@ namespace GeneradorRecursosHumanos.Controller {
             return report.Render("PDF");
         }
 
-        public byte[] GenerarQR(string texto) {
+        public static byte[] GenerarQR(string texto) {
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
 
             QRCodeData qrCodeData = qrGenerator.CreateQrCode(texto, QRCodeGenerator.ECCLevel.Q);
@@ -52,7 +53,6 @@ namespace GeneradorRecursosHumanos.Controller {
                 }
             }
         }
-
         /*
         public static void ExportarExcel<T>( List<T> lista, string archivo, ProgressBar pb,  Label lb) {
             Excel.Application excel = new Excel.Application( );

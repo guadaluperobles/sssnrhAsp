@@ -1,11 +1,11 @@
-﻿using GeneradorRecursosHumanos.Models;
+﻿using RecursosHumanos.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Model
+namespace RecursosHumanos.Model
 {
     public class ReciboModel {
         private string? _noComprobante;

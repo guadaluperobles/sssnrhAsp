@@ -20,3 +20,4 @@ new tempusDominus.TempusDominus(
         }
     }
 );
+

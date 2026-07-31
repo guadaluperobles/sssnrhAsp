@@ -1,9 +1,11 @@
-﻿using System.Data;
+﻿using RecursosHumanos.Model;
+using System.Data;
 
 namespace RecursosHumanos.Models {
     public class ConsultaRecibosViewModel {
         public DataTable BasesDatos { get; set; }
         public DataTable Recibos { get; set; }
+        public ReciboModel Recibo { get; set; }
         public string NumeroEmpleado { get; set; }
         public string EjercicioInicio { get; set; }
         public string EjercicioFin { get; set; }

@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Models
-{
-    public class Percepcion
-    {
+namespace RecursosHumanos.Models {
+    public class Percepcion {
         private string _Clave;
         private string _Concepto;
         private string _TextImporte;

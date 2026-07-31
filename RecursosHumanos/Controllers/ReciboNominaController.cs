@@ -1,19 +1,15 @@
-﻿using GeneradorRecursosHumanos.Controller;
-using GeneradorRecursosHumanos.Model;
-using GeneradorRecursosHumanos.Models;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Reporting.NETCore;
 using RecursosHumanos.Data;
+using RecursosHumanos.Model;
 using RecursosHumanos.Models;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
-namespace RecursosHumanos.Controllers
-{
-    public class ReciboNominaController : Controller
-    {
+namespace RecursosHumanos.Controllers {
+    public class ReciboNominaController : Controller {
         private readonly ConeccionService _coneccionService;
         private readonly IWebHostEnvironment _env;
 
@@ -165,7 +161,7 @@ namespace RecursosHumanos.Controllers
         }
 
         [HttpPost]
-        public IActionResult DescargarXML( string uuid) {
+        public IActionResult DescargarXML(string uuid) {
             string nombreArchivo = string.Empty;
             string xml = string.Empty;
 
@@ -177,86 +173,114 @@ namespace RecursosHumanos.Controllers
                 $"{nombreArchivo}.xml");
         }
         // GET: ReciboNominaController/Details/5
-        public ActionResult Details(int id)
-        {
+        public ActionResult Details(int id) {
             return View();
         }
 
         // GET: ReciboNominaController/Create
-        public ActionResult Create()
-        {
+        public ActionResult Create() {
             return View();
         }
 
         // POST: ReciboNominaController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
+        public ActionResult Create(IFormCollection collection) {
+            try {
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
+            catch {
                 return View();
             }
         }
 
         // GET: ReciboNominaController/Edit/5
-        public ActionResult Edit(int id)
-        {
+        public ActionResult Edit(int id) {
             return View();
         }
 
         // POST: ReciboNominaController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
+        public ActionResult Edit(int id, IFormCollection collection) {
+            try {
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
+            catch {
                 return View();
             }
         }
 
-        public ActionResult ReciboNomina(string numeroEmpleado, string e) { 
+        public ActionResult ReciboNomina(string numeroEmpleado, string e) {
             DataTable recibos = new DataTable();
 
             return View(recibos);
         }
 
         // GET: ReciboNominaController/Delete/5
-        public ActionResult Delete(int id)
-        {
+        public ActionResult Delete(int id) {
             return View();
         }
 
         // POST: ReciboNominaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
+        public ActionResult Delete(int id, IFormCollection collection) {
+            try {
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
+            catch {
                 return View();
             }
         }
+        [HttpGet]
+        public IActionResult Reporte(string UUID) {
+            var datos = ObtenerDatos(UUID);
 
+            return PartialView("_Reporte", datos);
+        }
+        public IActionResult GenerarReporte(string UUID) {
+            try {
+                LocalReport reporte = new LocalReport();
+                var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptReciboNomina.rdlc");
+                if (!System.IO.File.Exists(ruta)) {
+                    throw new Exception(ruta);
+                }
+                reporte.ReportPath = ruta;
+                var resibo = ObtenerDatos(UUID);
+                var resibos = new List<ReciboModel> { resibo };
+
+                reporte.DataSources.Add(new ReportDataSource("dsReciboNomina", resibos));
+                reporte.DataSources.Add(new ReportDataSource("dsPercepciones", resibo.Percepciones));
+                reporte.DataSources.Add(new ReportDataSource("dsDeducciones", resibo.Deducciones));
+
+                byte[] pdf = reporte.Render("PDF");
+
+                return File(pdf, "application/pdf");
+            }
+            catch (Exception ex) {
+                return Content(ex.ToString());
+            }
+        }
+        public ReciboModel ObtenerDatos(string UUID) {
+
+            Global global = new Global(_coneccionService);
+            string consulta = $"{ConsultasModel.BuscarCFDI} WHERE pd.PrUUID = '{UUID}'";
+            DataTable dt = global.ConsultaGeneral(consulta);
+            if (dt == null || dt.Rows.Count == 0) {
+                return null;
+            }
+            DataRow rcb = dt.Rows[0];
+            string nombreArchivo = rcb[1].ToString() + "_" + rcb[2].ToString() + "_" + rcb[5].ToString();
+
+            var recibo = CargarCFDI(rcb[6].ToString(), rcb[2].ToString(), nombreArchivo, rcb[3].ToString(), rcb[7].ToString());
+            return recibo;
+        }
         public ReciboModel CargarCFDI(string vXml, string vQuincena, string vNombreArchivo, string clavePago, string nombreBaseDatos) {
             string myXML = vXml;
 
             XmlDocument xmlDoc = new XmlDocument();
-            Global global = new Global(_coneccionService); 
-            var archivo = new ArchivoController(_env);
+            Global global = new Global(_coneccionService);
 
             int c;
 
@@ -479,9 +503,9 @@ namespace RecursosHumanos.Controllers
                 + "&tt=" + totalSAT
                 + "&fe=" + fe;
 
-
+            //ArchivoController archivo = new ArchivoController();
             string NombreArchivo = vNombreArchivo + "_" + reciboNomina.rfc + "_" + reciboNomina.nombre;
-            reciboNomina.CodigoQR = archivo.GenerarQR(reciboNomina.qrVerificador);
+            reciboNomina.CodigoQR = ArchivoController.GenerarQR(reciboNomina.qrVerificador);
             reciboNomina.importeLetras = Global.Letras(reciboNomina.totalPagar);
 
             string Clave = "";
@@ -629,11 +653,8 @@ namespace RecursosHumanos.Controllers
                                 break;
                         }
                     }
-
                 }
-
             }
-
             reciboNomina.Deducciones = Deducciones;
             reciboNomina.Percepciones = Percepciones;
             return reciboNomina;
@@ -653,7 +674,7 @@ namespace RecursosHumanos.Controllers
                 int meses = semanasRestantes / 4;
                 semanasRestantes %= 4;
 
-                return $"{(años > 0 ? $" {años} año(s)" : $"")}, {(meses > 0 ? $"{meses} mes(es)" : $"")}, {(semanasRestantes > 0 ? $"{semanasRestantes} semana(s)" : $"")}";
+                return $"{(años > 0 ? $" {años} año(s)," : $"")} {(meses > 0 ? $"{meses} mes(es)," : $"")} {(semanasRestantes > 0 ? $"{semanasRestantes} semana(s)" : $"")}";
             }
 
             // Formato PnYnMnD

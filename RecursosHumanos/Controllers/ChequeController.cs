@@ -1,9 +1,11 @@
-
 using Azure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Reporting.NETCore;
 using RecursosHumanos.Data;
+using RecursosHumanos.Model;
 using RecursosHumanos.Models;
+using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class ChequeController : Controller {
@@ -166,5 +168,34 @@ public class ChequeController : Controller {
 
     private bool ChequeExists(int? id) {
         return _context.Cheque.Any(e => e.Id == id);
+    }
+    public async Task<IActionResult> GenerarReporte(int id) {
+        try {
+            var ruta = Path.Combine( Directory.GetCurrentDirectory(), "Reportes","rptImpresionCheque.rdlc");
+
+            if (!System.IO.File.Exists(ruta)) {
+                return NotFound("No se encontró el archivo RDLC.");
+            }
+
+            var cheque = await ObtenerDatos(id);
+
+            if (cheque == null) {
+                return NotFound("No se encontró el cheque.");
+            }
+
+            var reporte = new LocalReport { ReportPath = ruta };
+            reporte.DataSources.Add(new ReportDataSource("dsCheque",new List<Cheque> { cheque }) );
+
+            byte[] pdf = reporte.Render("PDF");
+
+            return File(pdf, "application/pdf");
+        }
+        catch (Exception ex) {
+            return Content(ex.ToString());
+        }
+    }
+
+    public async Task<Cheque> ObtenerDatos(int id) {
+        return await _context.Cheque.FindAsync(id);
     }
 }

@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GeneradorRecursosHumanos.Models
-{
+namespace RecursosHumanos.Models {
     public class ConceptosModel {
         private string _Clave;
         private string _Concepto;

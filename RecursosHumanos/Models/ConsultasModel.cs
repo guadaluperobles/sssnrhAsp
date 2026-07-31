@@ -15,7 +15,24 @@
         ";
 
         public static string BuscarEmpleado = @"
-            SELECT *, CONCAT(MeNomAP, ' ', MeNomAM, ' ',MeNomEmp ) as NombreCompleto FROM Empleado WHERE CONCAT(MeRfc, CAST(ClkDet AS VARCHAR), MeNomAP, MeNomAM, MeNomEmp) 
+            SELECT 
+                *, 
+                CONCAT(MeNomAP, ' ', MeNomAM, ' ',MeNomEmp ) as NombreCompleto 
+            FROM Empleado 
+            WHERE CONCAT(MeRfc, CAST(ClkDet AS VARCHAR), MeNomAP, MeNomAM, MeNomEmp, MeNomEmp, MeNomAP, MeNomAM) 
         ";
+
+        public static string BuscarCFDI = @"
+         SELECT 
+             pd.ClkPr + CAST(pd.ClkDet AS VARCHAR) AS ClkPr_ClkDet, 
+             pc.PrAno, 
+             RIGHT('0' + CAST(pc.PrQna AS VARCHAR), 2) AS PrQna, 
+             pd.PrClvPag, 
+             pd.PrNeto, 
+             pd.PrUUID,  
+         pd.PrXML
+         FROM Producto_Detalle AS pd
+         INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
+";
     }
 }

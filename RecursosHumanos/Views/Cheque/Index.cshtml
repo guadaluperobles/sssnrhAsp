@@ -9,10 +9,7 @@
     {
         Datos = datos.Where(x =>
         {
-            var valor = x.GetType()
-                         .GetProperty("impreso")
-                         ?.GetValue(x);
-
+            var valor = x.GetType().GetProperty("impreso")?.GetValue(x);
             return Convert.ToInt32(valor) == 0;
         }),
         Columnas = Model.Columnas
@@ -22,15 +19,28 @@
     {
         Datos = datos.Where(x =>
         {
-            var valor = x.GetType()
-                         .GetProperty("impreso")
-                         ?.GetValue(x);
-
+            var valor = x.GetType().GetProperty("impreso")?.GetValue(x);
             return Convert.ToInt32(valor) == 1;
         }),
         Columnas = Model.Columnas
     };
 }
+@section Scripts {
+    <script>
+        function verModalImpresion(id) {
+            $("#modalReporte").modal("show");
+            $("#contenidoReporte").html(
+                '<iframe ' +
+                'src="/Cheque/GenerarReporte?id=' + id + '" ' +
+                'width="100%" ' +
+                'height="700px" ' +
+                'frameborder="0">' +
+                '</iframe>'
+            );
+        }
+    </script>
+}
+<partial name="_ModalReporte" />
 <div class="container">
     <div class="row">
         <div class="col-md-12" style="text-align: end">
