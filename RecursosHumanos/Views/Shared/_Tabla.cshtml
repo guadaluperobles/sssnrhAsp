@@ -1,5 +1,33 @@
-﻿@*
+﻿@using System.Data
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{
+@model System.Data.DataTable
+@if (Model == null || Model.Rows.Count == 0)
+{
+    <p>No hay registros.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                @foreach (DataColumn columna in Model.Columns)
+                {
+                    <th>@columna.ColumnName</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (DataRow fila in Model.Rows)
+            {
+                <tr>
+                    @foreach (var valor in fila.ItemArray)
+                    {
+                        <td>@valor</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
 }

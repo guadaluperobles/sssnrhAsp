@@ -1,9 +1,10 @@
-﻿@*
+﻿@using System.Data
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model CustomTable
 
-@if (Model?.Datos != null && Model.Columnas != null && Model.Columnas.Any())
+@if (Model?.Datos != null && Model.Datos.Any()  && Model.Columnas != null && Model.Columnas.Any())
 {
     var llave = Model.Columnas.FirstOrDefault(x => x.Pk);
     <table class="table">
@@ -11,11 +12,12 @@
             <tr>
                 @foreach (var columna in Model.Columnas)
                 {
-                    if (columna.Visible){
+                    if (columna.Visible)
+                    {
                         <th>@columna.Titulo</th>
                     }
                 }
-                @if(llave != null)
+                @if (llave != null)
                 {
                     <th></th>
                 }
@@ -23,31 +25,48 @@
         </thead>
 
         <tbody>
-            @foreach (var item in Model.Datos)
+            @if (Model.Datos.First() is DataRow)
             {
-                var id = llave == null ? null : item.GetType().GetProperty(llave.Propiedad)?.GetValue(item);
-                <tr>
-                    @foreach (var columna in Model.Columnas)
-                    {
-                        var valor = item.GetType().GetProperty(columna.Propiedad)?.GetValue(item);
-                        if (columna.Visible)
-                        {
-                            <td>@valor</td>
-                        }
-                    }
 
-                    @if (id != null)
-                    {
-                        <td class="td-actions">
-                            <a  class="btn btn-edit" asp-action="Edit" asp-route-id="@id">
-                                <i class="bi bi-pencil"></i>Editar
-                            </a>
-                            <a  class="btn btn-delete" asp-action="Delete" asp-route-id="@id">
-                                <i class="bi bi-trash"></i> Eliminar
-                            </a>
-                        </td>
-                    }
-                </tr>
+                @foreach (DataRow fila in Model.Datos)
+                {
+                    <tr>
+                        @foreach (var columna in Model.Columnas.Where(c => c.Visible))
+                        {
+                            <td>@fila[columna.Propiedad]</td>
+                        }
+                    </tr>
+                }
+
+            }
+            else
+            {
+                @foreach (var item in Model.Datos) @foreach(DataRow fila in Model.Datos)
+                {
+                    var id = llave == null ? null : item.GetType().GetProperty(llave.Propiedad)?.GetValue(item);
+                    <tr>
+                        @foreach (var columna in Model.Columnas)
+                        {
+                            var valor = item.GetType().GetProperty(columna.Propiedad)?.GetValue(item);
+                            if (columna.Visible)
+                            {
+                                <td>@valor</td>
+                            }
+                        }
+
+                        @if (id != null)
+                        {
+                            <td class="td-actions">
+                                <a class="btn btn-edit" asp-action="Edit" asp-route-id="@id">
+                                    <i class="bi bi-pencil"></i>Editar
+                                </a>
+                                <a class="btn btn-delete" asp-action="Delete" asp-route-id="@id">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                            </td>
+                        }
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -67,5 +86,11 @@
                 Siguiente
             </a>
         }
+    </div>
+}
+else
+{
+    <div class="col-12">
+        <h4>No se encontraron datos</h4>
     </div>
 }

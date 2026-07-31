@@ -12,6 +12,10 @@
             FROM Producto_Detalle AS pd
             INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
             INNER JOIN Empleado AS emp  ON pd.ClkDet = emp.ClkDet
-";
+        ";
+
+        public static string BuscarEmpleado = @"
+            SELECT *, CONCAT(MeNomAP, ' ', MeNomAM, ' ',MeNomEmp ) as NombreCompleto FROM Empleado WHERE CONCAT(MeRfc, CAST(ClkDet AS VARCHAR), MeNomAP, MeNomAM, MeNomEmp) 
+        ";
     }
 }
