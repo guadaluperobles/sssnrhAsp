@@ -75,3 +75,18 @@ main {
 .td-actions {
     min-width:180px
 }
+
+#loading {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+#loading .spinner-border {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

@@ -26,6 +26,10 @@ namespace RecursosHumanos.Models {
         private short? _impreso;
         private int? _Ejercicio;
         private int? _Quincena;
+        private DateTime _Creado;
+        private DateTime? _Editado;
+        private DateTime? _Eliminado;
+        private DateTime? _Impreso;
 
         public int? Id { get { return _Id; } set { _Id = value; } }
         public int? ClkDet { get { return _ClkDet; } set { _ClkDet = value; } }
@@ -47,5 +51,9 @@ namespace RecursosHumanos.Models {
         public short? impreso { get { return _impreso; } set { _impreso = value; } }
         public int? Ejercicio { get { return _Ejercicio; } set { _Ejercicio = value; } }
         public int? Quincena { get { return _Quincena; } set { _Quincena = value; } }
+        public DateTime Creado { get { return _Creado; } set { _Creado = value; } }
+        public DateTime? Editado { get { return _Editado; } set { _Editado = value; } }
+        public DateTime? Eliminado { get { return _Eliminado; } set { _Eliminado = value; } }
+        public DateTime? Impreso { get { return _Impreso; } set { _Impreso = value; } }
     }
 }

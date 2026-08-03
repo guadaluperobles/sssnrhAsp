@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
+using IdentityUser = Microsoft.AspNetCore.Identity.IdentityUser;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -21,3 +21,26 @@ new tempusDominus.TempusDominus(
     }
 );
 
+//Para formularios(POST)
+$(document).on("submit", "form", function () {
+    $("#loading").show();
+});
+
+//Para peticiones AJAX
+$(document).ajaxStart(function () {
+    $("#loading").show();
+});
+
+$(document).ajaxStop(function () {
+    $("#loading").hide();
+});
+
+//Para ocultarlo al cargar la página
+$(window).on("load", function () {
+    $("#loading").hide();
+});
+
+//todos los clics que provoquen una redirección
+$(document).on("click", "a", function () {
+    $("#loading").show();
+});
