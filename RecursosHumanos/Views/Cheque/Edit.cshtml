@@ -1,7 +1,7 @@
 @model RecursosHumanos.Models.Cheque
 
 @{
-    ViewData["Title"] = $"Editar Cheque #{Model.NumeroCheque}";
+    ViewData["Title"] = Model?.Id == null ? "Nuevo Cheque" : $"Editar Cheque #{Model.NumeroCheque}";
 }
 <div class="container">
     <div class="row">
@@ -10,6 +10,7 @@
     </div>
    
     <hr />
+
     <partial name="_Form" model="Model" />
 
     @section Scripts {

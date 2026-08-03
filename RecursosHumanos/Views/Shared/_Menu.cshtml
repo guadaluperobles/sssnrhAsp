@@ -3,45 +3,67 @@
     {
         new MenuItem
         {
+            Vista = "Inicio", Controlador = ""
+        },
+        new MenuItem
+        {
             Vista = "Buscador",Controlador = "Buscador"
         },
+    };
+
+    if (User.Identity?.IsAuthenticated == true)
+    {
+        modulos.Add(
+            new MenuItem
+            {
+                Vista = "Recibo de Nómina",
+                Controlador = "ReciboNomina"
+            });
+        modulos.Add(
+            new MenuItem
+            {
+                Vista = "Cheques",
+                Controlador = "Cheque"
+            });
+        modulos.Add(
         new MenuItem
         {
-            Vista = "Recibo de Nómina",Controlador = "ReciboNomina"
-        },
-        new MenuItem
-        {
-            Vista = "Cheques",Controlador = "Cheque"
-        },
-        new MenuItem
-        {
-            Vista = "Reportes Nomina",  Controlador = "ReporteNomina",
+            Vista = "Reportes Nomina",
+            Controlador = "ReporteNomina",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "ISRTP",                                                            Controlador = "TransparenciaIX" },
-                new MenuItem    {   Vista = "Detalle de percepciones y deducciones por tipo de nomina",         Controlador = "TransparenciaVII"},
-                new MenuItem    {   Vista = "Plantilla Sindicalizados",                                         Controlador = "TransparenciaXL"}
+                new MenuItem    {   Vista = "ISRTP",                                                            Controlador = "ISRTP" },
+                new MenuItem    {   Vista = "Detalle de percepciones y deducciones por tipo de nomina",         Controlador = "DetallePersepcionDeduccion"},
+                new MenuItem    {   Vista = "Para validad Ctros de Trab por BD en Productos de Pago",           Controlador = "ValidarCentrosTrabajo"},
+                new MenuItem    {   Vista = "Plantilla Sindicalizados",                                         Controlador = "PlantillaSindicalizados"}
             }
-        },
+        });
+        modulos.Add(
         new MenuItem
         {
-            Vista = "Transparencia LGT65 ", Controlador = "Transparencia",
+            Vista = "Transparencia LGT65 ",
+            Controlador = "Transparencia",
             SubModulos = new List<MenuItem>
             {
                 new MenuItem    {   Vista = "Plazas Vacantes",                                                   Controlador = "TransparenciaIX" },
                 new MenuItem    {   Vista = "Remuneraciones Brutas y Netas",                                     Controlador = "TransparenciaVII"},
                 new MenuItem    {   Vista = "Personas Jubiladas y Pensionadas",                                  Controlador = "TransparenciaXL"}
             }
-        },
+        });
+
+        modulos.Add(
         new MenuItem
         {
-            Vista = "Administración", Controlador = "Administracion",
+            Vista = "Administración",
+            Controlador = "Administracion",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Notas",                                                   Controlador = "Nota" },
+                new MenuItem    {   Vista = "Notas",                                                           Controlador = "Nota" },
+                new MenuItem    {   Vista = "Consultas SQL",                                                   Controlador = "Consultas" },
             }
-        }
-    };
+        });
+    }
+
 }
 
 <ul class="nav nav-pills flex-column mb-auto">

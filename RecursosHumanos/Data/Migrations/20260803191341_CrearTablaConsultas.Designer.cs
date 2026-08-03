@@ -12,8 +12,8 @@ using RecursosHumanos.Data;
 namespace RecursosHumanos.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260803170806_AgregarCamposCheques")]
-    partial class AgregarCamposCheques
+    [Migration("20260803191341_CrearTablaConsultas")]
+    partial class CrearTablaConsultas
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -276,7 +276,7 @@ namespace RecursosHumanos.Data.Migrations
                     b.Property<int?>("Folio")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("Impreso")
+                    b.Property<DateTime?>("Impresion")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InicioPeriodo")

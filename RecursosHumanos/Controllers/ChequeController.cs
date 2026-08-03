@@ -88,7 +88,7 @@ public class ChequeController : Controller {
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,Folio,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena")] Cheque cheque) {
+    public async Task<IActionResult> Create([Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena")] Cheque cheque) {
         if (ModelState.IsValid) {
             _context.Add(cheque);
             await _context.SaveChangesAsync();
@@ -115,7 +115,7 @@ public class ChequeController : Controller {
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,Folio,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena")] Cheque cheque) {
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena")] Cheque cheque) {
         if (id != cheque.Id) {
             return NotFound();
         }

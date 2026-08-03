@@ -1,7 +1,7 @@
 ﻿using AspNetCoreGeneratedDocument;
 
 namespace RecursosHumanos.Models {
-    public class Consulta {
+    public class Consultas {
         private int? _Id;
         private string _Nombre;
         private string _Sql;

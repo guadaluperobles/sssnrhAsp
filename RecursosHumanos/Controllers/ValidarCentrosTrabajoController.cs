@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
+using RecursosHumanos.ConsultaViewModel;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
-using RecursosHumanos.ConsultaViewModel;
 using RecursosHumanos.Models;
 using System.Data;
 using System.Text;
@@ -10,17 +10,16 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace RecursosHumanos.Controllers {
-    public class ReciboNominaController : Controller {
+    public class ValidarCentrosTrabajoController : Controller {
         private readonly ConeccionService _coneccionService;
         private readonly IWebHostEnvironment _env;
 
-        public ReciboNominaController(ConeccionService coneccionService) {
+        public ValidarCentrosTrabajoController(ConeccionService coneccionService) {
             _coneccionService = coneccionService;
         }
         // GET: ReciboNominaController
         public ActionResult Index() {
-            var model = new RecibosConsulta{
-                //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
+            var model = new RecibosConsulta {
                 Recibos = null,
                 NumeroEmpleado = "",
                 EjercicioInicio = "",
@@ -35,7 +34,6 @@ namespace RecursosHumanos.Controllers {
         public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) {
             DataTable recibos = new DataTable();
             var model = new RecibosConsulta {
-                //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
                 Recibos = null,
                 NumeroEmpleado = numeroEmpleado,
                 EjercicioInicio = ejercicioInicio,

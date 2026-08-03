@@ -1,7 +1,8 @@
-﻿using System.Data;
+﻿using RecursosHumanos.Models;
+using System.Data;
 
-namespace RecursosHumanos.Models {
-    public class ConsultaEmpleadosViewModel {
+namespace RecursosHumanos.ConsultaViewModel {
+    public class EmpleadosConsulta {
         public DataTable BasesDatos { get; set; }
         public CustomTable Empleados { get; set; }
         public string Localizar { get; set; }

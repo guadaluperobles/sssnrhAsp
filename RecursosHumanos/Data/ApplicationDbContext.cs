@@ -5,6 +5,7 @@ namespace RecursosHumanos.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext(options)
     {
+    public DbSet<RecursosHumanos.Models.Consultas> Consulta { get; set; } = default!;
     public DbSet<RecursosHumanos.Models.Cheque> Cheque { get; set; } = default!;
     }
 }
