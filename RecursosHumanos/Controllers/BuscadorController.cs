@@ -7,7 +7,7 @@ using System.Data;
 using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 using RecursosHumanos.Model;
-using RecursosHumanos.ConsultaViewModel;
+using RecursosHumanos.ViewModel;
 
 namespace RecursosHumanos.Controllers {
     public class BuscadorController : Controller {
@@ -19,7 +19,7 @@ namespace RecursosHumanos.Controllers {
         }
         // GET: BuscadorController
         public ActionResult Index() {
-            var model = new EmpleadosConsulta {
+            var model = new EmpleadosViewModel {
                 Empleados = new CustomTable {
                     Datos = null,
                 },
@@ -47,7 +47,7 @@ namespace RecursosHumanos.Controllers {
                     })
             };
 
-            var model = new EmpleadosConsulta {
+            var model = new EmpleadosViewModel {
                 //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
                 Empleados = modelo,
                 Localizar = localizar

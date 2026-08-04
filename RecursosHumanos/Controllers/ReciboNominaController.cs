@@ -2,7 +2,7 @@
 using Microsoft.Reporting.NETCore;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
-using RecursosHumanos.ConsultaViewModel;
+using RecursosHumanos.ViewModel;
 using RecursosHumanos.Models;
 using System.Data;
 using System.Text;
@@ -630,6 +630,8 @@ namespace RecursosHumanos.Controllers {
 
                                         case "nomina:OtrosPagos":
 
+                                            //for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
+                                            //    XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
                                             for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
                                                 XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
 
@@ -705,6 +707,9 @@ namespace RecursosHumanos.Controllers {
             }
 
             return antiguedad;
+        }
+        private static XmlNode? GetNodo(XmlDocument xmlDoc, int c, int i, int j) {
+            return xmlDoc.DocumentElement?.ChildNodes[c]?.ChildNodes[i]?.ChildNodes[j];
         }
     }
 }

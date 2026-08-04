@@ -1,8 +1,8 @@
 ﻿using RecursosHumanos.Model;
 using System.Data;
 
-namespace RecursosHumanos.ConsultaViewModel {
-    public class RecibosConsulta {
+namespace RecursosHumanos.ViewModel {
+    public class RecibosViewModel {
         public DataTable BasesDatos { get; set; }
         public DataTable Recibos { get; set; }
         public ReciboModel Recibo { get; set; }

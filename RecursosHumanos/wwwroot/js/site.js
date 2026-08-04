@@ -27,7 +27,10 @@ $(window).on("load", function () {
 });
 
 //todos los clics que provoquen una redirección
-$(document).on("click", "a", function () {
-    console.log("Click")
+$(document).on("click", "a", function (e) {
+    console.log($(this).closest(".navbar-nav"), e.target)
+    if ($(this).closest(".navbar-nav").length) {
+        return;
+    }
     $("#loading").show();
 });

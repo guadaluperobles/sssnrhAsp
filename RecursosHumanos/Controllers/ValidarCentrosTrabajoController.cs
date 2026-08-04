@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
-using RecursosHumanos.ConsultaViewModel;
+using RecursosHumanos.ViewModel;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using RecursosHumanos.Models;
@@ -19,7 +19,7 @@ namespace RecursosHumanos.Controllers {
         }
         // GET: ReciboNominaController
         public ActionResult Index() {
-            var model = new RecibosConsulta {
+            var model = new RecibosViewModel {
                 Recibos = null,
                 NumeroEmpleado = "",
                 EjercicioInicio = "",
@@ -33,7 +33,7 @@ namespace RecursosHumanos.Controllers {
         [HttpPost]
         public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) {
             DataTable recibos = new DataTable();
-            var model = new RecibosConsulta {
+            var model = new RecibosViewModel {
                 Recibos = null,
                 NumeroEmpleado = numeroEmpleado,
                 EjercicioInicio = ejercicioInicio,

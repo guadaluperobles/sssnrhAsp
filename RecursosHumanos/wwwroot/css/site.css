@@ -89,3 +89,14 @@ main {
     top: 50%;
     left: 50%;
 }
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff !important;
+    background-color: #6c757d;
+    margin: 0 -16px;
+    padding: 10px 16px;
+}
+
+#sidebar {
+    overflow-y: auto;
+}
