@@ -19,7 +19,7 @@ namespace RecursosHumanos.Controllers {
         }
         // GET: ReciboNominaController
         public ActionResult Index() {
-            var model = new RecibosConsulta{
+            var model = new RecibosViewModel{
                 //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
                 Recibos = null,
                 NumeroEmpleado = "",
@@ -34,7 +34,7 @@ namespace RecursosHumanos.Controllers {
         [HttpPost]
         public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) {
             DataTable recibos = new DataTable();
-            var model = new RecibosConsulta {
+            var model = new RecibosViewModel {
                 //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
                 Recibos = null,
                 NumeroEmpleado = numeroEmpleado,
