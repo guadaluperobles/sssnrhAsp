@@ -17,7 +17,9 @@ public class ChequeController : Controller {
 
     // GET: CHEQUES
     public async Task<IActionResult> Index() {
-        var cheques = await _context.Cheque.ToListAsync();
+        var cheques = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).ToListAsync();
+
+
         var modelo = new CustomTable {
             Datos = cheques,
             Columnas = new List<CustomTableColumn> {
@@ -58,8 +60,24 @@ public class ChequeController : Controller {
                     Propiedad = "NombreBeneficiario" ,
                     Titulo = "Beneficiario"
                 }
+            },
+        };
+
+        modelo.Acciones = new List<CustomTableAction>{
+            new CustomTableAction{
+                Texto = "Editar",
+                Action = "Edit",
+                Controller = "Consulta",
+                Clase = "btn btn-warning btn-sm"
+            },
+            new CustomTableAction{
+                Texto = "Ejecutar",
+                Action = "Ejecutar",
+                Controller = "Consulta",
+                Clase = "btn btn-success btn-sm"
             }
         };
+
         return View(modelo);
     }
 
@@ -169,9 +187,9 @@ public class ChequeController : Controller {
     private bool ChequeExists(int? id) {
         return _context.Cheque.Any(e => e.Id == id);
     }
-    public async Task<IActionResult> GenerarReporte(int id) {
+    public async Task<IActionResult> GenerarReporteCheque(int id) {
         try {
-            var ruta = Path.Combine( Directory.GetCurrentDirectory(), "Reportes","rptImpresionCheque.rdlc");
+            var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptImpresionCheque.rdlc");
 
             if (!System.IO.File.Exists(ruta)) {
                 return NotFound("No se encontró el archivo RDLC.");
@@ -184,7 +202,32 @@ public class ChequeController : Controller {
             }
 
             var reporte = new LocalReport { ReportPath = ruta };
-            reporte.DataSources.Add(new ReportDataSource("dsCheque",new List<Cheque> { cheque }) );
+            reporte.DataSources.Add(new ReportDataSource("dsCheque", new List<Cheque> { cheque }));
+
+            byte[] pdf = reporte.Render("PDF");
+
+            return File(pdf, "application/pdf");
+        }
+        catch (Exception ex) {
+            return Content(ex.ToString());
+        }
+    }
+    public async Task<IActionResult> GenerarReporteFirmas(int id) {
+        try {
+            var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptFirmaCheque.rdlc");
+
+            if (!System.IO.File.Exists(ruta)) {
+                return NotFound("No se encontró el archivo RDLC.");
+            }
+
+            var cheque = await ObtenerDatos(id);
+
+            if (cheque == null) {
+                return NotFound("No se encontró el cheque.");
+            }
+
+            var reporte = new LocalReport { ReportPath = ruta };
+            reporte.DataSources.Add(new ReportDataSource("dsCheque", new List<Cheque> { cheque }));
 
             byte[] pdf = reporte.Render("PDF");
 

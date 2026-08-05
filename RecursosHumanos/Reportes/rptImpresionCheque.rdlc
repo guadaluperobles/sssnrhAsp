@@ -1,22 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
-  <rd:ReportUnitType>Cm</rd:ReportUnitType>
-  <rd:ReportID>d9ab506b-d4b7-4241-a61c-db0584b821fa</rd:ReportID>
-  <am:AuthoringMetadata>
-    <am:CreatedBy>
-      <am:Name>MSRB</am:Name>
-      <am:Version>15.1.30001.02</am:Version>
-    </am:CreatedBy>
-    <am:UpdatedBy>
-      <am:Name>MSRB</am:Name>
-      <am:Version>15.1.30001.02</am:Version>
-    </am:UpdatedBy>
-    <am:LastModifiedTimestamp>2026-07-28T20:48:42.9335957Z</am:LastModifiedTimestamp>
-  </am:AuthoringMetadata>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
     <DataSource Name="ChequeModel">
-      <rd:SecurityType>Integrated</rd:SecurityType>
       <ConnectionProperties>
         <DataProvider>ENTERDATA</DataProvider>
         <ConnectString>/* Local Connection */</ConnectString>
@@ -33,84 +19,84 @@
       </Query>
       <Fields>
         <Field Name="Id">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Id</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="ClkDet">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>ClkDet</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="NombreEmpleado">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>NombreEmpleado</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="NombreBeneficiario">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>NombreBeneficiario</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="RfcEmpleado">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>RfcEmpleado</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="Folio">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Folio</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="ClavePresupuestal">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>ClavePresupuestal</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="NumeroCheque">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>NumeroCheque</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="ClaveUbicacion">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>ClaveUbicacion</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="Descripcion">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Descripcion</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="InicioPeriodo">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>InicioPeriodo</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="FinPeriodo">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>FinPeriodo</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="FechaPago">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>FechaPago</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="Neto">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Neto</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="Deducciones">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Deducciones</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="VPA">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>VPA</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="impreso">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>impreso</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="Ejercicio">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Ejercicio</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="Quincena">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>Quincena</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
         <Field Name="VPATexto">
-          <rd:UserDefined>true</rd:UserDefined>
           <DataField>VPATexto</DataField>
+          <rd:UserDefined>true</rd:UserDefined>
         </Field>
       </Fields>
     </DataSet>
@@ -120,8 +106,6 @@
       <Body>
         <ReportItems>
           <Textbox Name="Textbox2">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -150,7 +134,9 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Left>0.51841cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>0.27517cm</Top>
+            <Left>0.49724cm</Left>
             <Height>0.6cm</Height>
             <Width>7.112cm</Width>
             <Style>
@@ -164,8 +150,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox3">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -184,6 +168,8 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>0.28223cm</Top>
             <Left>11.73745cm</Left>
             <Height>0.6cm</Height>
             <Width>3.64067cm</Width>
@@ -199,8 +185,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox4">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -221,6 +205,8 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>0.3175cm</Top>
             <Left>15.62365cm</Left>
             <Height>0.6cm</Height>
             <Width>2.09549cm</Width>
@@ -236,8 +222,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox5">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -256,8 +240,9 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>0.81167cm</Top>
-            <Left>0.51841cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>0.98806cm</Top>
+            <Left>0.48875cm</Left>
             <Height>0.6cm</Height>
             <Width>7.112cm</Width>
             <ZIndex>3</ZIndex>
@@ -272,14 +257,12 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox6">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Fields!FechaPago.Value</Value>
+                    <Value>=Format(CDate(Fields!FechaPago.Value), "dd/MM/yyyy")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Calibri</FontFamily>
@@ -292,8 +275,9 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>0.81167cm</Top>
-            <Left>10.93665cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>0.97788cm</Top>
+            <Left>10.92816cm</Left>
             <Height>0.6cm</Height>
             <Width>3.64067cm</Width>
             <ZIndex>4</ZIndex>
@@ -308,8 +292,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox7">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -330,8 +312,9 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>0.77639cm</Top>
-            <Left>15.62365cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>0.9426cm</Top>
+            <Left>15.61516cm</Left>
             <Height>0.6cm</Height>
             <Width>2.09549cm</Width>
             <ZIndex>5</ZIndex>
@@ -346,8 +329,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox8">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -363,7 +344,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Fields!InicioPeriodo.Value</Value>
+                    <Value>=Format(Fields!InicioPeriodo.Value, "dd/MM/yyyy")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Calibri</FontFamily>
@@ -383,7 +364,7 @@
                     </Style>
                   </TextRun>
                   <TextRun>
-                    <Value>=Fields!FinPeriodo.Value</Value>
+                    <Value>=Format(Fields!FinPeriodo.Value, "dd/MM/yyyy")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Calibri</FontFamily>
@@ -396,8 +377,9 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>1.93066cm</Top>
-            <Left>0.51841cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>1.55671cm</Top>
+            <Left>0.48875cm</Left>
             <Height>0.6cm</Height>
             <Width>7.112cm</Width>
             <ZIndex>6</ZIndex>
@@ -412,8 +394,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox9">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -442,8 +422,9 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>1.93066cm</Top>
-            <Left>10.93665cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>1.61316cm</Top>
+            <Left>10.92816cm</Left>
             <Height>0.6cm</Height>
             <Width>2.286cm</Width>
             <ZIndex>7</ZIndex>
@@ -458,8 +439,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox10">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -490,8 +469,9 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>1.93066cm</Top>
-            <Left>15.44868cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>1.55671cm</Top>
+            <Left>15.44019cm</Left>
             <Height>0.6cm</Height>
             <Width>2.27895cm</Width>
             <ZIndex>8</ZIndex>
@@ -506,8 +486,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox11">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -538,8 +516,9 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>1.93066cm</Top>
-            <Left>13.51545cm</Left>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>1.61316cm</Top>
+            <Left>13.50696cm</Left>
             <Height>0.6cm</Height>
             <Width>1.86267cm</Width>
             <ZIndex>9</ZIndex>
@@ -554,8 +533,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox12">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -574,7 +551,8 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>3.3528cm</Top>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>3.6703cm</Top>
             <Left>0.8158cm</Left>
             <Height>0.6cm</Height>
             <Width>1.70744cm</Width>
@@ -590,8 +568,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox13">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
-            <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
@@ -622,7 +598,8 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>3.3528cm</Top>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>3.6703cm</Top>
             <Left>2.69963cm</Left>
             <Height>0.6cm</Height>
             <Width>2.286cm</Width>
@@ -638,7 +615,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox14">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
@@ -656,7 +632,8 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>12.6238cm</Top>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>12.07347cm</Top>
             <Left>0.8158cm</Left>
             <Height>0.6cm</Height>
             <Width>11.06311cm</Width>
@@ -672,7 +649,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox15">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
@@ -704,7 +680,8 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>12.6238cm</Top>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>12.07347cm</Top>
             <Left>15.20879cm</Left>
             <Height>0.6cm</Height>
             <Width>2.08703cm</Width>
@@ -720,14 +697,13 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox16">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=Fields!FechaPago.Value</Value>
+                    <Value>=Format(Fields!FechaPago.Value, "dd/MM/yyyy")</Value>
                     <Style>
                       <FontStyle>Normal</FontStyle>
                       <FontFamily>Calibri</FontFamily>
@@ -741,7 +717,8 @@
                 </Style>
               </Paragraph>
             </Paragraphs>
-            <Top>11.04336cm</Top>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>10.49303cm</Top>
             <Left>14.26898cm</Left>
             <Height>0.727cm</Height>
             <Width>3.02684cm</Width>
@@ -757,7 +734,6 @@
             </Style>
           </Textbox>
           <Textbox Name="Textbox17">
-            <rd:DefaultName>Textbox2</rd:DefaultName>
             <CanGrow>true</CanGrow>
             <KeepTogether>true</KeepTogether>
             <Paragraphs>
@@ -775,7 +751,8 @@
                 <Style />
               </Paragraph>
             </Paragraphs>
-            <Top>13.63274cm</Top>
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <Top>13.08241cm</Top>
             <Left>0.8158cm</Left>
             <Height>0.6cm</Height>
             <Width>13.76152cm</Width>
@@ -811,5 +788,8 @@
       <NumberOfRows>1</NumberOfRows>
     </GridLayoutDefinition>
   </ReportParametersLayout>
+  <Language>es-MX</Language>
   <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>d9ab506b-d4b7-4241-a61c-db0584b821fa</rd:ReportID>
 </Report>

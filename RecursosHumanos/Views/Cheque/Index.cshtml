@@ -22,21 +22,68 @@
             var valor = x.GetType().GetProperty("impreso")?.GetValue(x);
             return Convert.ToInt32(valor) == 1;
         }),
-        Columnas = Model.Columnas
+        Columnas = Model.Columnas, 
+        Acciones = new List<CustomTableAction>{
+            new CustomTableAction{
+                Titulo = "Editar",
+                Action = "Edit",
+                Controller = "Cheque",
+                Clase = "btn btn-info",
+                Icono = "bi bi-pencil-fill"
+            },
+            new CustomTableAction{
+                Titulo = "Impresion de Cheque",
+                Action = "js",
+                Href ="verModalImpresion({Id}, 'cheque')",
+                Controller = "Cheque",
+                Clase = "btn btn-warning",
+                Icono = "bi bi-printer-fill"
+            },
+            new CustomTableAction{
+                Titulo = "Impresión de Documento de firma",
+                Action = "js",
+                Href ="verModalImpresion({Id}, 'firmas')",
+                Controller = "Cheque",
+                Clase = "btn btn-warning",
+                Icono = "bi bi-printer-fill"
+            },
+            new CustomTableAction{
+                Titulo = "Eliminar",
+                Action = "Delete",
+                Controller = "Cheque",
+                Clase = "btn btn-delete",
+                Icono = "bi bi-trash"
+            },
+        }
     };
 }
+
+
 @section Scripts {
     <script>
-        function verModalImpresion(id) {
+        function verModalImpresion(id, tipo) {
             $("#modalReporte").modal("show");
-            $("#contenidoReporte").html(
-                '<iframe ' +
-                'src="/Cheque/GenerarReporte?id=' + id + '" ' +
-                'width="100%" ' +
-                'height="700px" ' +
-                'frameborder="0">' +
-                '</iframe>'
-            );
+
+            if(tipo == "cheque")
+                $("#contenidoReporte").html(
+                    '<iframe ' +
+                    'src="/Cheque/GenerarReporteCheque?id=' + id + '" ' +
+                    'width="100%" ' +
+                    'height="700px" ' +
+                    'frameborder="0">' +
+                    '</iframe>'
+                );
+
+            if(tipo === "firmas")
+                $("#contenidoReporte").html(
+                    '<iframe ' +
+                    'src="/Cheque/GenerarReporteFirmas?id=' + id + '" ' +
+                    'width="100%" ' +
+                    'height="700px" ' +
+                    'frameborder="0">' +
+                    '</iframe>'
+                );
+
         }
     </script>
 }
@@ -44,6 +91,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12" style="text-align: end">
+            <i class="bi bi-0-square"></i>
             <button type="button" class="btn btn-secondary" asp-action="Create">Agregar</button>
             <button type="button" class="btn btn-secondary" asp-action="Import">Importar</button>
         </div>

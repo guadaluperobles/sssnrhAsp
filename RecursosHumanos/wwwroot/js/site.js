@@ -32,5 +32,5 @@ $(document).on("click", "a", function (e) {
     if ($(this).closest(".navbar-nav").length) {
         return;
     }
-    $("#loading").show();
+    //$("#loading").show();
 });
