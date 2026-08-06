@@ -1,5 +1,6 @@
 using Azure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Reporting.NETCore;
 using RecursosHumanos.Data;
@@ -62,13 +63,19 @@ public class ChequeController : Controller {
                 }
             },
         };
-        int ejercicio = 2026;
-        int quincena = 1;
+
+        DateTime fecha = DateTime.Now;
+        string[] df = DatosFecha(fecha);
+
+        int ejercicio = DateTime.Now.Year;
+        int quincena = Convert.ToInt32(df[0]);
+        var ultimoCheque = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
 
         var modelView = new ChequeViewModel {
             Cheques = modelo,
             Quincena = quincena,
-            Ejercicio = ejercicio
+            Ejercicio = ejercicio,
+            UltimoDigito = ultimoCheque.NumeroCheque.Value + 1
         };
 
         return View(modelView);
@@ -130,6 +137,7 @@ public class ChequeController : Controller {
             return NotFound();
         }
 
+        cheque.Editado = DateTime.Now;
         if (ModelState.IsValid) {
             try {
                 _context.Update(cheque);
@@ -207,6 +215,9 @@ public class ChequeController : Controller {
                 var ultimoChequeEmpleado = await _context.Cheque.Where(x => x.ClkDet == numeroEmpleado).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 var ultimoCheque = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
 
+                DateTime fecha = DateTime.Now;
+                string[] df = DatosFecha(fecha);
+
                 var cheque = new Cheque {
                     ClkDet = Convert.ToInt32(numeroEmpleado),
                     NombreEmpleado = nombreEmpleado,
@@ -216,28 +227,29 @@ public class ChequeController : Controller {
                     NumeroCheque = ultimoCheque.NumeroCheque + 1, //"ultimo cheque global"
                     ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion,
                     Descripcion = "PA",
-                    //InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
-                    //FinPeriodo = Global.ObtenerFecha(df[4].ToString()),
-                    //FechaPago = Global.ObtenerFecha(df[2].ToString()),
+                    InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
+                    FinPeriodo = Global.ObtenerFecha(df[4].ToString()),
+                    FechaPago = Global.ObtenerFecha(df[2].ToString()),
                     Neto = Global.ObtenerDecimal(row[7].ToString()),
                     Deducciones = Global.ObtenerDecimal("0.00"),
                     VPA = Global.ObtenerDecimal(row[7].ToString()),
                     VPATexto = Global.Letras(row[7].ToString()),
-                    impreso = 0
-                    //Ejercicio = Convert.ToInt32(df[1]),
-                    //Quincena = Convert.ToInt32(df[0]),
+                    impreso = 0,
+                    Creado = fecha,
+                    Ejercicio = Convert.ToInt32(df[1]),
+                    Quincena = Convert.ToInt32(df[0]),
                 };
-
+               
                 if (await GuardarCheque(cheque)) {
 
                 }
                 else { 
                 
-                }
+                }/**/
             }
         }
 
-        return await Index();
+        return RedirectToAction("Index");
     }
     private async Task<bool> GuardarCheque(Cheque cheque) {
         try {
@@ -254,20 +266,38 @@ public class ChequeController : Controller {
     }
     public async Task<IActionResult> GenerarReporteCheque(int id) {
         try {
-            var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptImpresionCheque.rdlc");
+            var ruta = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reportes",
+                "rptImpresionCheque.rdlc");
 
             if (!System.IO.File.Exists(ruta)) {
                 return NotFound("No se encontró el archivo RDLC.");
             }
 
-            var cheque = await ObtenerDatos(id);
+            var cheque = await _context.Cheque
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (cheque == null) {
                 return NotFound("No se encontró el cheque.");
             }
 
-            var reporte = new LocalReport { ReportPath = ruta };
-            reporte.DataSources.Add(new ReportDataSource("dsCheque", new List<Cheque> { cheque }));
+            var reporte = new LocalReport {
+                ReportPath = ruta
+            };
+
+            reporte.DataSources.Add(
+                new ReportDataSource(
+                    "dsCheque",
+                    new List<Cheque> { cheque }
+                )
+            );
+
+            // Marcar como impreso
+            cheque.impreso = 1;
+            cheque.Impresion = DateTime.Now;
+
+            await _context.SaveChangesAsync();
 
             byte[] pdf = reporte.Render("PDF");
 
@@ -304,5 +334,34 @@ public class ChequeController : Controller {
     }
     public async Task<Cheque> ObtenerDatos(int id) {
         return await _context.Cheque.FindAsync(id);
+    }
+    private string[] DatosFecha(DateTime fa, int quincena = 0) {
+        if(quincena == 0)
+            quincena = (fa.Month - 1) * 2 + (fa.Day <= 15 ? 1 : 2);
+
+        Periodo periodo = new Periodo().quincena().FirstOrDefault(p => p.Quincenas == quincena.ToString());
+        DateTime PrimerDiaQuincena, ultimoDiaQuincena;
+
+        if (periodo.Inicio == "1") {
+            PrimerDiaQuincena = new DateTime(fa.Year, fa.Month, 1);
+            ultimoDiaQuincena = new DateTime(fa.Year, fa.Month, 15);
+        }
+        else {
+            PrimerDiaQuincena = new DateTime(fa.Year, fa.Month, 16);
+            ultimoDiaQuincena = new DateTime(fa.Year, fa.Month, DateTime.DaysInMonth(fa.Year, fa.Month));
+        }
+
+        string fechaPago = ultimoDiaQuincena.ToString("dd/MM/yyyy");
+        string fechaInicioPeriodo = PrimerDiaQuincena.ToString("dd/MM/yyyy");
+        string fechaFinPeriodo = ultimoDiaQuincena.ToString("dd/MM/yyyy");
+
+        return new string[]
+        {
+                quincena.ToString("00"),
+                fa.Year.ToString(),
+                fechaPago,
+                fechaInicioPeriodo,
+                fechaFinPeriodo
+        };
     }
 }

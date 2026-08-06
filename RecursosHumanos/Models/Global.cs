@@ -234,7 +234,9 @@ namespace RecursosHumanos.Model {
                 "dd/MM/yyyy",
                 "dd/M/yyyy",
                 "dd/MM/yyyy HH:mm:ss",
-                "dd/M/yyyy HH:mm:ss"
+                "dd/M/yyyy HH:mm:ss",
+                "dd/MM/yyyy HH:mm:ss.fffffff",
+                "dd/M/yyyy HH:mm:ss.fffffff"
             };
 
             if (DateTime.TryParseExact(

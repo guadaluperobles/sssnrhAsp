@@ -54,7 +54,6 @@ namespace RecursosHumanos.Controllers {
                 ComplementarConsulta = " (pc.PrAno = " + ejercicioInicio + ") ";
             }
 
-
             if (!String.IsNullOrWhiteSpace(ejercicioFin)) {
                 if (ComplementarConsulta != "") {
                     ComplementarConsulta += " AND ";

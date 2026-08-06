@@ -77,16 +77,22 @@
         }
     };
     var camposTexto = $@"
-        <div class='col-md-3'>
+        <div class='col-md-2'>
             <div class='form-group' style='text-align:left' >
                 <labelclass='control-label'>Ejercicio</label>
                 <input asp-for='Ejercicio' value='{Model.Ejercicio}' class='form-control' />
             </div>
         </div>
-        <div class='col-md-3'>
+        <div class='col-md-2'>
             <div class='form-group' style='text-align:left'>
                 <label class='control-label'>Quincena</label>
                 <input asp -for= 'Quincena' value = '{Model.Quincena}' class= 'form-control' />
+            </div>
+        </div>
+        <div class='col-md-2'>
+            <div class='form-group' style='text-align:left'>
+                <label class='control-label'>Numero de Cheque</label>
+                <input asp -for= 'NumeroCheque' value = '{Model.UltimoDigito}' class= 'form-control' />
             </div>
         </div>
     ";
@@ -102,6 +108,19 @@
 
 @section Scripts {
     <script>
+         console.log("no es una vieja dramatiquisima");
+        document.addEventListener("DOMContentLoaded", function () {
+            var modal = document.getElementById('modalReporte');
+
+            if (modal) {
+                modal.addEventListener('hidden.bs.modal', function () {
+                    location.reload();
+                    console.log("Es una vieja dramatica");
+                });
+            }
+                    console.log("no es una vieja dramatica");
+        });
+
         function verModalImpresion(id, tipo) {
             $("#modalReporte").modal("show");
 
