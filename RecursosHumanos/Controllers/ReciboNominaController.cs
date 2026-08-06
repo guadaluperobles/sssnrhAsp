@@ -44,7 +44,7 @@ namespace RecursosHumanos.Controllers {
                 QuincenaFin = quincenaFin
             };
 
-            string ComplementarConsulta = string.Empty;
+            string ComplementarConsulta = " pd.PrUUID IS NOT NULL AND LTRIM(RTRIM(pd.PrUUID)) <> '' ";
             string anios = "";
 
             if (!String.IsNullOrWhiteSpace(ejercicioInicio) && String.IsNullOrWhiteSpace(ejercicioFin)) {
@@ -65,16 +65,13 @@ namespace RecursosHumanos.Controllers {
                     anios = ejercicioFin;
                 }
                 else {
+
                     string inicio = ejercicioInicio;
                     string fin = ejercicioFin;
-
                     int intInicio = Convert.ToInt32(inicio);
                     int intFin = Convert.ToInt32(fin);
-
                     int recorrer = (intInicio - intFin);
-
                     int incrementar = intInicio;
-
                     string consultarVariosA = "";
 
                     if (intInicio > intFin) {
@@ -113,14 +110,10 @@ namespace RecursosHumanos.Controllers {
                 else {
                     string inicio = quincenaInicio;
                     string fin = quincenaFin;
-
                     int intInicio = Convert.ToInt32(inicio);
                     int intFin = Convert.ToInt32(fin);
-
                     int recorrer = (intInicio - intFin);
-
                     int incrementar = intInicio;
-
                     string consultarVariosQ = "";
 
                     if (intInicio > intFin) {

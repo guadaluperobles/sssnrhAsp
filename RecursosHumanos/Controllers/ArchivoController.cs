@@ -1,7 +1,9 @@
-﻿using Microsoft.Reporting.NETCore;
+﻿using ExcelDataReader;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Reporting.NETCore;
 using QRCoder;
 using RecursosHumanos.Model;
+using System.Data;
 using System.Drawing;
 using System.Text;
 
@@ -52,6 +54,112 @@ namespace RecursosHumanos.Controllers {
                     return ms.ToArray();
                 }
             }
+        }
+        [HttpPost]
+        public async Task<IActionResult> SubirArchivo(IFormFile archivo) {
+            if (archivo == null || archivo.Length == 0) {
+                return BadRequest("No se seleccionó ningún archivo.");
+            }
+
+            var carpeta = Path.Combine(_env.WebRootPath, "uploads");
+
+            if (!Directory.Exists(carpeta))
+                Directory.CreateDirectory(carpeta);
+
+            var nombreArchivo = Guid.NewGuid() + Path.GetExtension(archivo.FileName);
+            var ruta = Path.Combine(carpeta, nombreArchivo);
+
+            using (var stream = new FileStream(ruta, FileMode.Create)) {
+                await archivo.CopyToAsync(stream);
+            }
+
+            return Ok(new {
+                NombreOriginal = archivo.FileName,
+                NombreGuardado = nombreArchivo,
+                Tamaño = archivo.Length
+            });
+        }
+        [HttpPost]
+        public async Task<IActionResult> SubirArchivos(List<IFormFile> archivos) {
+            foreach (var archivo in archivos) {
+                if (archivo.Length > 0) {
+                    var carpeta = Path.Combine(_env.WebRootPath, "uploads");
+                    if (!Directory.Exists(carpeta))
+                        Directory.CreateDirectory(carpeta);
+
+                    var nombreArchivo = Guid.NewGuid() + Path.GetExtension(archivo.FileName);
+                    var ruta = Path.Combine(carpeta, nombreArchivo);
+
+                    using (var stream = new FileStream(ruta, FileMode.Create)) {
+                        await archivo.CopyToAsync(stream);
+                    }
+
+                    return Ok(new {
+                        NombreOriginal = archivo.FileName,
+                        NombreGuardado = nombreArchivo,
+                        Tamaño = archivo.Length
+                    });
+                }
+            }
+            return Ok();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CargarArchivo(IFormFile archivo) {
+            if (archivo == null || archivo.Length == 0)
+                return BadRequest("Seleccione un archivo.");
+
+            var extension = Path.GetExtension(archivo.FileName).ToLower();
+
+            switch (extension) {
+                case ".txt":
+                    await LeerTxt(archivo);
+                    break;
+
+                case ".xlsx":
+                case ".xls":
+                    await LeerExcel(archivo);
+                    break;
+
+                default:
+                    return BadRequest("Tipo de archivo no soportado.");
+            }
+
+            return Ok();
+        }
+        private async Task LeerTxt(IFormFile archivo) {
+            using var reader = new StreamReader(archivo.OpenReadStream());
+
+            while (!reader.EndOfStream) {
+                string? linea = await reader.ReadLineAsync();
+
+                if (!string.IsNullOrWhiteSpace(linea)) {
+                    Console.WriteLine(linea);
+                }
+            }
+        }
+        private async Task LeerExcel(IFormFile archivo) {
+            using var stream = archivo.OpenReadStream();
+
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+
+            var ds = reader.AsDataSet();
+
+            DataTable tabla = ds.Tables[0];
+
+            foreach (DataRow fila in tabla.Rows) {
+                for (int i = 0; i < tabla.Columns.Count; i++) {
+                    string valor = fila[i]?.ToString() ?? "";
+
+                    Console.Write(valor + " | ");
+                }
+
+                Console.WriteLine();
+            }
+        }
+        public static DataTable DtLeerExcel(IFormFile archivo) {
+            using var stream = archivo.OpenReadStream();
+            using var reader = ExcelReaderFactory.CreateReader(stream);
+            return reader.AsDataSet().Tables[0];
         }
         /*
         public static void ExportarExcel<T>( List<T> lista, string archivo, ProgressBar pb,  Label lb) {

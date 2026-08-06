@@ -5,6 +5,7 @@ using Microsoft.Reporting.NETCore;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using RecursosHumanos.Models;
+using RecursosHumanos.ViewModel;
 using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -18,7 +19,6 @@ public class ChequeController : Controller {
     // GET: CHEQUES
     public async Task<IActionResult> Index() {
         var cheques = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).ToListAsync();
-
 
         var modelo = new CustomTable {
             Datos = cheques,
@@ -62,23 +62,16 @@ public class ChequeController : Controller {
                 }
             },
         };
+        int ejercicio = 2026;
+        int quincena = 1;
 
-        modelo.Acciones = new List<CustomTableAction>{
-            new CustomTableAction{
-                Texto = "Editar",
-                Action = "Edit",
-                Controller = "Consulta",
-                Clase = "btn btn-warning btn-sm"
-            },
-            new CustomTableAction{
-                Texto = "Ejecutar",
-                Action = "Ejecutar",
-                Controller = "Consulta",
-                Clase = "btn btn-success btn-sm"
-            }
+        var modelView = new ChequeViewModel {
+            Cheques = modelo,
+            Quincena = quincena,
+            Ejercicio = ejercicio
         };
 
-        return View(modelo);
+        return View(modelView);
     }
 
     // GET: CHEQUES/Details/5
@@ -127,7 +120,6 @@ public class ChequeController : Controller {
         }
         return View(cheque);
     }
-
     // POST: CHEQUES/Edit/5
     // To protect from overposting attacks, enable the specific properties you want to bind to.
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -183,7 +175,80 @@ public class ChequeController : Controller {
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
+    public async Task<IActionResult> Exportar(IFormFile archivo) {
+        if (archivo == null)
+            return BadRequest();
 
+        DataTable dt;
+
+        switch (Path.GetExtension(archivo.FileName).ToLower()) {
+            case ".xlsx":
+            case ".xls":
+                dt = RecursosHumanos.Controllers.ArchivoController.DtLeerExcel(archivo);
+                break;
+
+            default:
+                return BadRequest("Formato no soportado.");
+        }
+
+        // Ya puedes trabajar con el DataTable
+        return await GuardarExcel(dt);
+    }
+    private async Task<IActionResult> GuardarExcel(DataTable re) {
+        DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
+
+        foreach (DataRow row in filtrado.Rows) {
+            var identificador = row[4]?.ToString()?.Trim().ToUpper();
+            if (identificador == "CHEQUE") {
+                var nombreBeneficiario = $"{row[3].ToString()} {row[1].ToString()} {row[2].ToString()} ";
+                var nombreEmpleado = $"{row[12].ToString()} {row[10].ToString()} {row[11].ToString()}";
+                var numeroEmpleado = Convert.ToInt32(row[9].ToString());
+                
+                var ultimoChequeEmpleado = await _context.Cheque.Where(x => x.ClkDet == numeroEmpleado).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                var ultimoCheque = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
+
+                var cheque = new Cheque {
+                    ClkDet = Convert.ToInt32(numeroEmpleado),
+                    NombreEmpleado = nombreEmpleado,
+                    NombreBeneficiario = nombreBeneficiario,
+                    RfcEmpleado = ultimoChequeEmpleado.RfcEmpleado,
+                    ClavePresupuestal = ultimoChequeEmpleado.ClavePresupuestal,
+                    NumeroCheque = ultimoCheque.NumeroCheque + 1, //"ultimo cheque global"
+                    ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion,
+                    Descripcion = "PA",
+                    //InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
+                    //FinPeriodo = Global.ObtenerFecha(df[4].ToString()),
+                    //FechaPago = Global.ObtenerFecha(df[2].ToString()),
+                    Neto = Global.ObtenerDecimal(row[7].ToString()),
+                    Deducciones = Global.ObtenerDecimal("0.00"),
+                    VPA = Global.ObtenerDecimal(row[7].ToString()),
+                    VPATexto = Global.Letras(row[7].ToString()),
+                    impreso = 0
+                    //Ejercicio = Convert.ToInt32(df[1]),
+                    //Quincena = Convert.ToInt32(df[0]),
+                };
+
+                if (await GuardarCheque(cheque)) {
+
+                }
+                else { 
+                
+                }
+            }
+        }
+
+        return await Index();
+    }
+    private async Task<bool> GuardarCheque(Cheque cheque) {
+        try {
+            _context.Cheque.Add(cheque);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch {
+            return false;
+        }
+    }
     private bool ChequeExists(int? id) {
         return _context.Cheque.Any(e => e.Id == id);
     }
@@ -237,7 +302,6 @@ public class ChequeController : Controller {
             return Content(ex.ToString());
         }
     }
-
     public async Task<Cheque> ObtenerDatos(int id) {
         return await _context.Cheque.FindAsync(id);
     }

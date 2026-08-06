@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+<div class="container">
+    <form asp-action="@ViewData["Action"]" asp-controller="@ViewData["Controller"]" method="post" enctype="multipart/form-data">
+        <div class="row">
+            @(ViewData["ExtraParams"] != null ? @Html.Raw(ViewData["ExtraParams"]) : @Html.Raw("< div class='col-6' ></>"))
+            <div class="col-4">
+                <input type="file" name="archivo" class="form-control" />
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-primary" style="width: 100%">
+                    @(ViewData["Texto"] != null ? @ViewData["Texto"] : "Subir")
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -72,10 +72,6 @@ main {
     border-color: #480419;
 }
 
-.td-actions {
-    min-width:200px
-}
-
 #loading {
     display: none;
     position: fixed;

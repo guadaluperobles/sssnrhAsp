@@ -1,0 +1,14 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<form asp-action="SubirArchivo" asp-controller="Archivo" method="post" enctype="multipart/form-data">
+    <div class="mb-3">
+        <input type="file" name="archivo" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Subir
+    </button>
+</form>

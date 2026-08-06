@@ -4,6 +4,7 @@ using RecursosHumanos.Models;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -219,13 +220,34 @@ namespace RecursosHumanos.Model {
                 }
 
                 return dec != ""
-                    ? (palabras + "peso(s) " + dec + "/100 M.N.").ToUpper()
-                    : (palabras + "peso(s) 00/100 M.N.").ToUpper();
+                    ? (palabras + "pesos " + dec + "/100 M.N.").ToUpper()
+                    : (palabras + "pesos 00/100 M.N.").ToUpper();
             }
 
             return "";
         }
+        public static Decimal ObtenerDecimal(string tb) {
+            return decimal.Parse(tb, NumberStyles.Any, new CultureInfo("es-MX"));
+        }
+        public static DateTime ObtenerFecha(string texto) {
+            string[] formatos = {
+                "dd/MM/yyyy",
+                "dd/M/yyyy",
+                "dd/MM/yyyy HH:mm:ss",
+                "dd/M/yyyy HH:mm:ss"
+            };
 
+            if (DateTime.TryParseExact(
+                    texto,
+                    formatos,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out DateTime fecha)) {
+                return fecha;
+            }
+
+            return DateTime.Now;
+        }
         public DataTable ConsultaGeneral(string consulta, string baseDatos = "") {
             DataTable dataTable = new DataTable();
             DataTable BasesDatos = _coneccionService.CargarBasesDatosOperativas();
