@@ -34,8 +34,17 @@
             {
                 new MenuItem    {   Vista = "ISRTP",                                                            Controlador = "ISRTP" },
                 new MenuItem    {   Vista = "Detalle de percepciones y deducciones por tipo de nomina",         Controlador = "DetallePersepcionDeduccion"},
-                new MenuItem    {   Vista = "Para validad Ctros de Trab por BD en Productos de Pago",           Controlador = "ValidarCentrosTrabajo"},
                 new MenuItem    {   Vista = "Plantilla Sindicalizados",                                         Controlador = "PlantillaSindicalizados"}
+            }
+        }); 
+        modulos.Add(
+        new MenuItem
+        {
+            Vista = "Centros de Trabajo",
+            Controlador = "ValidarCentrosTrabajo",
+            SubModulos = new List<MenuItem>
+            {
+                new MenuItem    {   Vista = "Para validad Ctros de Trab por BD en Productos de Pago",           Controlador = "CentroTrabajo"},
             }
         });
         modulos.Add(

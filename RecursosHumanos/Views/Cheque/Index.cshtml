@@ -108,17 +108,14 @@
 
 @section Scripts {
     <script>
-         console.log("no es una vieja dramatiquisima");
         document.addEventListener("DOMContentLoaded", function () {
             var modal = document.getElementById('modalReporte');
 
             if (modal) {
                 modal.addEventListener('hidden.bs.modal', function () {
                     location.reload();
-                    console.log("Es una vieja dramatica");
                 });
             }
-                    console.log("no es una vieja dramatica");
         });
 
         function verModalImpresion(id, tipo) {

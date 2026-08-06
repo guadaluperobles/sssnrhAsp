@@ -6,7 +6,6 @@ using RecursosHumanos.Data;
 public class ConsultasController : Controller
 {
     private readonly ApplicationDbContext _context;
-
     public ConsultasController(ApplicationDbContext context)
     {
         _context = context;

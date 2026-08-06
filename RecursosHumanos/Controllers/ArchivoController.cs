@@ -1,4 +1,5 @@
-﻿using ExcelDataReader;
+﻿using ClosedXML.Excel;
+using ExcelDataReader;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
 using QRCoder;
@@ -160,6 +161,15 @@ namespace RecursosHumanos.Controllers {
             using var stream = archivo.OpenReadStream();
             using var reader = ExcelReaderFactory.CreateReader(stream);
             return reader.AsDataSet().Tables[0];
+        }
+
+        public IActionResult ExportarExcel(DataTable dt, string nombreArchivo) {
+            using var workbook = new XLWorkbook();
+            workbook.Worksheets.Add(dt, "Datos");
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+
+            return File( stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"{nombreArchivo}.xlsx");
         }
         /*
         public static void ExportarExcel<T>( List<T> lista, string archivo, ProgressBar pb,  Label lb) {

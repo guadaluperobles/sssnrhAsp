@@ -20,7 +20,6 @@ namespace RecursosHumanos.Controllers {
         // GET: ReciboNominaController
         public ActionResult Index() {
             var model = new RecibosViewModel{
-                //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
                 Recibos = null,
                 NumeroEmpleado = "",
                 EjercicioInicio = "",

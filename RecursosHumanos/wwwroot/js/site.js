@@ -32,5 +32,16 @@ $(document).on("click", "a", function (e) {
     if ($(this).closest(".navbar-nav").length) {
         return;
     }
-    //$("#loading").show();
+    $("#loading").show();
+});
+
+$(document).ready(function () {
+    console.log("Validacion")
+    $('#tablaDatos').DataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/2.3.4/i18n/es-MX.json'
+        },
+        pageLength: 25,
+        responsive: true
+    });
 });
