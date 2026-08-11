@@ -183,7 +183,7 @@ public class ChequeController : Controller {
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-    public async Task<IActionResult> Exportar(IFormFile archivo) {
+    public async Task<IActionResult> Importar(IFormFile archivo) {
         if (archivo == null)
             return BadRequest();
 

@@ -1,12 +1,57 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using RecursosHumanos.Data;
+using RecursosHumanos.Model;
+using RecursosHumanos.Models;
+using RecursosHumanos.ViewModel;
 
 namespace RecursosHumanos.Controllers {
     public class TransparenciaVIIController : Controller {
-        // GET: TransparenciaVIIController
-        public ActionResult Index() {
-            return View();
+
+        private readonly ApplicationDbContext _context;
+        private readonly Global _global;
+        public TransparenciaVIIController(ApplicationDbContext context, Global global) {
+            _context = context;
+            _global = global;
         }
+
+        // GET: TransparenciaVIIController
+        public async Task<IActionResult> Index() {
+            var Consulta = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "TotalPercepcionesEmpleados");
+            if (Consulta == null)
+                return View();
+
+            int anio = DateTime.Now.Year;
+            int trimestre = ((DateTime.Now.Month - 1) / 3) + 1; 
+
+            var consultaLocal    = $" DECLARE @Anio			    INT = {anio}; ";
+            consultaLocal       += $" DECLARE @Trimestre		INT = {trimestre}; ";
+
+            var Resultado = _global.ConsultaGeneral(consultaLocal + Consulta.Sql);
+
+            
+            var Model = new ConsultaTrimestralViewModel {
+                Ejercicio = anio,
+                Trimestre = trimestre,
+                Models = Resultado
+            };
+            return View(Model);
+        }
+
+        // GET: TransparenciaVIIController
+        /*[HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index() {
+
+            var Consulta = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "TotalPercepcionesEmpleados");
+            if (Consulta == null)
+                return View();
+
+            var Resultado = _global.ConsultaGeneral(Consulta.Sql);
+
+            return View(Resultado);
+        }*/
 
         // GET: TransparenciaVIIController/Details/5
         public ActionResult Details(int id) {

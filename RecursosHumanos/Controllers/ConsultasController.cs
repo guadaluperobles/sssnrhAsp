@@ -30,7 +30,23 @@ public class ConsultasController : Controller
                     Propiedad = "Sql",
                     Titulo = "Consulta"
                 },
-            }
+            },
+            Acciones = new List<CustomTableAction>{
+            new CustomTableAction{
+                Titulo = "Editar",
+                Action = "Edit",
+                Controller = "Consultas",
+                Clase = "btn btn-info",
+                Icono = "bi bi-pencil-fill"
+            },
+            new CustomTableAction{
+                Titulo = "Eliminar",
+                Action = "Delete",
+                Controller = "Consultas",
+                Clase = "btn btn-delete",
+                Icono = "bi bi-trash"
+            },
+        }
         };
         return View(modelo);
     }

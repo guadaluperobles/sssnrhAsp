@@ -162,14 +162,19 @@ namespace RecursosHumanos.Controllers {
             using var reader = ExcelReaderFactory.CreateReader(stream);
             return reader.AsDataSet().Tables[0];
         }
-
-        public IActionResult ExportarExcel(DataTable dt, string nombreArchivo) {
+        public static FileContentResult ExportarExcel(DataTable dt,string nombreArchivo) {
             using var workbook = new XLWorkbook();
-            workbook.Worksheets.Add(dt, "Datos");
             using var stream = new MemoryStream();
+
+            var fecha = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
+            workbook.Worksheets.Add(dt, "Datos");
             workbook.SaveAs(stream);
 
-            return File( stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",$"{nombreArchivo}.xlsx");
+            return new FileContentResult(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                FileDownloadName = $"{fecha} {nombreArchivo}.xlsx"
+            };
         }
         /*
         public static void ExportarExcel<T>( List<T> lista, string archivo, ProgressBar pb,  Label lb) {

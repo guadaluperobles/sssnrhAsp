@@ -62,7 +62,7 @@ main {
 
 .btn-edit {
     color: #fff;
-    background-color: #2a8713;
+    background-color: #878513;
     border-color: #1f4a1b;
 }
 
@@ -95,4 +95,10 @@ main {
 
 #sidebar {
     overflow-y: auto;
+}
+
+.btn-excel {
+    color: #fff;
+    background-color: #0c6c36;
+    border-color: #175835;
 }

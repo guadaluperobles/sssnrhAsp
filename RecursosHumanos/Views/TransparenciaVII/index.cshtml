@@ -1,6 +1,31 @@
-﻿@*
+﻿@using RecursosHumanos.ViewModel
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model ConsultaTrimestralViewModel;
 @{
+    ViewData["Title"] = "Transparencia LGT65 VII 1.- Remuneraciones brutas y netas de todas las personas servidoras públicas de base y de confianza";
+   
 }
 
+<div class="row">
+    <div class="col-md-12" style="text-align: end">
+        <a class="btn btn-secondary"
+           data-bs-toggle="collapse"
+           href="#collapseImport"
+           role="button"
+           aria-expanded="false"
+           aria-controls="collapseImport">
+            Agregar archivo
+        </a>
+        <div class="collapse" id="collapseImport">
+            <div class="card card-body">
+                <partial name="_ArchivoExportar" />
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-12">
+        <partial name="_Tabla" model="Model.Models"/>
+    </div>
+</div>

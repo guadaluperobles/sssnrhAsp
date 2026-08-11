@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using RecursosHumanos.Models;
+using System.Data;
 
 namespace RecursosHumanos.Controllers {
     public class CentroTrabajoController : Controller {
@@ -17,10 +18,19 @@ namespace RecursosHumanos.Controllers {
         // GET: CentroTrabajoController
         public async Task<IActionResult> Index() {
             var validaciones = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "ValidarCentrosTrabajos");
-
-            var Resultado = _global.ConsultaGeneral(validaciones.Sql);
+            var Resultado = RevisarAnexoRectoria(_global.ConsultaGeneral(validaciones.Sql));
 
             return View(Resultado);
+
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(int id) {
+            var validaciones = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "ValidarCentrosTrabajos");
+            var Resultado = RevisarAnexoRectoria(_global.ConsultaGeneral(validaciones.Sql));
+
+            return View(Resultado);
+
         }
 
         // GET: CentroTrabajoController/Details/5
@@ -77,6 +87,9 @@ namespace RecursosHumanos.Controllers {
             catch {
                 return View();
             }
+        }
+        private DataTable RevisarAnexoRectoria(DataTable dt, DataTable dte = null) {
+            return dt;
         }
     }
 }

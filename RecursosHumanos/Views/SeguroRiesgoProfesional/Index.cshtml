@@ -1,0 +1,27 @@
+﻿@using RecursosHumanos.ViewModel
+@model ConsultaTrimestralViewModel;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+
+    ViewData["Title"] = "Seguro de Riesgo Profesional";
+    Model.Controlador = "SeguroRiesgoProfesional";
+
+    var data = new ViewDataDictionary(ViewData)
+    {
+        { "Controller", "SeguroRiesgoProfesional"},
+        { "Action", "Comparar"},
+        { "Texto", "Comparar"}
+    };
+}
+
+<div class="row">
+    <div class="col-12">
+        <partial name="_FormBusquedaTrimestral" model="Model" />
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-12">
+        <partial name="_Tabla" model="Model.Models"/>
+    </div>
+</div>
