@@ -46,7 +46,7 @@ namespace RecursosHumanos.Controllers {
             return View(Model);
         }
 
-        // POST: CentroTrabajoController/Create
+        // POST: CentroTrabajoController/Import
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportarExcel(ConsultaTrimestralViewModel model) {
@@ -82,6 +82,7 @@ namespace RecursosHumanos.Controllers {
 
             var resultadoTrimActual = _global.ConsultaGeneral(consultaLocalTrimActual + consultaBD.Sql);
             var resultadoTrimAnterior = _global.ConsultaGeneral(consultaLocalTrimAnterior + consultaBD.Sql);
+
             try {
 
                 return resultado;
