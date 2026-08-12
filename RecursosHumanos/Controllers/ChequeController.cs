@@ -1,5 +1,6 @@
 using Azure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Reporting.NETCore;
@@ -69,7 +70,7 @@ public class ChequeController : Controller {
 
         int ejercicio = DateTime.Now.Year;
         int quincena = Convert.ToInt32(df[0]);
-        var ultimoCheque = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
+        var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
 
         var modelView = new ChequeViewModel {
             Cheques = modelo,
@@ -97,8 +98,24 @@ public class ChequeController : Controller {
     }
 
     // GET: CHEQUES/Create
-    public IActionResult Create() {
-        return View();
+    public async Task<IActionResult> Create() {
+        DateTime fecha = DateTime.Now;
+        string[] df = DatosFecha(fecha);
+
+        int ejercicio = DateTime.Now.Year;
+        int quincena = Convert.ToInt32(df[0]);
+        var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
+
+        var model = new Cheque {
+            Quincena = quincena,
+            Ejercicio = ejercicio,
+            NumeroCheque = ultimoCheque.NumeroCheque.Value + 1,
+            TipoCheque = "PensionAlimenticia",
+            FechaPago = DateTime.Now
+        };
+
+        return View(model);
+
     }
 
     // POST: CHEQUES/Create
@@ -106,7 +123,7 @@ public class ChequeController : Controller {
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena")] Cheque cheque) {
+    public async Task<IActionResult> Create([Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena,TipoCheque")] Cheque cheque) {
         if (ModelState.IsValid) {
             _context.Add(cheque);
             await _context.SaveChangesAsync();
@@ -132,12 +149,34 @@ public class ChequeController : Controller {
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena")] Cheque cheque) {
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,ClkDet,NombreEmpleado,NombreBeneficiario,RfcEmpleado,ClavePresupuestal,NumeroCheque,ClaveUbicacion,Descripcion,InicioPeriodo,FinPeriodo,FechaPago,Neto,Deducciones,VPA,VPATexto,impreso,Ejercicio,Quincena,TipoCheque")] Cheque cheque) {
+
+        cheque.VPATexto = Global.Letras((cheque.VPA).ToString());
+        cheque.impreso = 0;
+
+        ModelState.SetModelValue("VPATexto", new ValueProviderResult(cheque.VPATexto));
+
+        ModelState.Remove("VPATexto");
+        ModelState.Remove("TipoCheque");
+
+        if (id == null) {
+            cheque.Creado = DateTime.Now;
+
+            if (ModelState.IsValid) {
+                _context.Cheque.Add(cheque);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            return View(cheque);
+        }
+
         if (id != cheque.Id) {
             return NotFound();
         }
 
         cheque.Editado = DateTime.Now;
+
         if (ModelState.IsValid) {
             try {
                 _context.Update(cheque);
@@ -213,7 +252,7 @@ public class ChequeController : Controller {
                 var numeroEmpleado = Convert.ToInt32(row[9].ToString());
                 
                 var ultimoChequeEmpleado = await _context.Cheque.Where(x => x.ClkDet == numeroEmpleado).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
-                var ultimoCheque = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
+                var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
 
                 DateTime fecha = DateTime.Now;
                 string[] df = DatosFecha(fecha);
@@ -238,6 +277,7 @@ public class ChequeController : Controller {
                     Creado = fecha,
                     Ejercicio = Convert.ToInt32(df[1]),
                     Quincena = Convert.ToInt32(df[0]),
+                    TipoCheque = "PensionAlimenticia"
                 };
                
                 if (await GuardarCheque(cheque)) {
@@ -264,23 +304,40 @@ public class ChequeController : Controller {
     private bool ChequeExists(int? id) {
         return _context.Cheque.Any(e => e.Id == id);
     }
-    public async Task<IActionResult> GenerarReporteCheque(int id) {
+    [HttpPost]
+    public async Task<IActionResult> ObtenerDatos(string tipoCheque) {
+        var cheque = await _context.Cheque
+            .Where(x => x.TipoCheque == tipoCheque)
+            .OrderByDescending(x => x.NumeroCheque)
+            .FirstOrDefaultAsync();
+
+        if (cheque == null)
+            return NotFound();
+
+        return Json(new {
+            numeroCheque = cheque.NumeroCheque,
+            nombreEmpleado = cheque.NombreEmpleado,
+            neto = cheque.Neto,
+            vpa = cheque.VPA
+        });
+    }
+    public async Task<IActionResult> GenerarReporteCheque(int id, string tipo) {
         try {
-            var ruta = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Reportes",
-                "rptImpresionCheque.rdlc");
+            string ruta;
+            var cheque = await _context.Cheque.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (!System.IO.File.Exists(ruta)) {
+            if (cheque.TipoCheque == "Chequera")
+                ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptImpresionChequera.rdlc");
+            else
+                ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptImpresionCheque.rdlc");
+
+            if (!System.IO.File.Exists(ruta)) 
                 return NotFound("No se encontró el archivo RDLC.");
-            }
+            
 
-            var cheque = await _context.Cheque
-                .FirstOrDefaultAsync(x => x.Id == id);
-
-            if (cheque == null) {
+            if (cheque == null) 
                 return NotFound("No se encontró el cheque.");
-            }
+            
 
             var reporte = new LocalReport {
                 ReportPath = ruta
@@ -296,9 +353,7 @@ public class ChequeController : Controller {
             // Marcar como impreso
             cheque.impreso = 1;
             cheque.Impresion = DateTime.Now;
-
             await _context.SaveChangesAsync();
-
             byte[] pdf = reporte.Render("PDF");
 
             return File(pdf, "application/pdf");

@@ -22,16 +22,12 @@ namespace RecursosHumanos.Controllers {
             int Ejercicio = DateTime.Now.Year;
             int Trimestre = ((DateTime.Now.Month - 1) / 3) + 1;
 
-            var consultaLocal = $" DECLARE @Anio			    INT = {Ejercicio}; ";
-            consultaLocal += $" DECLARE @Trimestre		        INT = {Trimestre}; ";
-
-            var Resultado = _global.ConsultaGeneral(consultaLocal + Consulta.Sql);
-
+            var Resultado = ProcesarConsulta(Ejercicio, Trimestre);
 
             var Model = new ConsultaTrimestralViewModel {
                 Ejercicio = Ejercicio,
                 Trimestre = Trimestre,
-                Models = Resultado
+                Models = await Resultado
             };
             return View(Model);
         }
@@ -39,13 +35,8 @@ namespace RecursosHumanos.Controllers {
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(int id, int Ejercicio, int Trimestre) {
-            var Consulta = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "SeguroRiesgoProfecional");
-            
-            var consultaLocal = $" DECLARE @Anio			    INT = {Ejercicio}; ";
-            consultaLocal +=    $" DECLARE @Trimestre		    INT = {Trimestre}; ";
 
-            var Resultado = _global.ConsultaGeneral(consultaLocal + Consulta.Sql);
-
+            var Resultado = await ProcesarConsulta(Ejercicio, Trimestre);
 
             var Model = new ConsultaTrimestralViewModel {
                 Ejercicio = Ejercicio,
@@ -60,18 +51,43 @@ namespace RecursosHumanos.Controllers {
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ImportarExcel(ConsultaTrimestralViewModel model) {
             try {
-
-                var Consulta = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "SeguroRiesgoProfecional");
-
-                var consultaLocal = $" DECLARE @Anio			    INT = {model.Ejercicio}; ";
-                consultaLocal += $" DECLARE @Trimestre		    INT = {model.Trimestre}; ";
-
-                var Resultado = _global.ConsultaGeneral(consultaLocal + Consulta.Sql);
-
+                var Resultado = await ProcesarConsulta(model.Ejercicio, model.Trimestre);
                 return ArchivoController.ExportarExcel(Resultado, $"Seguro de riesgos profesional {model.Ejercicio}/{model.Trimestre}");
             }
             catch (Exception ex) {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        public async Task<DataTable> ProcesarConsulta(int ejercicio, int trimestre) {
+            var consultaBD = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "SeguroRiesgoProfecional");
+
+            int ejercicioAnterior = ejercicio;
+            int trimestreAnterior = trimestre - 1;
+
+            if (trimestreAnterior == 0) {
+                trimestreAnterior = 4;
+                ejercicioAnterior--;
+            }
+
+            if (consultaBD == null) 
+                throw new Exception("No se encontró la consulta SeguroRiesgoProfecional.");
+            
+            var consultaLocalTrimActual = $@" DECLARE @Anio			        INT = {ejercicio}; 
+                                              DECLARE @Trimestre		    INT = {trimestre}; "; 
+
+            var consultaLocalTrimAnterior = $@" DECLARE @Anio			    INT = {ejercicioAnterior}; 
+                                                DECLARE @Trimestre		    INT = {trimestreAnterior}; ";
+            var resultado = new DataTable();
+
+            var resultadoTrimActual = _global.ConsultaGeneral(consultaLocalTrimActual + consultaBD.Sql);
+            var resultadoTrimAnterior = _global.ConsultaGeneral(consultaLocalTrimAnterior + consultaBD.Sql);
+            try {
+
+                return resultado;
+            }
+            catch (Exception ex) {
+                return resultado;
             }
         }
     }

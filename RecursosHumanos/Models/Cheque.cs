@@ -21,7 +21,7 @@ namespace RecursosHumanos.Models {
         private Decimal? _Neto;
         private Decimal? _Deducciones;
         private Decimal? _VPA;
-        private string _VPATexto;
+        private string? _VPATexto;
         private short? _impreso;
         private int? _Ejercicio;
         private int? _Quincena;
@@ -29,6 +29,7 @@ namespace RecursosHumanos.Models {
         private DateTime? _Editado;
         private DateTime? _Eliminado;
         private DateTime? _Impresion;
+        private string _TipoCheque;
 
         public int? Id { get { return _Id; } set { _Id = value; } }
         public int? ClkDet { get { return _ClkDet; } set { _ClkDet = value; } }
@@ -45,7 +46,7 @@ namespace RecursosHumanos.Models {
         public Decimal? Neto { get { return _Neto; } set { _Neto = value; } }
         public Decimal? Deducciones { get { return _Deducciones; } set { _Deducciones = value; } }
         public Decimal? VPA { get { return _VPA; } set { _VPA = value; } }
-        public string VPATexto { get { return _VPATexto; } set { _VPATexto = value; } }
+        public string? VPATexto { get { return _VPATexto; } set { _VPATexto = value; } }
         public short? impreso { get { return _impreso; } set { _impreso = value; } }
         public int? Ejercicio { get { return _Ejercicio; } set { _Ejercicio = value; } }
         public int? Quincena { get { return _Quincena; } set { _Quincena = value; } }
@@ -53,5 +54,6 @@ namespace RecursosHumanos.Models {
         public DateTime? Editado { get { return _Editado; } set { _Editado = value; } }
         public DateTime? Eliminado { get { return _Eliminado; } set { _Eliminado = value; } }
         public DateTime? Impresion { get { return _Impresion; } set { _Impresion = value; } }
+        public string TipoCheque { get { return _TipoCheque; } set { _TipoCheque = value; } }
     }
 }
