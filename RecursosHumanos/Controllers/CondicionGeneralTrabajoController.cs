@@ -37,6 +37,18 @@ namespace RecursosHumanos.Controllers {
             };
             return View(Model);
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(int Ejercicio, int Semestre) {
+            var Resultado = ProcesarConsulta(Ejercicio, Semestre);
+
+            var Model = new ConsultaSemestralViewModel {
+                Ejercicio = Ejercicio,
+                Semestre = Semestre,
+                Models = await Resultado
+            };
+            return View(Model);
+        }
 
         // GET: CondicionGeneralTrabajoController/Details/5
         public ActionResult Details(int id) {
