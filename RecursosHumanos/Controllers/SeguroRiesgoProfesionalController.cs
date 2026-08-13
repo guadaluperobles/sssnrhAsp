@@ -170,7 +170,23 @@ namespace RecursosHumanos.Controllers {
                             quincena6 = quincena6 * 2;
 
                         }
-                        
+
+                        if (descripcionBaseDatos.Contains("IB") && ejercicio == 2026 && trimestre == 2) {
+                            quincena1 = 0;
+                            quincena2 = 0;
+                            quincena3 = 0;
+
+                            if (descripcionBaseDatos == "FEDERAL IB") {
+                                quincena4 = 0;
+                            }
+                        }
+
+                        // q1 q2 q3 q4 q5 q6
+                        //  1  2  3  4  5  6
+                        //  7  8  9 10 11 12
+                        // 13 14 15 16 17 18
+                        // 19 20 21 22 23 24
+
                         total = quincena1 + quincena2 + quincena3 + quincena4 + quincena5 + quincena6;
 
                         if (total <= 0)
@@ -183,7 +199,7 @@ namespace RecursosHumanos.Controllers {
                             fechaAlta = "20250106";
                         }
 
-                        resultado.Rows.Add(numeroEmpleado, nombreEmpleado, cargo, rfc, curp, cedulaProfecional, nivelTabular, Global.ObtenerFecha(fechaAlta), quincena1, quincena2, quincena3, quincena4, quincena5, quincena6, total, descripcionBaseDatos, nota );
+                        resultado.Rows.Add(numeroEmpleado, nombreEmpleado, cargo, rfc, curp, cedulaProfecional, nivelTabular, Global.ObtenerFecha(fechaAlta).ToString("dd/MM/yyyy"), quincena1, quincena2, quincena3, quincena4, quincena5, quincena6, total, descripcionBaseDatos, nota );
                     }
 
                 return resultado;

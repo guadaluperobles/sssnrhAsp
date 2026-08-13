@@ -153,10 +153,11 @@ namespace RecursosHumanos.Controllers {
             resultado.Columns.Add("IMPORTE NETO");
 
             var resultadoTrimActual = _global.ConsultaGeneral(consultaLocalTrimActual + consultaBD.Sql);
+            var bdOperativas = _global.BasesDatosOperativas();
 
             if (resultadoTrimActual != null || resultadoTrimActual.Rows.Count > 0)
                 foreach (DataRow Row in resultadoTrimActual.Rows) {
-                    var fecha = Row[5]?.ToString()?.Trim();
+                    var fecha = Row[6]?.ToString()?.Trim();
 
                     string fechaFormateada = "";
 
@@ -169,20 +170,24 @@ namespace RecursosHumanos.Controllers {
                         fechaFormateada = fechaResult.ToString("dd/MM/yyyy");
                     }
 
-                    Decimal Bruto = string.IsNullOrWhiteSpace(Row[6]?.ToString()) ? 0m : Convert.ToDecimal(Row[6]); 
-                    Decimal Iva = string.IsNullOrWhiteSpace(Row[7]?.ToString()) ? 0m : Convert.ToDecimal(Row[7]);
-                    Decimal Neto = string.IsNullOrWhiteSpace(Row[8]?.ToString()) ? Bruto - Iva : Convert.ToDecimal(Row[8]);
+                    Decimal Bruto = Global.ObtenerDecimal(Row[7].ToString());
+                    Decimal Iva = Global.ObtenerDecimal(Row[8].ToString());
+                    Decimal Neto = string.IsNullOrWhiteSpace(Row[9]?.ToString()) ? Bruto - Iva : Global.ObtenerDecimal(Row[9].ToString());
+
+
+                    DataRow bd = bdOperativas.Select($"BaseDatos = '{Row[11].ToString()}'").FirstOrDefault();
+                    string descripcionBaseDatos = bd?["Descripcion"]?.ToString() ?? "";
 
                     resultado.Rows.Add(
                         "26",
                         "SONORA",
                         Row[0],
                         Row[1],
-                        Row[10],
+                        descripcionBaseDatos,
                         Row[2],
                         Row[3],
+                        Row[5],
                         Row[4],
-                        "",
                         fechaFormateada,
                         Bruto,
                         Iva,

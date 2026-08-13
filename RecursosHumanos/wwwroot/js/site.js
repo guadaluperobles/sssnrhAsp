@@ -38,10 +38,26 @@ $(document).on("click", "a", function (e) {
 $(document).ready(function () {
     console.log("Validacion")
     $('#tablaDatos').DataTable({
-        language: {
-            url: '//cdn.datatables.net/plug-ins/2.3.4/i18n/es-MX.json'
-        },
         pageLength: 25,
-        responsive: true
+        responsive: true,
+        language: {
+            decimal: ",",
+            thousands: ".",
+            processing: "Procesando...",
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "_START_ a _END_ de _TOTAL_",
+            infoEmpty: "0",
+            infoFiltered: "(filtrado de _MAX_ registros)",
+            loadingRecords: "Cargando...",
+            zeroRecords: "No se encontraron registros",
+            emptyTable: "No hay datos disponibles en la tabla",
+            paginate: {
+                first: "Inicio",
+                previous: "<",
+                next: ">",
+                last: "Fin"
+            }
+        }
     });
 });

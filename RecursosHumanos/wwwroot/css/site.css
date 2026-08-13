@@ -102,3 +102,11 @@ main {
     background-color: #0c6c36;
     border-color: #175835;
 }
+
+.dataTable thead th {
+    font-size: small;
+}
+
+.dataTable tbody td {
+    font-size: small;
+}
