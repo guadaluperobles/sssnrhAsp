@@ -158,6 +158,7 @@ namespace RecursosHumanos.Controllers {
             if (resultadoTrimActual != null || resultadoTrimActual.Rows.Count > 0)
                 foreach (DataRow Row in resultadoTrimActual.Rows) {
                     var fecha = Row[6]?.ToString()?.Trim();
+                    string tipoNomina = "";
 
                     string fechaFormateada = "";
 
@@ -174,11 +175,33 @@ namespace RecursosHumanos.Controllers {
                     Decimal Iva = Global.ObtenerDecimal(Row[8].ToString());
                     Decimal Neto = string.IsNullOrWhiteSpace(Row[9]?.ToString()) ? Bruto - Iva : Global.ObtenerDecimal(Row[9].ToString());
 
+                    Neto = Global.ObtenerDecimal(Row[8].ToString());
 
                     DataRow bd = bdOperativas.Select($"BaseDatos = '{Row[11].ToString()}'").FirstOrDefault();
                     string descripcionBaseDatos = bd?["Descripcion"]?.ToString() ?? "";
 
-                    resultado.Rows.Add(
+                    switch (Row[5].ToString()) {
+                        case "PRE":
+                            tipoNomina = "EXTRAORDINARIA";
+                            break;
+                        case "PRO":
+                            tipoNomina = "ORDINARIA";
+                            break;
+                        case "PRR":
+                            tipoNomina = "RETROACTIVA";
+                            break;
+                        case "PRC":
+                            tipoNomina = "RECALCULO";
+                            break;
+                        case "PRX":
+                            tipoNomina = "REEXPEDICIÓN";
+                            break;
+                        case "PRA":
+                            tipoNomina = "AGUINALDO";
+                            break;
+                    }
+
+                            resultado.Rows.Add(
                         "26",
                         "SONORA",
                         Row[0],
@@ -186,7 +209,7 @@ namespace RecursosHumanos.Controllers {
                         descripcionBaseDatos,
                         Row[2],
                         Row[3],
-                        Row[5],
+                        tipoNomina,
                         Row[4],
                         fechaFormateada,
                         Bruto,
