@@ -227,7 +227,7 @@ namespace RecursosHumanos.Model {
             return "";
         }
         public static Decimal ObtenerDecimal(string tb) {
-            return decimal.Parse(tb, NumberStyles.Any, new CultureInfo("es-MX"));
+            return decimal.Parse(string.IsNullOrWhiteSpace(tb?.ToString()) ? "0" : tb.ToString(), NumberStyles.Any, new CultureInfo("es-MX"));
         }
         public static DateTime ObtenerFecha(string texto) {
             string[] formatos = {
@@ -249,6 +249,9 @@ namespace RecursosHumanos.Model {
             }
 
             return DateTime.Now;
+        }
+        public DataTable BasesDatosOperativas() {
+            return _coneccionService?.CargarBasesDatosOperativas();
         }
         public DataTable ConsultaGeneral(string consulta, string baseDatos = "") {
             DataTable dataTable = new DataTable();

@@ -4,6 +4,11 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    List<SelectListItem> Semestre = new()
+    {
+        new SelectListItem {Value = "1", Text = "Primer semestre" },
+        new SelectListItem {Value = "2", Text = "Segundo semestre" },
+    };
 }
 <form asp-action="Index" method="post">
     <div class="row">
@@ -17,7 +22,12 @@
         <div class="col-md-2">
             <div class="form-group">
                 <label class="control-label">Semestre</label>
-                <input asp-for="Semestre" class="form-control" />
+                <select asp-for="Semestre"
+                        asp-items="Semestre"
+                        onchange="cargarDatos(this.value)"
+                        class="form-select">
+                    <option value="">-- Seleccione un Semestre --</option>
+                </select>
             </div>
         </div>
         <div class="col-md-2" style="text-align:end">
