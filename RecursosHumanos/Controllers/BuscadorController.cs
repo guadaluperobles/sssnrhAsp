@@ -87,7 +87,7 @@ namespace RecursosHumanos.Controllers {
         public ActionResult Procesar(int id) {
             try {
                 Global global = new Global(_coneccionService);
-                string consulta = $"{ConsultasModel.BuscarEmpleado} LIKE '%{id}%' AND ClkDet = {id}";
+                string consulta = $"{ConsultasModel.BuscarEmpleado} LIKE '%%' AND Empleado.ClkDet = {id}";
                 DataTable Empleados = global.ConsultaGeneral(consulta);
                 DataRow empleado = Empleados.Rows.Count > 0 ? Empleados.Rows[0] : null;
 

@@ -19,7 +19,8 @@
 </div>
 
 <script>
-    function seleccionarRegistro(pk) {
+    function seleccionarRegistro(pk, baseDatos) {
+        console.log(baseDatos)
         $.ajax({
             url: '/Buscador/Procesar',
             type: 'POST',
@@ -32,7 +33,7 @@
                     var empleado = r?.empleado;
                     $("#nombre").val(empleado?.NombreCompleto);
                     $("#rfc").val(empleado?.MeRfc);
-                    $("#curp").val(empleado?.MeRfc);
+                    $("#curp").val(empleado?.MeCurp);
                     $("#puesto").val(empleado?.MePuesto);
                     $("#puestoNombre").val(empleado?.MePuesto);
                     $("#ceTrabajoNo").val(empleado?.MeCTrab);
@@ -43,13 +44,13 @@
                     $("#cedisRfc").val(empleado?.MeCTrabDist);
                     $("#unidad").val(empleado?.MeRfc);
                     $("#programa").val(empleado?.MeRfc);
-                    $("#ingresoDependencia").val(empleado?.MeRfc);
-                    $("#ingresoGobiernoFederal").val(empleado?.MeRfc);
+                    $("#ingresoDependencia").val(empleado?.MeFechIRam);
+                    $("#ingresoGobiernoFederal").val(empleado?.MeFechIIst);
                     $("#clavePago").val(empleado?.MeClvPag);
                     $("#ramoPagaduria").val(empleado?.MeRfc);
                     $("#claveCentroTrabajo").val(empleado?.MeRfc);
                     $("#satCp").val(empleado?.MeRfc);
-                    $("#satNombre").val(empleado?.MeRfc);
+                    $("#satNombre").val(empleado?.MeHrTrab);
                 }
                 else{
                     alert("PK: " + r.mensaje);

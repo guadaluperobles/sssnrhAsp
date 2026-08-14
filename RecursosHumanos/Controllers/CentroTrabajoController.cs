@@ -17,20 +17,16 @@ namespace RecursosHumanos.Controllers {
         }
         // GET: CentroTrabajoController
         public async Task<IActionResult> Index() {
-            var validaciones = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "ValidarCentrosTrabajos");
-            var Resultado = RevisarAnexoRectoria(_global.ConsultaGeneral(validaciones.Sql));
-
-            return View(Resultado);
-
+            var validaciones = await _context.Consulta?.FirstOrDefaultAsync(x => x.Nombre == "ValidarCentrosTrabajos");
+            var resultado = RevisarAnexoRectoria(_global.ConsultaGeneral(validaciones.Sql));
+            return View(resultado);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Index(int id) {
-            var validaciones = await _context.Consulta.FirstOrDefaultAsync(x => x.Nombre == "ValidarCentrosTrabajos");
-            var Resultado = RevisarAnexoRectoria(_global.ConsultaGeneral(validaciones.Sql));
-
-            return View(Resultado);
-
+            var validaciones = await _context.Consulta?.FirstOrDefaultAsync(x => x.Nombre == "ValidarCentrosTrabajos");
+            var resultado = RevisarAnexoRectoria(_global.ConsultaGeneral(validaciones.Sql));
+            return View(resultado);
         }
 
         // GET: CentroTrabajoController/Details/5

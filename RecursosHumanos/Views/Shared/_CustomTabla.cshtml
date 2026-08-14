@@ -1,4 +1,5 @@
 ﻿@using System.Data
+@using System.Text.Json
 @*
     Tabla generica que manda los datos con paginador
 *@
@@ -17,7 +18,10 @@
                         <th>@columna.Titulo</th>
                     }
                 }
-                <th class="td-actions"></th>
+                @if (Model.Acciones?.Any() == true)
+                {
+                    <th class="td-actions"></th>
+                }
             </tr>
         </thead>
 
@@ -26,15 +30,22 @@
                 var pk = Model.Columnas.FirstOrDefault(c => c.Pk);
             }
 
-            @if (Model.Datos.First() is DataRow)
+            @if (Model.Datos.Any() && Model.Datos.First() is DataRow)
             {
-                @foreach (DataRow fila in Model.Datos)
+                foreach (DataRow fila in Model.Datos)
                 {
-                    <tr onclick="seleccionarRegistro('@fila[pk.Propiedad]')" style="cursor:pointer">
+                    string valorPk = fila[pk.Propiedad]?.ToString()?.Trim() ?? "";
+                    string valorJs = JsonSerializer.Serialize(valorPk);
+                    string ultimo = fila.ItemArray.Last()?.ToString() ?? "";
+                    string valorUltimoJs = JsonSerializer.Serialize(ultimo);
+
+                    <tr onclick="seleccionarRegistro(@Html.Raw(valorPk), 'ultimo')" style="cursor:pointer">
+
                         @foreach (var columna in Model.Columnas.Where(c => c.Visible))
                         {
                             <td>@fila[columna.Propiedad]</td>
                         }
+
                     </tr>
                 }
             }

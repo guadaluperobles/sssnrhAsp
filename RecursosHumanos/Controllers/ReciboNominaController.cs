@@ -31,7 +31,7 @@ namespace RecursosHumanos.Controllers {
             return View(model);
         }
         [HttpPost]
-        public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin) {
+        public ActionResult Index(string numeroEmpleado, string ejercicioInicio, string ejercicioFin, string quincenaInicio, string quincenaFin,string soloTimbrados = "true") {
             DataTable recibos = new DataTable();
             var model = new RecibosViewModel {
                 //BasesDatos = _coneccionService.CargarBasesDatosOperativas(),
@@ -40,10 +40,15 @@ namespace RecursosHumanos.Controllers {
                 EjercicioInicio = ejercicioInicio,
                 EjercicioFin = ejercicioFin,
                 QuincenaInicio = quincenaInicio,
-                QuincenaFin = quincenaFin
+                QuincenaFin = quincenaFin,
+    
             };
 
-            string ComplementarConsulta = " pd.PrUUID IS NOT NULL AND LTRIM(RTRIM(pd.PrUUID)) <> '' ";
+            string ComplementarConsulta = "";
+
+            if(bool.Parse(soloTimbrados))
+                ComplementarConsulta = " pd.PrUUID IS NOT NULL AND LTRIM(RTRIM(pd.PrUUID)) <> '' ";
+
             string anios = "";
 
             if (!String.IsNullOrWhiteSpace(ejercicioInicio) && String.IsNullOrWhiteSpace(ejercicioFin)) {

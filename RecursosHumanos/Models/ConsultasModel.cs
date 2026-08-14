@@ -19,7 +19,9 @@
                 *, 
                 CONCAT(MeNomAP, ' ', MeNomAM, ' ',MeNomEmp ) as NombreCompleto 
             FROM Empleado 
-            WHERE CONCAT(MeRfc, CAST(ClkDet AS VARCHAR), MeNomAP, MeNomAM, MeNomEmp, MeNomEmp, MeNomAP, MeNomAM) 
+            INNER JOIN Empleado_Generales ON Empleado.ClkDet = Empleado_Generales.ClkDet
+
+            WHERE CONCAT(MeRfc, CAST(Empleado.ClkDet AS VARCHAR), MeNomAP, MeNomAM, MeNomEmp, MeNomEmp, MeNomAP, MeNomAM) 
         ";
 
         public static string BuscarCFDI = @"

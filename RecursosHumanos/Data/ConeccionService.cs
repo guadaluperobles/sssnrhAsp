@@ -33,6 +33,8 @@ namespace RecursosHumanos.Data {
             using SqlConnection conexion = new SqlConnection(cadena);
             conexion.Open();
             DataTable dt = new DataTable();
+
+            
             SqlDataAdapter da = new SqlDataAdapter(consulta, conexion);
             da.Fill(dt);
             return dt;

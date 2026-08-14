@@ -110,11 +110,11 @@ main {
 }
 
 .dataTable thead th {
-    font-size: small;
+    font-size: clamp(12px, 1vw, 16px);
 }
 
 .dataTable tbody td {
-    font-size: small;
+    font-size: clamp(12px, 1vw, 16px);
 }
 
 .sidebar-container {
@@ -122,4 +122,12 @@ main {
     background: #44152c;
     min-height: 83vh;
     color: #efc4a3 !important;
+}
+
+.container-rows input {
+    font-size: clamp(12px, 1vw, 16px);
+}
+
+.container-rows {
+    font-size: clamp(12px, 1vw, 16px) !important;
 }
