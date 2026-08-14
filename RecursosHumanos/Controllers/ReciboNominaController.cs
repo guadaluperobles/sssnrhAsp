@@ -19,13 +19,18 @@ namespace RecursosHumanos.Controllers {
         }
         // GET: ReciboNominaController
         public ActionResult Index() {
+            DateTime Hoy = DateTime.Now;
+
+            int Ejercicio = DateTime.Now.Year;
+            int Quincena = (DateTime.Now.Month - 1) * 2;
+
             var model = new RecibosViewModel{
                 Recibos = null,
                 NumeroEmpleado = "",
                 EjercicioInicio = "",
-                EjercicioFin = "",
+                EjercicioFin = Ejercicio.ToString(),
                 QuincenaInicio = "",
-                QuincenaFin = ""
+                QuincenaFin = Quincena.ToString()
             };
 
             return View(model);

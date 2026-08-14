@@ -61,6 +61,14 @@ $(document).ready(function () {
     });
 });
 
+function formatearFecha(fecha) {
+    return fecha.toLocaleDateString('es-MX', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
 $(document).ready(function () {
     $('#tablaDatos').DataTable({
         pageLength: 10,

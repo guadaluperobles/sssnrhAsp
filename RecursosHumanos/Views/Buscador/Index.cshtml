@@ -31,26 +31,40 @@
                 console.log("Respuesta:", r.empleado);
                 if(r.success == true && r.encontrado === true){
                     var empleado = r?.empleado;
+                    
+                    var fechaIngresoDependencia =  new Date(
+                        Number(empleado?.MeFechIRam.substring(0, 4)),
+                        Number(empleado?.MeFechIRam.substring(4, 6)) - 1,
+                        Number(empleado?.MeFechIRam.substring(6, 8))
+                    ).toLocaleDateString('es-MX');  
+
+                    var fechaIngresoFederal =  new Date(
+                        Number(empleado?.MeFechIIst.substring(0, 4)),
+                        Number(empleado?.MeFechIIst.substring(4, 6)) - 1,
+                        Number(empleado?.MeFechIIst.substring(6, 8))
+                    ).toLocaleDateString('es-MX'); 
+
+                    
                     $("#nombre").val(empleado?.NombreCompleto);
                     $("#rfc").val(empleado?.MeRfc);
                     $("#curp").val(empleado?.MeCurp);
-                    $("#puesto").val(empleado?.MePuesto);
-                    $("#puestoNombre").val(empleado?.MePuesto);
+                    $("#puesto").val(empleado?.ptPtoSHCP ? empleado?.ptPtoSHCP  : empleado?.ClkPt);
+                    $("#puestoNombre").val(empleado?.PtDsc1);
                     $("#ceTrabajoNo").val(empleado?.MeCTrab);
-                    $("#ceTrabajo").val(empleado?.MeCTrab);
-                    $("#ceTrabajoRfc").val(empleado?.MeCTrab);
+                    $("#ceTrabajo").val(empleado?.CtDsc);
+                    $("#ceTrabajoRfc").val(empleado?.CtCLUES);
                     $("#cedisNo").val(empleado?.MeCTrabDist);
                     $("#cedis").val(empleado?.MeCTrabDist);
                     $("#cedisRfc").val(empleado?.MeCTrabDist);
-                    $("#unidad").val(empleado?.MeRfc);
+                    $("#unidad").val(empleado?.MeUAdmva);
                     $("#programa").val(empleado?.MeRfc);
-                    $("#ingresoDependencia").val(empleado?.MeFechIRam);
-                    $("#ingresoGobiernoFederal").val(empleado?.MeFechIIst);
+                    $("#ingresoDependencia").val(fechaIngresoDependencia);
+                    $("#ingresoGobiernoFederal").val(fechaIngresoFederal);
                     $("#clavePago").val(empleado?.MeClvPag);
                     $("#ramoPagaduria").val(empleado?.MeRfc);
                     $("#claveCentroTrabajo").val(empleado?.MeRfc);
-                    $("#satCp").val(empleado?.MeRfc);
-                    $("#satNombre").val(empleado?.MeHrTrab);
+                    $("#satCp").val(empleado?.MeSATCPost);
+                    $("#satNombre").val(empleado?.MeSATNomEmp);
                 }
                 else{
                     alert("PK: " + r.mensaje);
