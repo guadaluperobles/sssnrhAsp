@@ -162,7 +162,7 @@ namespace RecursosHumanos.Controllers {
             using var reader = ExcelReaderFactory.CreateReader(stream);
             return reader.AsDataSet().Tables[0];
         }
-        public static FileContentResult ExportarExcel(DataTable dt,string nombreArchivo) {
+        /*public static FileContentResult ExportarExcel(DataTable dt,string nombreArchivo) {
             using var workbook = new XLWorkbook();
             using var stream = new MemoryStream();
 
@@ -174,6 +174,27 @@ namespace RecursosHumanos.Controllers {
                 stream.ToArray(),
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
                 FileDownloadName = $"{fecha} {nombreArchivo}.xlsx"
+            };
+        }*/
+
+        public static FileContentResult ExportarExcel( Dictionary<string, DataTable> tablas,string nombreArchivo) {
+            using var workbook = new XLWorkbook();
+
+            foreach (var tabla in tablas) {
+                workbook.Worksheets.Add(
+                    tabla.Value,
+                    tabla.Key
+                );
+            }
+
+            using var stream = new MemoryStream();
+
+            workbook.SaveAs(stream);
+
+            return new FileContentResult(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+                FileDownloadName = $"{nombreArchivo}.xlsx"
             };
         }
         /*

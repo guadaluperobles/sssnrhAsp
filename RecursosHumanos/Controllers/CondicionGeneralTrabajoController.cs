@@ -110,7 +110,10 @@ namespace RecursosHumanos.Controllers {
         public async Task<IActionResult> ImportarExcel(ConsultaSemestralViewModel model) {
             try {
                 var Resultado = await ProcesarConsulta(model.Ejercicio, model.Semestre);
-                return ArchivoController.ExportarExcel(Resultado, $"CondicionGeneralTrabajo {model.Ejercicio}/{model.Semestre}");
+                var tablas = new Dictionary<string, DataTable>{
+                    { "Hoja 1", Resultado }
+                };
+                return ArchivoController.ExportarExcel(tablas, $"CondicionGeneralTrabajo {model.Ejercicio}/{model.Semestre}");
             }
             catch (Exception ex) {
                 return BadRequest(ex.Message + "56");

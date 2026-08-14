@@ -8,11 +8,14 @@
     {
         new SelectListItem {Value = "1", Text = "Primer semestre" },
         new SelectListItem {Value = "2", Text = "Segundo semestre" },
+        new SelectListItem {Value = "3", Text = "Seleccionar por meses" },
+        new SelectListItem {Value = "4", Text = "Seleccionar por quincenas" },
     };
 }
 <form asp-action="Index" method="post">
     <div class="row">
-        <div class="col-6"></div>
+        <div class="col-2"></div>
+        <div class="col-4" id="compenzacion"></div>
         <div class="col-md-2">
             <div class="form-group">
                 <label class="control-label">Ejercicio</label>
@@ -28,6 +31,18 @@
                         class="form-select">
                     <option value="">-- Seleccione un Semestre --</option>
                 </select>
+            </div>
+        </div>
+        <div class="col-md-2" id="inicial">
+            <div class="form-group">
+                <label class="control-label" id="LabelInicial"></label>
+                <input asp-for="Inicial" class="form-control" />
+            </div>
+        </div>
+        <div class="col-md-2" id="final">
+            <div class="form-group">
+                <label class="control-label" id="LabelFinal"></label>
+                <input asp-for="Final" class="form-control" />
             </div>
         </div>
         <div class="col-md-2" style="text-align:end">

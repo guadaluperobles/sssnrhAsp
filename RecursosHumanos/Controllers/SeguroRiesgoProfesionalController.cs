@@ -52,7 +52,10 @@ namespace RecursosHumanos.Controllers {
         public async Task<IActionResult> ImportarExcel(ConsultaTrimestralViewModel model) {
             try {
                 var Resultado = await ProcesarConsulta(model.Ejercicio, model.Trimestre);
-                return ArchivoController.ExportarExcel(Resultado, $"Seguro de riesgos profesional {model.Ejercicio}/{model.Trimestre}");
+                var tablas = new Dictionary<string, DataTable>{
+                    { "Seguro de Riesgo Profesional", Resultado }
+                };
+                return ArchivoController.ExportarExcel(tablas, $"Seguro de riesgos profesional {model.Ejercicio}/{model.Trimestre}");
             }
             catch (Exception ex) {
                 return BadRequest(ex.Message);
@@ -153,15 +156,11 @@ namespace RecursosHumanos.Controllers {
                         DataRow bd = bdOperativas.Select($"BaseDatos = '{baseDatos}'").FirstOrDefault();
                         string descripcionBaseDatos = bd?["Descripcion"]?.ToString() ?? "";
 
-                        if (
-                            (baseDatos == "IESYS_SYSNGFSON" || 
-                            baseDatos == "IESYS_HONOFED" || 
-                            baseDatos == "FORMALIZADOS" || 
-                            baseDatos == "SYSNGFSON_IB" || 
-                            baseDatos == "HONOFED_IB" || 
-                            baseDatos == "FORMALIZADOS_IB") &&
-                            nivelTabular.Substring(0, 2) != "CF"
-                            ) {
+
+                        if(baseDatos == "IESYS_SYSNGFSON" || baseDatos == "IESYS_HONOFED" || baseDatos == "FORMALIZADOS" || baseDatos == "SYSNGFSON_IB" || baseDatos == "HONOFED_IB" || baseDatos == "FORMALIZADOS_IB") 
+
+
+                        if (nivelTabular.Substring(0, 2) != "CF" ) {
                             quincena1 = quincena1 * 2;
                             quincena2 = quincena2 * 2;
                             quincena3 = quincena3 * 2;
@@ -171,12 +170,12 @@ namespace RecursosHumanos.Controllers {
 
                         }
 
-                        if (descripcionBaseDatos.Contains("IB") && ejercicio == 2026 && trimestre == 2) {
+                        if (baseDatos.Contains("IB") && ejercicio == 2026 && trimestre == 2) {
                             quincena1 = 0;
                             quincena2 = 0;
                             quincena3 = 0;
 
-                            if (descripcionBaseDatos == "FEDERAL IB") {
+                            if (baseDatos == "FEDERAL_IB") {
                                 quincena4 = 0;
                             }
                         }

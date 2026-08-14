@@ -94,7 +94,13 @@ main {
 }
 
 #sidebar {
+    top: 0;
+    left: 0;
+    min-width: 265px !important;
+    height: 83vh;
     overflow-y: auto;
+    z-index: 1000;
+    flex-shrink: 0;
 }
 
 .btn-excel {
@@ -109,4 +115,11 @@ main {
 
 .dataTable tbody td {
     font-size: small;
+}
+
+.sidebar-container {
+    width: 250px;
+    background: #44152c;
+    min-height: 83vh;
+    color: #efc4a3 !important;
 }

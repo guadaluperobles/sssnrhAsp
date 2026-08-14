@@ -84,16 +84,34 @@ namespace RecursosHumanos.Controllers {
 
         // POST: BuscadorController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection) {
+        public ActionResult Procesar(int id) {
             try {
-                return RedirectToAction(nameof(Index));
+                Global global = new Global(_coneccionService);
+                string consulta = $"{ConsultasModel.BuscarEmpleado} LIKE '%{id}%' AND ClkDet = {id}";
+                DataTable Empleados = global.ConsultaGeneral(consulta);
+                DataRow empleado = Empleados.Rows.Count > 0 ? Empleados.Rows[0] : null;
+
+                if (empleado == null) {
+                    return Json(new {
+                        success = true,
+                        encontrado = false,
+                        mensaje = "No se encontró el empleado."
+                    });
+                }
+                var datos = empleado.Table.Columns.Cast<DataColumn>().ToDictionary(c => c.ColumnName, c => empleado[c] == DBNull.Value ? null : empleado[c]);
+                return Json(new {
+                    success = true,
+                    encontrado = true,
+                    empleado = datos
+                });
             }
-            catch {
-                return View();
+            catch (Exception ex) {
+                return Json(new {
+                    success = false,
+                    mensaje = ex
+                });
             }
         }
-
         // GET: BuscadorController/Delete/5
         public ActionResult Delete(int id) {
             return View();

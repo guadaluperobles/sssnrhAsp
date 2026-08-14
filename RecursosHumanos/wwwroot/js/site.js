@@ -11,7 +11,6 @@ $(document).on("submit", "form", function () {
 
 //Para peticiones AJAX
 $(document).ajaxStart(function () {
-    console.log("Start")
     $("#loading").show();
 });
 
@@ -27,18 +26,44 @@ $(window).on("load", function () {
 });
 
 //todos los clics que provoquen una redirección
-$(document).on("click", "a", function (e) {
-    console.log($(this).closest(".navbar-nav"), e.target)
+$(document).on("click", "a.loading-link", function (e) {
+    /*console.log("loading-link")
     if ($(this).closest(".navbar-nav").length) {
+        console.log("loading-link <-")
         return;
-    }
-    //$("#loading").show();
+    }/**/
+    console.log("loading-link")
+    $("#loading").show();
+});
+$(document).ready(function () {
+    $('#customTabla').DataTable({
+        pageLength: 10,
+        responsive: true,
+        language: {
+            decimal: ",",
+            thousands: ".",
+            processing: "Procesando...",
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "_START_ a _END_ de _TOTAL_",
+            infoEmpty: "0",
+            infoFiltered: "(filtrado de _MAX_ registros)",
+            loadingRecords: "Cargando...",
+            zeroRecords: "No se encontraron registros",
+            emptyTable: "No hay datos disponibles en la tabla",
+            paginate: {
+                first: "Inicio",
+                previous: "<",
+                next: ">",
+                last: "Fin"
+            }
+        }
+    });
 });
 
 $(document).ready(function () {
-    console.log("Validacion")
     $('#tablaDatos').DataTable({
-        pageLength: 25,
+        pageLength: 10,
         responsive: true,
         language: {
             decimal: ",",
