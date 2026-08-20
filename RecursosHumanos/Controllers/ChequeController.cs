@@ -71,12 +71,13 @@ public class ChequeController : Controller {
         int ejercicio = DateTime.Now.Year;
         int quincena = Convert.ToInt32(df[0]);
         var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
+        var digito = (ultimoCheque?.NumeroCheque ?? 0) + 1;
 
         var modelView = new ChequeViewModel {
             Cheques = modelo,
             Quincena = quincena,
             Ejercicio = ejercicio,
-            UltimoDigito = ultimoCheque.NumeroCheque.Value + 1
+            UltimoDigito = digito
         };
 
         return View(modelView);

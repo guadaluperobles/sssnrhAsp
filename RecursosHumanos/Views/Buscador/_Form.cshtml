@@ -3,10 +3,17 @@
 *@
 <form asp-action="Index" id="frmBuscar" method="post">
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-10">
             <div class="form-group">
                 <label class="control-label">Localizar</label>
                 <input id="localizar" name="localizar" class="form-control" value="@Model.Localizar" />
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo" checked >
+                </div>
             </div>
         </div>
     </div>
