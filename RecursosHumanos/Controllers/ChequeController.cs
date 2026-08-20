@@ -20,7 +20,37 @@ public class ChequeController : Controller {
 
     // GET: CHEQUES
     public async Task<IActionResult> Index() {
-        var cheques = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).ToListAsync();
+        var cheques = await _context.Cheque
+    .Select(x => new {
+        x.Id,
+        x.ClkDet,
+        x.NombreEmpleado,
+        x.NombreBeneficiario,
+        //x.RfcEmpleado,
+        //x.ClavePresupuestal,
+        x.NumeroCheque,
+        //x.ClaveUbicacion,
+        x.Descripcion,
+        x.InicioPeriodo,
+        x.FinPeriodo,
+        x.FechaPago,
+        x.Neto,
+        x.Deducciones,
+        x.VPA,
+        x.VPATexto,
+        x.impreso,
+        x.Ejercicio,
+        x.Quincena,
+        x.Creado,
+        x.Editado,
+        x.Eliminado,
+        x.Impresion,
+        x.TipoCheque
+    })
+    .ToListAsync();
+        //var cheques = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).ToListAsync();
+       // var cheques = await _context.Cheque.OrderBy(x => x.NumeroCheque).ToListAsync();
+
 
         var modelo = new CustomTable {
             Datos = cheques,
@@ -70,16 +100,16 @@ public class ChequeController : Controller {
 
         int ejercicio = DateTime.Now.Year;
         int quincena = Convert.ToInt32(df[0]);
-        var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
-        var digito = (ultimoCheque?.NumeroCheque ?? 0) + 1;
-
+        var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).Select(x => x.NumeroCheque).FirstOrDefaultAsync();
+        var digito = (ultimoCheque ?? 0) + 1;
+        
+        
         var modelView = new ChequeViewModel {
             Cheques = modelo,
             Quincena = quincena,
             Ejercicio = ejercicio,
             UltimoDigito = digito
         };
-
         return View(modelView);
     }
 
@@ -223,7 +253,7 @@ public class ChequeController : Controller {
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
     }
-    public async Task<IActionResult> Importar(IFormFile archivo) {
+    public async Task<IActionResult> Importar(IFormFile archivo, int Ejercicio, int Quincena, int NumeroCheque) {
         if (archivo == null)
             return BadRequest();
 
@@ -240,9 +270,9 @@ public class ChequeController : Controller {
         }
 
         // Ya puedes trabajar con el DataTable
-        return await GuardarExcel(dt);
+        return await GuardarExcel(dt, Ejercicio, Quincena, NumeroCheque);
     }
-    private async Task<IActionResult> GuardarExcel(DataTable re) {
+    private async Task<IActionResult> GuardarExcel(DataTable re, int Ejercicio,int Quincena,int NumeroCheque) {
         DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
 
         foreach (DataRow row in filtrado.Rows) {
@@ -254,7 +284,8 @@ public class ChequeController : Controller {
                 
                 var ultimoChequeEmpleado = await _context.Cheque.Where(x => x.ClkDet == numeroEmpleado).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
                 var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
-
+                
+                var digito = (ultimoCheque?.NumeroCheque ?? 0) + 1;
                 DateTime fecha = DateTime.Now;
                 string[] df = DatosFecha(fecha);
 
@@ -264,7 +295,7 @@ public class ChequeController : Controller {
                     NombreBeneficiario = nombreBeneficiario,
                     RfcEmpleado = ultimoChequeEmpleado.RfcEmpleado,
                     ClavePresupuestal = ultimoChequeEmpleado.ClavePresupuestal,
-                    NumeroCheque = ultimoCheque.NumeroCheque + 1, //"ultimo cheque global"
+                    NumeroCheque = digito, //"ultimo cheque global"
                     ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion,
                     Descripcion = "PA",
                     InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
