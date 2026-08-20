@@ -20,36 +20,9 @@ public class ChequeController : Controller {
 
     // GET: CHEQUES
     public async Task<IActionResult> Index() {
-        var cheques = await _context.Cheque
-    .Select(x => new {
-        x.Id,
-        x.ClkDet,
-        x.NombreEmpleado,
-        x.NombreBeneficiario,
-        //x.RfcEmpleado,
-        //x.ClavePresupuestal,
-        x.NumeroCheque,
-        //x.ClaveUbicacion,
-        x.Descripcion,
-        x.InicioPeriodo,
-        x.FinPeriodo,
-        x.FechaPago,
-        x.Neto,
-        x.Deducciones,
-        x.VPA,
-        x.VPATexto,
-        x.impreso,
-        x.Ejercicio,
-        x.Quincena,
-        x.Creado,
-        x.Editado,
-        x.Eliminado,
-        x.Impresion,
-        x.TipoCheque
-    })
-    .ToListAsync();
-        //var cheques = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).ToListAsync();
-       // var cheques = await _context.Cheque.OrderBy(x => x.NumeroCheque).ToListAsync();
+        
+        var cheques = await _context.Cheque.OrderByDescending(x => x.NumeroCheque).ToListAsync();
+        //var cheques = await _context.Cheque.OrderBy(x => x.NumeroCheque).ToListAsync();
 
 
         var modelo = new CustomTable {
