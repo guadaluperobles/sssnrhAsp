@@ -1,4 +1,6 @@
 ﻿using ClosedXML.Excel;
+using CsvHelper;
+using CsvHelper.Configuration;
 using ExcelDataReader;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
@@ -6,6 +8,7 @@ using QRCoder;
 using RecursosHumanos.Model;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Text;
 
 namespace RecursosHumanos.Controllers {
@@ -161,6 +164,39 @@ namespace RecursosHumanos.Controllers {
             using var stream = archivo.OpenReadStream();
             using var reader = ExcelReaderFactory.CreateReader(stream);
             return reader.AsDataSet().Tables[0];
+        }
+
+        public static DataTable LeerCsv(IFormFile archivo) {
+            var dt = new DataTable();
+
+            using var stream = archivo.OpenReadStream();
+            using var reader = new StreamReader(stream);
+
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture) {
+                HasHeaderRecord = true,
+                Delimiter = ","
+            };
+
+            using var csv = new CsvReader(reader, config);
+
+            csv.Read();
+            csv.ReadHeader();
+
+            foreach (var encabezado in csv.HeaderRecord) {
+                dt.Columns.Add(encabezado);
+            }
+
+            while (csv.Read()) {
+                var row = dt.NewRow();
+
+                for (int i = 0; i < csv.HeaderRecord.Length; i++) {
+                    row[i] = csv.GetField(i) ?? "";
+                }
+
+                dt.Rows.Add(row);
+            }
+
+            return dt;
         }
         /*public static FileContentResult ExportarExcel(DataTable dt,string nombreArchivo) {
             using var workbook = new XLWorkbook();

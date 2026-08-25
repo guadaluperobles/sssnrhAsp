@@ -8,6 +8,7 @@ using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
+using DocumentFormat.OpenXml.Office2010.Excel;
 
 namespace RecursosHumanos.Controllers {
     public class ReciboNominaController : Controller {
@@ -155,7 +156,6 @@ namespace RecursosHumanos.Controllers {
                 ComplementarConsulta += $" CONCAT(emp.MeRfc, CAST(pd.ClkDet AS VARCHAR)) like '%{numeroEmpleado}%'";
             }
 
-
             Global global = new Global(_coneccionService);
             model.Recibos = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta + " ORDER BY pc.PrQna DESC");
 
@@ -240,6 +240,65 @@ namespace RecursosHumanos.Controllers {
             var datos = ObtenerDatos(UUID);
 
             return PartialView("_Reporte", datos);
+        }
+        public async Task<IActionResult> AnalizarRespaldo() {
+            
+            var model = new RecibosViewModel {
+                Recibos = null,
+            };
+
+            Global global = new Global(_coneccionService);
+            model.Recibos = global.ConsultaGeneral("SELECT * FROM RespaldoCFDI WHERE  (Rfc IS NOT NULL)", "IESYST");
+            foreach (DataRow r in model.Recibos.Rows) {
+                if (r.IsNull("Xml"))
+                    continue;
+
+                int Id = Convert.ToInt32(r["Id"]);
+                string xml = r["Xml"].ToString();
+                string producto = r["Producto"].ToString(); //PRE20261240
+
+
+                if (string.IsNullOrWhiteSpace(xml))
+                    continue;
+
+                if (Id <= 0)
+                    continue;
+
+                if (string.IsNullOrWhiteSpace(producto))
+                    continue;
+
+                if (xml.StartsWith("?")) {
+                    xml = xml.Substring(1);
+                }
+
+
+                int anio = int.Parse(producto.Substring(3, 4));
+                int quincena = int.Parse(producto.Substring(7, 2));
+                string BaseDatos = r["BaseDatos"].ToString();
+
+                //https://localhost:7281/ReciboNomina/AnalizarRespaldo
+                ReciboModel recibo = CargarCFDI(xml, quincena.ToString(), "", "", BaseDatos);
+
+                string rfc = recibo.rfc;
+                string FechaTimbrado = recibo.fechaEmision;
+                string FechaCertificacion = recibo.fechaHoraCertificacion;
+                string FechaPago = recibo.fechaDePago;
+
+                string sql = @$"
+                    UPDATE RespaldoCFDI
+                    SET
+                        FechaTimbrado = '{FechaTimbrado}',
+                        NoCertificadoSat = '{recibo.noComprobante}',
+                        Rfc = '{rfc}',
+                        Periodo = {anio},
+                        Quincena = {anio},
+                        FechaTimbradoXml = '{FechaPago}'
+                    WHERE Id = {Id}";
+
+                model.Recibos = global.ConsultaGeneral(sql, "IESYST");
+
+            }
+            return PartialView("Index");
         }
         public IActionResult GenerarReporte(string UUID) {
             try {
@@ -370,8 +429,15 @@ namespace RecursosHumanos.Controllers {
                                             reciboNomina.centroDeTrabajo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Departamento"].Value;
                                         }
                                     }
-                                    reciboNomina.antiguedad = obtenerAntiguedad(xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Antigüedad"].Value);
-                                    reciboNomina.CURP = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Curp"].Value;
+                                    var atributo = xmlDoc.DocumentElement
+                                        .ChildNodes[c]
+                                        .ChildNodes[i]
+                                        .ChildNodes[1]
+                                        .Attributes["Antigüedad"];
+
+                                    reciboNomina.antiguedad = atributo != null
+                                        ? obtenerAntiguedad(atributo.Value)
+                                        : ""; reciboNomina.CURP = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Curp"].Value;
                                     reciboNomina.noEmpleado = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["NumEmpleado"].Value;
                                     reciboNomina.puesto = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Puesto"].Value;
 

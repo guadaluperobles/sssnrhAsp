@@ -242,59 +242,80 @@ public class ChequeController : Controller {
                 return BadRequest("Formato no soportado.");
         }
 
+        DataRow filaTitulos = dt.Rows[1];
+
+        for (int i = 0; i < dt.Columns.Count; i++) {
+            string titulo = filaTitulos[i]?.ToString()?.Trim();
+
+            if (string.IsNullOrWhiteSpace(titulo))
+                titulo = $"Column{i}";
+
+            string nombreOriginal = titulo;
+            int contador = 1;
+
+            while (dt.Columns.Cast<DataColumn>()
+                .Any(c => c.ColumnName == titulo && c.Ordinal != i)) {
+                titulo = $"{nombreOriginal}_{contador++}";
+            }
+
+            dt.Columns[i].ColumnName = titulo;
+        }
+
+        dt.Rows.RemoveAt(1);
+        dt.Rows.RemoveAt(0);
+
         // Ya puedes trabajar con el DataTable
         return await GuardarExcel(dt, Ejercicio, Quincena, NumeroCheque);
     }
     private async Task<IActionResult> GuardarExcel(DataTable re, int Ejercicio,int Quincena,int NumeroCheque) {
-        DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
+        try {
+            DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
 
-        foreach (DataRow row in filtrado.Rows) {
-            var identificador = row[4]?.ToString()?.Trim().ToUpper();
-            if (identificador == "CHEQUE") {
-                var nombreBeneficiario = $"{row[3].ToString()} {row[1].ToString()} {row[2].ToString()} ";
-                var nombreEmpleado = $"{row[12].ToString()} {row[10].ToString()} {row[11].ToString()}";
-                var numeroEmpleado = Convert.ToInt32(row[9].ToString());
-                
-                var ultimoChequeEmpleado = await _context.Cheque.Where(x => x.ClkDet == numeroEmpleado).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
-                var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
-                
-                var digito = (ultimoCheque?.NumeroCheque ?? 0) + 1;
-                DateTime fecha = DateTime.Now;
-                string[] df = DatosFecha(fecha);
+            foreach (DataRow row in filtrado.Rows) {
+                var identificador = row["Descripcion"]?.ToString()?.Trim().ToUpper();
+                if (identificador == "CHEQUE") {
+                    var nombreBeneficiario = $"{row["Nombre"].ToString()} {row["apPaterno"].ToString()} {row["apPaterno"].ToString()} ";
+                    var nombreEmpleado = $"{row["Nombre_1"].ToString()} {row["apPaterno_1"].ToString()} {row["apMaterno_1"].ToString()}";
+                    var numeroEmpleado = Convert.ToInt32(row["NumEmp_1"].ToString());
 
-                var cheque = new Cheque {
-                    ClkDet = Convert.ToInt32(numeroEmpleado),
-                    NombreEmpleado = nombreEmpleado,
-                    NombreBeneficiario = nombreBeneficiario,
-                    RfcEmpleado = ultimoChequeEmpleado.RfcEmpleado,
-                    ClavePresupuestal = ultimoChequeEmpleado.ClavePresupuestal,
-                    NumeroCheque = digito, //"ultimo cheque global"
-                    ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion,
-                    Descripcion = "PA",
-                    InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
-                    FinPeriodo = Global.ObtenerFecha(df[4].ToString()),
-                    FechaPago = Global.ObtenerFecha(df[2].ToString()),
-                    Neto = Global.ObtenerDecimal(row[7].ToString()),
-                    Deducciones = Global.ObtenerDecimal("0.00"),
-                    VPA = Global.ObtenerDecimal(row[7].ToString()),
-                    VPATexto = Global.Letras(row[7].ToString()),
-                    impreso = 0,
-                    Creado = fecha,
-                    Ejercicio = Convert.ToInt32(df[1]),
-                    Quincena = Convert.ToInt32(df[0]),
-                    TipoCheque = "PensionAlimenticia"
-                };
-               
-                if (await GuardarCheque(cheque)) {
+                    var ultimoChequeEmpleado = await _context.Cheque.Where(x => x.ClkDet == numeroEmpleado).OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                    var ultimoCheque = await _context.Cheque.Where(x => x.TipoCheque == "PensionAlimenticia").OrderByDescending(x => x.NumeroCheque).FirstOrDefaultAsync();
 
+                    var digito = (ultimoCheque?.NumeroCheque ?? 0) + 1;
+                    DateTime fecha = DateTime.Now;
+                    string[] df = DatosFecha(fecha);
+
+                    var cheque = new Cheque {
+                        ClkDet = Convert.ToInt32(numeroEmpleado),
+                        NombreEmpleado = nombreEmpleado,
+                        NombreBeneficiario = nombreBeneficiario,
+                        RfcEmpleado = ultimoChequeEmpleado.RfcEmpleado,
+                        ClavePresupuestal = ultimoChequeEmpleado.ClavePresupuestal,
+                        NumeroCheque = digito, //"ultimo cheque global"
+                        ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion,
+                        Descripcion = "PA",
+                        InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
+                        FinPeriodo = Global.ObtenerFecha(df[4].ToString()),
+                        FechaPago = Global.ObtenerFecha(df[2].ToString()),
+                        Neto = Global.ObtenerDecimal(row["Valor"].ToString()),
+                        Deducciones = Global.ObtenerDecimal("0.00"),
+                        VPA = Global.ObtenerDecimal(row["Valor"].ToString()),
+                        VPATexto = Global.Letras(row["Valor"].ToString()),
+                        impreso = 0,
+                        Creado = fecha,
+                        Ejercicio = Convert.ToInt32(df[1]),
+                        Quincena = Convert.ToInt32(df[0]),
+                        TipoCheque = "PensionAlimenticia"
+                    };
+
+                    await GuardarCheque(cheque);
                 }
-                else { 
-                
-                }/**/
             }
+            return RedirectToAction("Index");
         }
-
-        return RedirectToAction("Index");
+        catch(Exception ex) {
+            return BadRequest($"error. {ex.Message}");
+        }
     }
     private async Task<bool> GuardarCheque(Cheque cheque) {
         try {
