@@ -40,14 +40,27 @@
         public static string BuscarCFDI = @"
          SELECT 
              pd.ClkPr + CAST(pd.ClkDet AS VARCHAR) AS ClkPr_ClkDet, 
-             pc.PrAno, 
+             pc.PrAno as PrAno, 
              RIGHT('0' + CAST(pc.PrQna AS VARCHAR), 2) AS PrQna, 
-             pd.PrClvPag, 
-             pd.PrNeto, 
-             pd.PrUUID,  
+             pd.PrClvPag as PrClvPag, 
+             pd.PrNeto as PrClvPag, 
+             pd.PrUUID as PrClvPag,  
          pd.PrXML
          FROM Producto_Detalle AS pd
          INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
+"; 
+        public static string BuscarRespaldoCFDI = @"
+         SELECT 
+             ClkPr + CAST(ClkDet AS VARCHAR) AS ClkPr_ClkDet, 
+             CAST(PrAno AS SMALLINT) AS PrAno,
+             CAST(PrQna AS VARCHAR(10)) AS PrQna,
+             '' as PrClvPag, 
+             CAST(0.00 AS FLOAT) AS PrNeto,
+             PrUUID,  
+             PrXML
+         FROM RespaldoCFDI 
 ";
+
+        
     }
 }

@@ -162,11 +162,12 @@ namespace RecursosHumanos.Controllers {
             ComplementarConsulta = ComplementarConsulta.Replace("emp.", "").Replace("pd.", "").Replace("pc.", "");
             DataTable recibosRespaldo = global.ConsultaGeneral(ConsultasModel.ConsultaRespaldoCFDI + " WHERE " + ComplementarConsulta + " ORDER BY PrQna DESC", "IESYST");
             
-            Console.WriteLine($"CFDI: {recibosCFDI.Columns["PrNeto"].DataType}");
-            Console.WriteLine($"Respaldo: {recibosRespaldo.Columns["PrNeto"].DataType}");
 
             recibosCFDI.Merge(recibosRespaldo);
-            recibosCFDI = recibosCFDI.AsEnumerable().GroupBy(row => row.Field<string>("PrUUID")).Select(g => g.First()).CopyToDataTable();
+
+            if (recibosCFDI.Rows.Count > 0)
+                recibosCFDI = recibosCFDI.AsEnumerable().GroupBy(row => row.Field<string>("PrUUID")).Select(g => g.First()).CopyToDataTable();
+
             model.Recibos = recibosCFDI;
             return View(model);
         }
@@ -334,13 +335,22 @@ namespace RecursosHumanos.Controllers {
         }
         public ReciboModel ObtenerDatos(string UUID) {
 
-            Global global = new Global(_coneccionService);
+            Global global = new Global(_coneccionService);//BuscarRespaldoCFDI
             string consulta = $"{ConsultasModel.BuscarCFDI} WHERE pd.PrUUID = '{UUID}'";
-            DataTable dt = global.ConsultaGeneral(consulta);
-            if (dt == null || dt.Rows.Count == 0) {
+            string consultaR = $"{ConsultasModel.BuscarRespaldoCFDI} WHERE PrUUID = '{UUID}'";
+            
+            DataTable recibosCFDI = global.ConsultaGeneral(consulta);
+            DataTable recibosRespaldo = global.ConsultaGeneral(consultaR, "IESYST");
+            
+            recibosCFDI.Merge(recibosRespaldo);
+
+            if (recibosCFDI.Rows.Count > 0)
+                recibosCFDI = recibosCFDI.AsEnumerable().GroupBy(row => row.Field<string>("PrUUID")).Select(g => g.First()).CopyToDataTable();
+
+            if (recibosCFDI == null || recibosCFDI.Rows.Count == 0) {
                 return null;
             }
-            DataRow rcb = dt.Rows[0];
+            DataRow rcb = recibosCFDI.Rows[0];
             string nombreArchivo = rcb[1].ToString() + "_" + rcb[2].ToString() + "_" + rcb[5].ToString();
 
             var recibo = CargarCFDI(rcb[6].ToString(), rcb[2].ToString(), nombreArchivo, rcb[3].ToString(), rcb[7].ToString());
