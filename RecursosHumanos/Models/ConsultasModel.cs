@@ -2,17 +2,28 @@
     public class ConsultasModel {
         public static string ConsultaCFDI = @"
             SELECT
-                pc.PrAno,
+                pc.PrAno as PrAno,
                 RIGHT('0' + CAST(pc.PrQna AS VARCHAR), 2) AS PrQna,
-                pd.ClkPr,
-                pd.PrNeto,
-                pd.PrUUID,
-                pd.PrXML,
+                pd.ClkPr as ClkPr,
+                pd.PrNeto as PrNeto,
+                pd.PrUUID as PrUUID,
+                pd.PrXML as PrXML,
                 CONCAT(emp.MeRfc, CAST(pd.ClkDet AS VARCHAR)) AS busqueda
             FROM Producto_Detalle AS pd
             INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
             INNER JOIN Empleado AS emp  ON pd.ClkDet = emp.ClkDet
---MeCTrabDist
+        "; 
+        
+        public static string ConsultaRespaldoCFDI = @"
+            SELECT
+                CAST(PrAno AS SMALLINT) AS PrAno,
+                CAST(PrQna AS VARCHAR(10)) AS PrQna,
+                ClkPr,
+                CAST(0.00 AS FLOAT) AS PrNeto,
+                PrUUID,
+                PrXML,
+                CONCAT(MeRfc, CAST(ClkDet AS VARCHAR)) AS busqueda
+            FROM RespaldoCFDI
         ";
 
         public static string BuscarEmpleado = @"

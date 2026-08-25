@@ -155,10 +155,19 @@ namespace RecursosHumanos.Controllers {
 
                 ComplementarConsulta += $" CONCAT(emp.MeRfc, CAST(pd.ClkDet AS VARCHAR)) like '%{numeroEmpleado}%'";
             }
-
+            //ConsultaRespaldoCFDI
             Global global = new Global(_coneccionService);
-            model.Recibos = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta + " ORDER BY pc.PrQna DESC");
 
+            DataTable recibosCFDI = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta + " ORDER BY pc.PrQna DESC");
+            ComplementarConsulta = ComplementarConsulta.Replace("emp.", "").Replace("pd.", "").Replace("pc.", "");
+            DataTable recibosRespaldo = global.ConsultaGeneral(ConsultasModel.ConsultaRespaldoCFDI + " WHERE " + ComplementarConsulta + " ORDER BY PrQna DESC", "IESYST");
+            
+            Console.WriteLine($"CFDI: {recibosCFDI.Columns["PrNeto"].DataType}");
+            Console.WriteLine($"Respaldo: {recibosRespaldo.Columns["PrNeto"].DataType}");
+
+            recibosCFDI.Merge(recibosRespaldo);
+            recibosCFDI = recibosCFDI.AsEnumerable().GroupBy(row => row.Field<string>("PrUUID")).Select(g => g.First()).CopyToDataTable();
+            model.Recibos = recibosCFDI;
             return View(model);
         }
 
@@ -291,7 +300,7 @@ namespace RecursosHumanos.Controllers {
                         NoCertificadoSat = '{recibo.noComprobante}',
                         Rfc = '{rfc}',
                         Periodo = {anio},
-                        Quincena = {anio},
+                        Quincena = {quincena},
                         FechaTimbradoXml = '{FechaPago}'
                     WHERE Id = {Id}";
 
