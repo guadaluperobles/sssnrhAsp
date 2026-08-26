@@ -1,4 +1,6 @@
-﻿namespace RecursosHumanos.Models {
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace RecursosHumanos.Models {
     public class ConsultasModel {
         public static string ConsultaCFDI = @"
             SELECT
@@ -60,7 +62,13 @@
              PrXML
          FROM RespaldoCFDI 
 ";
-
+        public static string ValidarClkdetRfc = @"
+            SELECT ClkDet FROM Empleado WHERE ClkDet = @clkdet AND MeRfc = @rfc
+        "; 
         
+        public static string BuscarClkdetRfc = @"
+            SELECT ClkDet FROM Empleado WHERE  MeRfc = @rfc
+        ";
+
     }
 }

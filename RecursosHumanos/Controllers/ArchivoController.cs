@@ -161,6 +161,7 @@ namespace RecursosHumanos.Controllers {
             }
         }
         public static DataTable DtLeerExcel(IFormFile archivo) {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             using var stream = archivo.OpenReadStream();
             using var reader = ExcelReaderFactory.CreateReader(stream);
             return reader.AsDataSet().Tables[0];

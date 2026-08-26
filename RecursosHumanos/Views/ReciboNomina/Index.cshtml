@@ -30,31 +30,7 @@
         { "Texto", "Importar"}
     };
 }
-<div class="container">
-    <div class="row">
-<div class="col-md-12" style="text-align: end">
-    <button type="button"
-            class="btn btn-secondary"
-            onclick="location.href='@Url.Action("Create")'">
-        Agregar
-    </button>
-    <a class="btn btn-secondary"
-       data-bs-toggle="collapse"
-       href="#collapseImport"
-       role="button"
-       aria-expanded="false"
-       aria-controls="collapseImport">
-        Agregar archivo
-    </a>
-    <div class="collapse" id="collapseImport">
-        <div class="card card-body">
-            <partial name="_ArchivoExportar" view-data="data" />
-        </div>
-    </div>
-        </div>
-    </div>
-</div>
-<div class="clearfix"></div>
+
 <partial name="_Form" />
 <partial name="_ModalReporte" />
 @if (Model.Recibos != null)
