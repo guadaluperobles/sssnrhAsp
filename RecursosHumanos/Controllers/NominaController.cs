@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Spreadsheet;
 using Humanizer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,9 @@ using RecursosHumanos.Model;
 using RecursosHumanos.Models;
 using RecursosHumanos.ViewModel;
 using System.Data;
+using System.Text.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecursosHumanos.Controllers {
     public class NominaController : Controller {
@@ -19,10 +23,11 @@ namespace RecursosHumanos.Controllers {
         public ActionResult Index() {
 
             var modelView = new NominaViewModel {
-                BaseDatos = "SYSNGFSON_IB",
+                BaseDatos = "DEPASO2",
                 Quincena = 15,
+                Procesados = new DataTable()
             };
-            return View(modelView);
+            return View("PerDedEmpleado", modelView);
         }
 
         // GET: NominaController1/Details/5
@@ -67,8 +72,9 @@ namespace RecursosHumanos.Controllers {
         public ActionResult PerDedEmpleado() {
 
             var modelView = new NominaViewModel {
-                BaseDatos = "SYSNGFSON_IB",
+                BaseDatos = "DEPASO2",
                 Quincena = 15,
+                Procesados = new DataTable()
             };
             return View(modelView);
         }
@@ -89,42 +95,11 @@ namespace RecursosHumanos.Controllers {
                 return View();
             }
         }
-        public async Task<IActionResult> Importar(IFormFile archivo, string BaseDatos, int Quincena) {
+        public async Task<IActionResult> Importar(IFormFile archivo, string BaseDatos, int Quincena, string Producto) {
             if (archivo == null)
                 return BadRequest();
 
-            DataTable dt;
-
-            switch (Path.GetExtension(archivo.FileName).ToLower()) {
-                case ".xlsx":
-                case ".xls":
-                    dt = RecursosHumanos.Controllers.ArchivoController.DtLeerExcel(archivo);
-                    break;
-
-                default:
-                    return BadRequest("Formato no soportado.");
-            }
-
-            DataRow filaTitulos = dt.Rows[0];
-
-            for (int i = 0; i < dt.Columns.Count; i++) {
-                string titulo = filaTitulos[i]?.ToString()?.Trim();
-
-                if (string.IsNullOrWhiteSpace(titulo))
-                    titulo = $"Column{i}";
-
-                string nombreOriginal = titulo;
-                int contador = 0;
-
-                while (dt.Columns.Cast<DataColumn>()
-                    .Any(c => c.ColumnName == titulo && c.Ordinal != i)) {
-                    titulo = $"{nombreOriginal}_{contador++}";
-                }
-
-                dt.Columns[i].ColumnName = titulo;
-            }
-
-            dt.Rows.RemoveAt(0);
+            DataTable dt = ProcesarExcel(archivo);
 
             DataTable dtPerDed_Empleado = new DataTable();
             DataTable dtPerDed_Empleado_404 = dt.Clone();
@@ -206,7 +181,7 @@ namespace RecursosHumanos.Controllers {
                     dtPerDed_Empleado_404.ImportRow(row);
             }
 
-            if (dtPerDed_Empleado.Rows.Count > 0) {
+            /*if (dtPerDed_Empleado.Rows.Count > 0) {
                 
                 global.ConsultaGeneral("DELETE FROM PerDed_Empleado", BaseDatos);
                 
@@ -215,10 +190,39 @@ namespace RecursosHumanos.Controllers {
                     if (Monto <= 0)
                         continue;
 
-                    if (row["MePDClave"] == "37") {
-                        var MePDClave = row["MePDClave"];
+                    string MePDTipo = "01";
+                    switch (row["MePDClave"]) {
+                        case "37":
+                        case "69":
+                            MePDTipo = "03";
+                            break;
+                        case "51":
+                        case "57":
+                            MePDTipo = "04";
+                            break;
+                        case "03":
+                        case "90":
+                        case "AR":
+                        case "AT":
+                        case "AY":
+                        case "BA":
+                        case "CB":
+                        case "CF":
+                        case "EM":
+                        case "FA":
+                        case "FM":
+                        case "FP":
+                        case "I1":
+                        case "RM":
+                        case "S3":
+                        case "S5":
+                            MePDTipo = "06";
+                            break;
+                        default:
+                            MePDTipo = row["MePDTipo"].ToString();
+                            break;
                     }
-                    string sql = $@"
+                            string sql = $@"
                         INSERT INTO PerDed_Empleado
                         (
                             ClkDet,
@@ -232,7 +236,7 @@ namespace RecursosHumanos.Controllers {
                         VALUES
                         (
                             {Convert.ToInt32(row["ClkDet"])},
-                            '{row["MePDTipo"]}',
+                            '{MePDTipo}',
                             '{row["MePDClave"]}',
                             '{row["MePDVParA"]}',
                             {Monto},
@@ -275,16 +279,119 @@ namespace RecursosHumanos.Controllers {
                         )";
                     global.ConsultaGeneral(sql, BaseDatos);
                 }
+            }*/
+
+            var modelView = new NominaViewModel {
+                BaseDatos = BaseDatos,
+                Quincena = Quincena,
+                Producto = $"PRO2026{Quincena}00",
+                Procesados = dtPerDed_Empleado,
+                EmpleadosFaltantes = dtPerDed_Empleado_404,
+            };
+            // Ya puedes trabajar con el DataTable
+            return View("PerDedEmpleado", modelView);
+        }
+        [HttpPost]
+        public IActionResult ProcesarSiguiente( string BaseDatos, string Producto, int Quincena, string procesadosJson) {
+
+            Global global = new Global(_coneccionService);
+            DataTable procesados = JsonToDataTable(procesadosJson);
+
+            foreach (DataRow procesado in procesados.Rows) {
+                if (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "01") {
+                    string sqlActualizar = @$"UPDATE PerDed_Producto
+                        SET PrPDImporte =  {procesado["MePDVImp"]}
+                        WHERE ClkPr = '{Producto}'
+                          AND PrPDClave = '01'
+                          AND PrPDTipo = '2'
+                          AND ClkDet = {procesado["ClkDet"]};" ;
+
+                    global.ConsultaGeneral(sqlActualizar, BaseDatos);
+                }
             }
 
             var modelView = new NominaViewModel {
                 BaseDatos = BaseDatos,
                 Quincena = Quincena,
-                Procesados = dtPerDed_Empleado,
-                EmpleadosFaltantes = dtPerDed_Empleado_404,
+                Producto = Producto,
+                Procesados = procesados
             };
             // Ya puedes trabajar con el DataTable
-            return View("Index", modelView);
+            return View("PerDedEmpleado", modelView);
+        }
+
+        public DataTable ProcesarExcel(IFormFile archivo) {
+            DataTable dt;
+
+
+            switch (Path.GetExtension(archivo.FileName).ToLower()) {
+                case ".xlsx":
+                case ".xls":
+                    dt = RecursosHumanos.Controllers.ArchivoController.DtLeerExcel(archivo);
+                    break;
+
+                default:
+                     dt = new DataTable(); 
+                    break;
+            }
+
+            if (dt.Rows.Count <= 0)
+                return dt;
+
+            DataRow filaTitulos = dt.Rows[0];
+
+            for (int i = 0; i < dt.Columns.Count; i++) {
+                string titulo = filaTitulos[i]?.ToString()?.Trim();
+
+                if (string.IsNullOrWhiteSpace(titulo))
+                    titulo = $"Column{i}";
+
+                string nombreOriginal = titulo;
+                int contador = 0;
+
+                while (dt.Columns.Cast<DataColumn>()
+                    .Any(c => c.ColumnName == titulo && c.Ordinal != i)) {
+                    titulo = $"{nombreOriginal}_{contador++}";
+                }
+
+                dt.Columns[i].ColumnName = titulo;
+            }
+
+            dt.Rows.RemoveAt(0);
+
+            return dt;
+        }
+
+        private DataTable JsonToDataTable(string json) {
+            var datos = JsonSerializer.Deserialize<
+                List<Dictionary<string, JsonElement>>
+            >(json);
+
+            DataTable dt = new DataTable();
+
+            if (datos == null || datos.Count == 0)
+                return dt;
+
+            // Crear columnas
+            foreach (var columna in datos[0].Keys) {
+                dt.Columns.Add(columna);
+            }
+
+            // Crear filas
+            foreach (var item in datos) {
+                DataRow row = dt.NewRow();
+
+                foreach (var campo in item) {
+                    if (campo.Value.ValueKind == JsonValueKind.Null)
+                        row[campo.Key] = DBNull.Value;
+                    else
+                        row[campo.Key] = campo.Value.ToString();
+                }
+
+                dt.Rows.Add(row);
+            }
+
+            return dt;
         }
 
     }

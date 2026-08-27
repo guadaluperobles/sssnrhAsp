@@ -1,4 +1,7 @@
 ﻿@model RecursosHumanos.ViewModel.NominaViewModel
+@using System.Data
+@using System.Linq
+@using System.Text.Json
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -27,22 +30,56 @@
         { "ExtraParams", camposTexto}
     };
 }
+
 <div class="container">
     <div class="row">
         <div class="col-md-12" style="text-align: end">
-            <a class="btn btn-secondary"
-               data-bs-toggle="collapse"
-               href="#collapseImport"
-               role="button"
-               aria-expanded="false"
-               aria-controls="collapseImport">
-                Agregar archivo
-            </a>
-            <div class="collapse" id="collapseImport">
-                <div class="card card-body">
-                    <partial name="_ArchivoExportar" view-data="data" />
+            
+            @if (Model.Procesados.Rows.Count > 0)
+            {
+                <form asp-action="ProcesarSiguiente" asp-controller="Nomina" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class='col-md-2'>
+                            <div class='form-group' style='text-align:left'>
+                                <label class='control-label'>Base de Datos</label>
+                                <input name='BaseDatos' value='@Model.BaseDatos' class='form-control' />
+                            </div>
+                        </div>
+                        <div class='col-md-2'>
+                            <div class='form-group' style='text-align:left'>
+                                <label class='control-label'>Producto</label>
+                                <input name='Producto' value='@Model.Producto' class='form-control' />
+                            </div>
+                        </div>
+                        <input type="hidden" id="procesadosJson" name="procesadosJson" />
+                        <div class="col-md-6">
+                            <button type="submit" class="btn btn-secondary">
+                                Continuar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <label>Antes procesar</label>
+                <a class="btn btn-secondary"
+                   data-bs-toggle="collapse"
+                   href="#collapseImport"
+                   role="button"
+                   aria-expanded="false"
+                   aria-controls="collapseImport">
+                    Agregar archivo
+                </a>
+
+                <input type="hidden" id="procesadosJson" name="procesadosJson" />
+                <div class="collapse" id="collapseImport">
+                    <div class="card card-body">
+                        <partial name="_ArchivoExportar" view-data="data" />
+                    </div>
                 </div>
-            </div>
+            }
+
         </div>
     </div>
 </div>
@@ -74,5 +111,31 @@
             </div>
         </div>
     </div>
-
 </div>
+@section Scripts {
+    @if (Model.Procesados != null && Model.Procesados.Rows.Count > 0)
+    {
+        <script>
+            const procesados = @Html.Raw(
+                JsonSerializer.Serialize(
+                    Model.Procesados.AsEnumerable()
+                    .Select(r => Model.Procesados.Columns
+                        .Cast<DataColumn>()
+                        .ToDictionary( c => c.ColumnName,  c => r[c] == DBNull.Value ? null : r[c] )
+                    )
+                )
+            );
+
+            document.getElementById("procesadosJson").value =
+                JSON.stringify(procesados);
+        </script>
+    }
+    else
+    {
+        <script>
+            const procesados = [];
+            document.getElementById("procesadosJson").value =
+                JSON.stringify(procesados);
+        </script>
+    }
+}
