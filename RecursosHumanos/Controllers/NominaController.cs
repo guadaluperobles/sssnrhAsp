@@ -21,8 +21,6 @@ namespace RecursosHumanos.Controllers {
                 Quincena = 15,
             };
             return View(modelView);
-
-            //SYSNGFSON_IB
         }
 
         // GET: NominaController1/Details/5
@@ -62,6 +60,15 @@ namespace RecursosHumanos.Controllers {
             catch {
                 return View();
             }
+        }
+
+        public ActionResult PerDedEmpleado() {
+
+            var modelView = new NominaViewModel {
+                BaseDatos = "SYSNGFSON_IB",
+                Quincena = 15,
+            };
+            return View(modelView);
         }
 
         // GET: NominaController1/Delete/5
@@ -134,8 +141,8 @@ namespace RecursosHumanos.Controllers {
                 int numEmp = Convert.ToInt32(row["No.Emp"].ToString());
                 string Filiacion = row["Filiacion"].ToString();
 
-                string ConsultaClkDetRfc = "SELECT ClkDet FROM Empleado WHERE ClkDet = 703000 AND MeRfc = 'AAGR7308041X7'";
-                string ConsultaRfc = "SELECT ClkDet FROM Empleado WHERE MeRfc = 'AAGR7308041X7'";
+                string ConsultaClkDetRfc = $"SELECT ClkDet FROM Empleado WHERE ClkDet = {numEmp} AND MeRfc = '{Filiacion}'";
+                string ConsultaRfc = $"SELECT ClkDet FROM Empleado WHERE MeRfc = '{Filiacion}'";
 
                 DataTable numeroEmpleadoValidado = global.ConsultaGeneral(ConsultaClkDetRfc, BaseDatos);
                 DataTable numeroEmpleado;

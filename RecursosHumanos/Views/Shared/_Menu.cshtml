@@ -28,6 +28,18 @@
         modulos.Add(
         new MenuItem
         {
+            Vista = "Nomina",
+            Controlador = "Nomina",
+            SubModulos = new List<MenuItem>
+            {
+                new MenuItem    {   Vista = "Clonar base de Datos",                                             Controlador = "Nomina",    Accion = "ClonarBaseDatos"  },
+                new MenuItem    {   Vista = "Clonar de empleado",                                               Controlador = "Nomina",    Accion = "ClonarEmpleado"  },
+                new MenuItem    {   Vista = "Subir PerDed_Empleado",                                            Controlador = "Nomina",    Accion = "PerDedEmpleado"  },
+                new MenuItem    {   Vista = "Borrar Contenido de base de datos",                                Controlador = "Nomina",    Accion = "PrimerPaso"  },
+            }
+        }); modulos.Add(
+        new MenuItem
+        {
             Vista = "Reportes Nomina",
             Controlador = "ReporteNomina",
             SubModulos = new List<MenuItem>
@@ -38,7 +50,7 @@
                 new MenuItem    {   Vista = "Condiciones Generales de trabajo",                                 Controlador = "CondicionGeneralTrabajo" },
                 new MenuItem    {   Vista = "Plantilla Sindicalizados",                                         Controlador = "PlantillaSindicalizados"}
             }
-        }); 
+        });
         modulos.Add(
         new MenuItem
         {
@@ -108,7 +120,7 @@
                                 <a class="nav-link loading-link @(controladorActual == sub.Controlador ? "active" : "")"
                                    style="color: #efc4a3;"
                                    asp-controller="@sub.Controlador"
-                                   asp-action="Index">
+                                   asp-action="@(string.IsNullOrEmpty(sub.Accion) ? "Index" : sub.Accion)">
                                     @sub.Vista
                                 </a>
                             </li>
@@ -120,7 +132,7 @@
             {
                 <a class="nav-link loading-link @(controladorActual == modulo.Controlador ? "active" : "")"
                    asp-controller="@modulo.Controlador"
-                   asp-action="Index"
+                   asp-action="@(string.IsNullOrEmpty(modulo.Accion) ? "Index" : modulo.Accion)"
                    style="color: #efc4a3;">
                     @modulo.Vista
                 </a>
