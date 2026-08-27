@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using Humanizer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using RecursosHumanos.Data;
@@ -138,11 +140,18 @@ namespace RecursosHumanos.Controllers {
             Global global = new Global(_coneccionService);
 
             foreach (DataRow row in dt.Rows) {
-                int numEmp = Convert.ToInt32(row["No.Emp"].ToString());
+                int? numEmp = null;
+                if (int.TryParse(row["No.Emp"]?.ToString(), out int resultado)) {
+                    numEmp = resultado;
+                }
                 string Filiacion = row["Filiacion"].ToString();
+
+                if (numEmp == null && Filiacion == "")
+                    continue;
 
                 string ConsultaClkDetRfc = $"SELECT ClkDet FROM Empleado WHERE ClkDet = {numEmp} AND MeRfc = '{Filiacion}'";
                 string ConsultaRfc = $"SELECT ClkDet FROM Empleado WHERE MeRfc = '{Filiacion}'";
+
 
                 DataTable numeroEmpleadoValidado = global.ConsultaGeneral(ConsultaClkDetRfc, BaseDatos);
                 DataTable numeroEmpleado;
@@ -205,6 +214,10 @@ namespace RecursosHumanos.Controllers {
                     Decimal Monto = Convert.ToDecimal(row["MePDVImp"]);
                     if (Monto <= 0)
                         continue;
+
+                    if (row["MePDClave"] == "37") {
+                        var MePDClave = row["MePDClave"];
+                    }
                     string sql = $@"
                         INSERT INTO PerDed_Empleado
                         (
@@ -225,6 +238,40 @@ namespace RecursosHumanos.Controllers {
                             {Monto},
                             '{row["MePDVVigI"]}',
                             '{row["MePDVVenc"]}'
+                        )";
+                    global.ConsultaGeneral(sql, BaseDatos);
+                }
+                
+                string sqlEmpleadosSinMovimientos = @"
+                SELECT E.ClkDet
+                FROM Empleado AS E
+                LEFT JOIN PerDed_Empleado AS PDE
+                    ON PDE.ClkDet = E.ClkDet
+                WHERE PDE.ClkDet IS NULL;";
+                DataTable EmpleadosSinMovimientos = global.ConsultaGeneral(sqlEmpleadosSinMovimientos, BaseDatos);
+
+                foreach (DataRow rowEmpleadoSinMov in EmpleadosSinMovimientos.Rows) {
+                    int numeroEmpleado = Convert.ToInt32(rowEmpleadoSinMov[0].ToString());
+                    string sql = $@"
+                        INSERT INTO PerDed_Empleado
+                        (
+                            ClkDet,
+                            MePDTipo,
+                            MePDClave,
+                            MePDVParA,
+                            MePDVImp,
+                            MePDVVigI,
+                            MePDVVenc
+                        )
+                        VALUES
+                        (
+                            {Convert.ToInt32(rowEmpleadoSinMov["ClkDet"])},
+                            '1', --MePDTipo
+                            '07', --MePDClave
+                            '0', --MePDVParA
+                            0.01, --Monto
+                            '000000', --MePDVVigI
+                            '000000' --MePDVVenc
                         )";
                     global.ConsultaGeneral(sql, BaseDatos);
                 }
