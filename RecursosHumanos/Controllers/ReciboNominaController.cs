@@ -373,16 +373,19 @@ namespace RecursosHumanos.Controllers {
 
             foreach (XmlAttribute atributo in xmlDoc.DocumentElement.Attributes) {
                 switch (atributo.Name) {
+                    case "fecha":
                     case "Fecha":
                         reciboNomina.noComprobante = atributo.Value.Substring(0, 4) + "-" + xmlDoc.DocumentElement.GetAttribute("Folio");
 
                         reciboNomina.fechaEmision = atributo.Value.Replace("T", " ");
                         break;
 
+                    case "descuento":
                     case "Descuento":
                         reciboNomina.totalDeducciones = Convert.ToDecimal(atributo.Value).ToString("N2");
                         break;
 
+                    case "total":
                     case "Total":
                         reciboNomina.total = atributo.Value;
                         break;
