@@ -191,8 +191,7 @@ namespace RecursosHumanos.Controllers {
 
 
                         if (clkDet != 0)
-                            if (Convert.ToDecimal(valor) > 0)
-                                dtPerDed_Empleado.Rows.Add(nuevaFila);
+                            dtPerDed_Empleado.Rows.Add(nuevaFila);
                     }
                 else
                     dtPerDed_Empleado_404.ImportRow(row);
@@ -203,6 +202,9 @@ namespace RecursosHumanos.Controllers {
                 global.ConsultaGeneral("DELETE FROM PerDed_Empleado", BaseDatos);
                 
                 foreach (DataRow row in dtPerDed_Empleado.Rows) {
+                    Decimal Monto = Convert.ToDecimal(row["MePDVImp"]);
+                    if (Monto <= 0)
+                        continue;
                     string sql = $@"
                         INSERT INTO PerDed_Empleado
                         (
@@ -220,7 +222,7 @@ namespace RecursosHumanos.Controllers {
                             '{row["MePDTipo"]}',
                             '{row["MePDClave"]}',
                             '{row["MePDVParA"]}',
-                            {Convert.ToDecimal(row["MePDVImp"])},
+                            {Monto},
                             '{row["MePDVVigI"]}',
                             '{row["MePDVVenc"]}'
                         )";
