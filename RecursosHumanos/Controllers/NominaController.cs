@@ -190,21 +190,22 @@ namespace RecursosHumanos.Controllers {
                     if (Monto <= 0)
                         continue;
 
-                    string MePDTipo = "01";
+                    string MePDTipo = "1";
                     switch (row["MePDClave"]) {
-                        case "37":
-                        case "69":
                         case "3D":
+                        case "37":
+                        case "32":
+                        case "69":
+                        case "70":
+                        case "75":
                         case "45":
-                            MePDTipo = "03";
+                            MePDTipo = "3";
                             break;
-                        case "51":
-                        case "57":
-                            MePDTipo = "04";
+                        case "17":
+                        case "S5":
+                            MePDTipo = "4";
                             break;
                         case "03":
-                        case "17":
-                        case "90":
                         case "AR":
                         case "AT":
                         case "AY":
@@ -216,10 +217,11 @@ namespace RecursosHumanos.Controllers {
                         case "FM":
                         case "FP":
                         case "I1":
+                        case "PB":
                         case "RM":
                         case "S3":
-                        case "S5":
-                            MePDTipo = "06";
+                        case "90":
+                            MePDTipo = "6";
                             break;
                         default:
                             MePDTipo = row["MePDTipo"].ToString();
@@ -254,7 +256,9 @@ namespace RecursosHumanos.Controllers {
                 FROM Empleado AS E
                 LEFT JOIN PerDed_Empleado AS PDE
                     ON PDE.ClkDet = E.ClkDet
-                WHERE PDE.ClkDet IS NULL;";
+                WHERE PDE.ClkDet IS NULL;"
+                ;
+
                 DataTable EmpleadosSinMovimientos = global.ConsultaGeneral(sqlEmpleadosSinMovimientos, BaseDatos);
 
                 foreach (DataRow rowEmpleadoSinMov in EmpleadosSinMovimientos.Rows) {
