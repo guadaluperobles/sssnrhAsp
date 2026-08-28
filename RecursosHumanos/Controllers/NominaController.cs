@@ -305,7 +305,7 @@ namespace RecursosHumanos.Controllers {
                     (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "S2") ||
                     (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "62")) {
 
-                    var MePDTipo = procesado["MePDClave"].ToString() == "62" ? "04" : procesado["MePDClave"].ToString(); 
+                    var MePDTipo = procesado["MePDClave"].ToString() == "62" ? "04" : procesado["MePDTipo"].ToString(); 
                     var MePDClave = procesado["MePDClave"].ToString();
 
                     string sqlActualizar = @$"UPDATE PerDed_Producto
