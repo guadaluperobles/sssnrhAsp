@@ -181,7 +181,7 @@ namespace RecursosHumanos.Controllers {
                     dtPerDed_Empleado_404.ImportRow(row);
             }
 
-            /*if (dtPerDed_Empleado.Rows.Count > 0) {
+            if (dtPerDed_Empleado.Rows.Count > 0) {
                 
                 global.ConsultaGeneral("DELETE FROM PerDed_Empleado", BaseDatos);
                 
@@ -194,6 +194,8 @@ namespace RecursosHumanos.Controllers {
                     switch (row["MePDClave"]) {
                         case "37":
                         case "69":
+                        case "3D":
+                        case "45":
                             MePDTipo = "03";
                             break;
                         case "51":
@@ -201,6 +203,7 @@ namespace RecursosHumanos.Controllers {
                             MePDTipo = "04";
                             break;
                         case "03":
+                        case "17":
                         case "90":
                         case "AR":
                         case "AT":
@@ -279,7 +282,7 @@ namespace RecursosHumanos.Controllers {
                         )";
                     global.ConsultaGeneral(sql, BaseDatos);
                 }
-            }*/
+            }
 
             var modelView = new NominaViewModel {
                 BaseDatos = BaseDatos,
@@ -298,12 +301,18 @@ namespace RecursosHumanos.Controllers {
             DataTable procesados = JsonToDataTable(procesadosJson);
 
             foreach (DataRow procesado in procesados.Rows) {
-                if (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "01") {
+                if ( (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "01") ||
+                    (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "S2") ||
+                    (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "62")) {
+
+                    var MePDTipo = procesado["MePDClave"].ToString() == "62" ? "04" : procesado["MePDClave"].ToString(); 
+                    var MePDClave = procesado["MePDClave"].ToString();
+
                     string sqlActualizar = @$"UPDATE PerDed_Producto
                         SET PrPDImporte =  {procesado["MePDVImp"]}
                         WHERE ClkPr = '{Producto}'
-                          AND PrPDClave = '01'
-                          AND PrPDTipo = '2'
+                          AND PrPDClave = '{MePDClave}'
+                          AND PrPDTipo = '{MePDTipo}'
                           AND ClkDet = {procesado["ClkDet"]};" ;
 
                     global.ConsultaGeneral(sqlActualizar, BaseDatos);
