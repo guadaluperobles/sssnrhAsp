@@ -304,22 +304,46 @@ namespace RecursosHumanos.Controllers {
             Global global = new Global(_coneccionService);
             DataTable procesados = JsonToDataTable(procesadosJson);
 
+            string vaciarTablaProducto = $"DELETE FROM PerDed_Producto WHERE ClkPr = '{Producto}'";
+            global.ConsultaGeneral(vaciarTablaProducto, BaseDatos);
+
+            var consecutivos = new Dictionary<int, int>();
+
             foreach (DataRow procesado in procesados.Rows) {
-                if ( (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "01") ||
-                    (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "S2") ||
-                    (procesado["MePDTipo"].ToString() == "2" && procesado["MePDClave"].ToString() == "62")) {
 
-                    var MePDTipo = procesado["MePDClave"].ToString() == "62" ? "04" : procesado["MePDTipo"].ToString(); 
-                    var MePDClave = procesado["MePDClave"].ToString();
+                int clkDet = Convert.ToInt32(procesado["ClkDet"]);
+                var MePDTipo = procesado["MePDTipo"].ToString() ;
+                var MePDClave = procesado["MePDClave"].ToString();
+                
+                if (!consecutivos.ContainsKey(clkDet))
+                    consecutivos[clkDet] = 1;
+                else
+                    consecutivos[clkDet]++;
+                
+                switch (MePDTipo) {
+                    case "3":
+                        MePDTipo = "1";
+                        break;
+                    case "4":
+                    case "6":
+                        MePDTipo = "2";
+                        break;
+                }
 
-                    string sqlActualizar = @$"UPDATE PerDed_Producto
-                        SET PrPDImporte =  {procesado["MePDVImp"]}
-                        WHERE ClkPr = '{Producto}'
-                          AND PrPDClave = '{MePDClave}'
-                          AND PrPDTipo = '{MePDTipo}'
-                          AND ClkDet = {procesado["ClkDet"]};" ;
+                int consecutivo = consecutivos[clkDet];
 
-                    global.ConsultaGeneral(sqlActualizar, BaseDatos);
+                string sqlActualizar = @$"UPDATE PerDed_Producto
+                    SET PrPDImporte =  {procesado["MePDVImp"]}
+                    WHERE ClkPr = '{Producto}'
+                        AND PrPDClave = '{MePDClave}'
+                        AND PrPDTipo = '{MePDTipo}'
+                        AND ClkDet = {procesado["ClkDet"]};" ;
+
+                if (Convert.ToSingle(procesado["MePDVImp"]) > 0) {
+                    string sqlInsertar = $"INSERT INTO PerDed_Producto (ClkPr, ClkDet, ClkSeqE, ClkSeq, PrPDTipo, PrPDClave, PrPDImporte, PrPDParA)" +
+                                     $"VALUES ('{Producto}', {procesado["ClkDet"]}, 1, {consecutivo},  {MePDTipo}, '{MePDClave}',{procesado["MePDVImp"]}, '00')";
+
+                    global.ConsultaGeneral(sqlInsertar, BaseDatos);
                 }
             }
 
