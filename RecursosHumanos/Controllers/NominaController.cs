@@ -228,18 +228,27 @@ namespace RecursosHumanos.Controllers {
                             break;
                     }
                             string sql = $@"
-                        INSERT INTO PerDed_Empleado
-                        (
-                            ClkDet,
-                            MePDTipo,
-                            MePDClave,
-                            MePDVParA,
-                            MePDVImp,
-                            MePDVVigI,
-                            MePDVVenc
-                        )
-                        VALUES
-                        (
+                        IF NOT EXISTS (
+                                SELECT 1
+                                FROM PerDed_Empleado
+                                WHERE ClkDet = {Convert.ToInt32(row["ClkDet"])}
+                                  AND MePDTipo = '1'
+                                  AND MePDClave = '07'
+                                  AND MePDVParA = '00'
+                            )
+                            BEGIN
+                                INSERT INTO PerDed_Empleado
+                                (
+                                    ClkDet,
+                                    MePDTipo,
+                                    MePDClave,
+                                    MePDVParA,
+                                    MePDVImp,
+                                    MePDVVigI,
+                                    MePDVVenc
+                                )
+                                VALUES
+                                (
                             {Convert.ToInt32(row["ClkDet"])},
                             '{MePDTipo}',
                             '{row["MePDClave"]}',
@@ -247,7 +256,8 @@ namespace RecursosHumanos.Controllers {
                             {Monto},
                             '{row["MePDVVigI"]}',
                             '{row["MePDVVenc"]}'
-                        )";
+                        );
+                            END";
                     global.ConsultaGeneral(sql, BaseDatos);
                 }
                 
@@ -260,6 +270,8 @@ namespace RecursosHumanos.Controllers {
                 ;
 
                 DataTable EmpleadosSinMovimientos = global.ConsultaGeneral(sqlEmpleadosSinMovimientos, BaseDatos);
+
+                HashSet<string> empleadosProcesados = new();
 
                 foreach (DataRow rowEmpleadoSinMov in EmpleadosSinMovimientos.Rows) {
                     int numeroEmpleado = Convert.ToInt32(rowEmpleadoSinMov[0].ToString());
@@ -284,7 +296,47 @@ namespace RecursosHumanos.Controllers {
                             '000000', --MePDVVigI
                             '000000' --MePDVVenc
                         )";
-                    global.ConsultaGeneral(sql, BaseDatos);
+                    string sqlte = $@"
+                            IF NOT EXISTS (
+                                SELECT 1
+                                FROM PerDed_Empleado
+                                WHERE ClkDet = {Convert.ToInt32(rowEmpleadoSinMov["ClkDet"])}
+                                  AND MePDTipo = '1'
+                                  AND MePDClave = '07'
+                                  AND MePDVParA = '00'
+                            )
+                            BEGIN
+                                INSERT INTO PerDed_Empleado
+                                (
+                                    ClkDet,
+                                    MePDTipo,
+                                    MePDClave,
+                                    MePDVParA,
+                                    MePDVImp,
+                                    MePDVVigI,
+                                    MePDVVenc
+                                )
+                                VALUES
+                                (
+                                    {Convert.ToInt32(rowEmpleadoSinMov["ClkDet"])},
+                                    '1',
+                                    '07',
+                                    '00',
+                                    0.01,
+                                    '000000',
+                                    '000000'
+                                );
+                            END
+";
+                    int clkDet = Convert.ToInt32(rowEmpleadoSinMov["ClkDet"]);
+
+                    string clave = $"{clkDet}|1|07|00";
+
+                    // Evitar duplicados dentro del mismo DataTable
+                    if (!empleadosProcesados.Add(clave))
+                        continue;
+
+                    //global.ConsultaGeneral(sqlte, BaseDatos);
                 }
             }
 
