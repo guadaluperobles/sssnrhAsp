@@ -187,7 +187,7 @@ namespace RecursosHumanos.Controllers {
                 
                 foreach (DataRow row in dtPerDed_Empleado.Rows) {
                     Decimal Monto = Convert.ToDecimal(row["MePDVImp"]);
-                    if (Monto <= 0)
+                    if (Monto == 0)
                         continue;
 
                     string MePDTipo = "1";
@@ -391,12 +391,16 @@ namespace RecursosHumanos.Controllers {
                         AND PrPDTipo = '{MePDTipo}'
                         AND ClkDet = {procesado["ClkDet"]};" ;
 
-                if (Convert.ToSingle(procesado["MePDVImp"]) > 0) {
-                    string sqlInsertar = $"INSERT INTO PerDed_Producto (ClkPr, ClkDet, ClkSeqE, ClkSeq, PrPDTipo, PrPDClave, PrPDImporte, PrPDParA)" +
+                decimal importe = procesado.IsNull("MePDVImp") ? 0m : Convert.ToDecimal(procesado["MePDVImp"]);
+
+                if (importe == 0m)
+                    continue;
+
+                string sqlInsertar = $"INSERT INTO PerDed_Producto (ClkPr, ClkDet, ClkSeqE, ClkSeq, PrPDTipo, PrPDClave, PrPDImporte, PrPDParA)" +
                                      $"VALUES ('{Producto}', {procesado["ClkDet"]}, 1, {consecutivo},  {MePDTipo}, '{MePDClave}',{procesado["MePDVImp"]}, '00')";
 
                     global.ConsultaGeneral(sqlInsertar, BaseDatos);
-                }
+                
             }
 
             var modelView = new NominaViewModel {
