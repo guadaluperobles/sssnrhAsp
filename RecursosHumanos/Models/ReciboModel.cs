@@ -38,7 +38,8 @@ namespace RecursosHumanos.Model
         private string? _antiguedad;
         private string? _XML;
         private string? _NombreArchivo;
-        private string? _BaseDatos;
+        private string? _codigoPostal;
+        private string? _BaseDatos; 
         private byte[]   _CodigoQR;
         private List<DeduccionModel> _Deducciones;
         private List<Percepcion> _Percepciones;
@@ -72,6 +73,8 @@ namespace RecursosHumanos.Model
         public string qrVerificador { get { return _qrVerificador; } set { _qrVerificador = value; } }
         public string antiguedad { get { return _antiguedad; } set { _antiguedad = value; } }
         public string XML { get { return _XML; } set { _XML = value; } }
+        public string codigoPostal { get { return _codigoPostal; } set { _codigoPostal = value; } }
+        
         public string NombreArchivo { get { return _NombreArchivo; } set { _NombreArchivo = value; } }
         public string BaseDatos { get { return _BaseDatos; } set { _BaseDatos = value; } }
         public byte[] CodigoQR { get { return _CodigoQR; } set { _CodigoQR = value; } }

@@ -9,6 +9,9 @@ namespace RecursosHumanos.ViewModel {
         public DataTable Procesados { get; set; }
         public DataTable ProcesadosFaltantes { get; set; }
         public DataTable EmpleadosFaltantes { get; set; }
+        public DataTable BasesDatos { get; set; }
+        public DataTable Models { get; set; }
+        public DataRow Model { get; set; }
         public DataTable ProcesadosJson { get; set; } = new DataTable();
     }
 }

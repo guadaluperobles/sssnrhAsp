@@ -1,0 +1,29 @@
+﻿@model RecursosHumanos.ViewModel.NominaViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Actualiza campos ";
+}
+<div class="container">
+    <form asp-action="ActualizarCFDIEmpleado" asp-controller="Nomina" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-6 align-content-end">
+                <partial name="_SelectBasesDatos" model="Model.BasesDatos" />
+            </div>
+            <div class="col-6 align-content-end">
+                <button class="btn btn-primary">
+                    Actualizar
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="clearfix"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <partial name="_Tabla" model="Model.Models" />
+        </div>
+    </div>
+</div>

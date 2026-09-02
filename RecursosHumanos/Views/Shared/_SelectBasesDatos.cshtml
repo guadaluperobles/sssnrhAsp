@@ -1,0 +1,11 @@
+﻿@using System.Data
+@model System.Data.DataTable
+
+<label>Seleccione la base de datos</label>
+<select class="form-select" name="BaseDatosConsulta">
+    <option value="">Todas</option>
+    @foreach (DataRow item in Model.Rows)
+    {
+        <option value="@item["BaseDatos"]">@item["Descripcion"]</option>
+    }
+</select>
