@@ -293,13 +293,12 @@ namespace RecursosHumanos.Model {
             }
             return dataTable;
         }
-
-        public static List<CustomTableColumn> GenerarColumnas( DataTable tabla, Dictionary<string, (string Titulo, bool PK)> columnasVisibles) {
+        public static List<CustomTableColumn> GenerarColumnas(DataTable tabla, Dictionary<string, (string Titulo, bool PK)> columnasVisibles) {
             var columnas = tabla.Columns.Cast<DataColumn>().Select(c => new CustomTableColumn {
-                    Propiedad = c.ColumnName,
-                    Titulo = c.ColumnName,
-                    Visible = false
-                }).ToList();
+                Propiedad = c.ColumnName,
+                Titulo = c.ColumnName,
+                Visible = false
+            }).ToList();
 
             foreach (var columna in columnas) {
                 if (columnasVisibles.TryGetValue(columna.Propiedad, out var cfg)) {
@@ -310,6 +309,42 @@ namespace RecursosHumanos.Model {
             }
 
             return columnas;
+        }
+        public static BaseDatosIB BaseDatosToIB(string tabla) {
+            switch (tabla) {
+                case "IESYS_SYSNGFSON":
+                    return new BaseDatosIB {
+                        BaseDatosOrigen = "IESYS_SYSNGFSON",
+                        BaseDatosDestino = "SYSNGFSON_IB"
+                    };
+
+                case "CONTRATOS":
+                    return new BaseDatosIB {
+                        BaseDatosOrigen = "CONTRATOS",
+                        BaseDatosDestino = "CONTRATOS_IB"
+                    };
+
+                case "FORMALIZADOS":
+                    return new BaseDatosIB {
+                        BaseDatosOrigen = "FORMALIZADOS",
+                        BaseDatosDestino = "FORMALIZADOS_IB"
+                    };
+
+                case "IESYS_SYSNGFHOMO":
+                    return new BaseDatosIB {
+                        BaseDatosOrigen = "IESYS_SYSNGFHOMO",
+                        BaseDatosDestino = "HOMO_IB"
+                    };
+
+                case "IESYS_HONOFED":
+                    return new BaseDatosIB {
+                        BaseDatosOrigen = "IESYS_HONOFED",
+                        BaseDatosDestino = "HONOFED_IB"
+                    };
+
+                default:
+                    return null;
+            }
         }
     }
 }

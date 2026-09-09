@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
 using RecursosHumanos.Models;
 using System.Data;
-using Microsoft.AspNetCore.Mvc;
 using static System.Net.Mime.MediaTypeNames;
 using RecursosHumanos.Model;
 using RecursosHumanos.ViewModel;
@@ -12,7 +11,6 @@ using RecursosHumanos.ViewModel;
 namespace RecursosHumanos.Controllers {
     public class BuscadorController : Controller {
         private readonly ConeccionService _coneccionService;
-        private readonly IWebHostEnvironment _env;
 
         public BuscadorController(ConeccionService coneccionService) {
             _coneccionService = coneccionService;

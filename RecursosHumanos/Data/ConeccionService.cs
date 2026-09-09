@@ -34,11 +34,19 @@ namespace RecursosHumanos.Data {
             conexion.Open();
             DataTable dt = new DataTable();
 
-            
+
             SqlDataAdapter da = new SqlDataAdapter(consulta, conexion);
             da.Fill(dt);
             return dt;
         }
-        
+
     }
+    /**
+    Tablas
+    Intercalacion : Modern_Spanish_CI_AS
+
+    Formalizados_IB 
+    Intercalacion : Traditional_Spanish_CI_AS
+
+    */
 }

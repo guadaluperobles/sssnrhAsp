@@ -11,8 +11,17 @@
         </div>
         <div class="col-md-2">
             <div class="form-group">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" role="switch" id="activo" name="activo" checked >
+                <div class="switch-container">
+                    <input type="checkbox"
+                           class="switch-input"
+                           id="activo"
+                           name="activo"
+                           checked>
+
+                    <label class="switch-label" for="activo">
+                        <span class="switch-text activo-text">Activo</span>
+                        <span class="switch-text inactivo-text">Inactivo</span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -23,5 +32,11 @@
     document.getElementById("localizar")
         .addEventListener("change", function () {
             document.getElementById("frmBuscar").submit();
+        });
+
+        const checkbox = document.getElementById("activo"); 
+        const texto = document.getElementById("textoActivo"); 
+        checkbox.addEventListener("change", function () { 
+            texto.textContent = this.checked ? "Activo" : "Inactivo"; 
         });
 </script>

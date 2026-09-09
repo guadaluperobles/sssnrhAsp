@@ -269,12 +269,12 @@ public class ChequeController : Controller {
     }
     private async Task<IActionResult> GuardarExcel(DataTable re, int Ejercicio,int Quincena,int NumeroCheque) {
         try {
-            DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
+            DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true || r.Field<string>(4)?.Contains("PENSIONES IMSS-BIENESTAR", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
 
             foreach (DataRow row in filtrado.Rows) {
                 var identificador = row["Descripcion"]?.ToString()?.Trim().ToUpper();
-                if (identificador == "CHEQUE") {
-                    var nombreBeneficiario = $"{row["Nombre"].ToString()} {row["apPaterno"].ToString()} {row["apPaterno"].ToString()} ";
+                if (identificador == "CHEQUE" || identificador == "PENSIONES IMSS-BIENESTAR") {
+                    var nombreBeneficiario = $"{row["Nombre"].ToString()} {row["apPaterno"].ToString()} {row["apMaterno"].ToString()}";
                     var nombreEmpleado = $"{row["Nombre_1"].ToString()} {row["apPaterno_1"].ToString()} {row["apMaterno_1"].ToString()}";
                     var numeroEmpleado = Convert.ToInt32(row["NumEmp_1"].ToString());
 
@@ -289,10 +289,7 @@ public class ChequeController : Controller {
                         ClkDet = Convert.ToInt32(numeroEmpleado),
                         NombreEmpleado = nombreEmpleado,
                         NombreBeneficiario = nombreBeneficiario,
-                        RfcEmpleado = ultimoChequeEmpleado.RfcEmpleado,
-                        ClavePresupuestal = ultimoChequeEmpleado.ClavePresupuestal,
                         NumeroCheque = digito, //"ultimo cheque global"
-                        ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion,
                         Descripcion = "PA",
                         InicioPeriodo = Global.ObtenerFecha(df[3].ToString()),
                         FinPeriodo = Global.ObtenerFecha(df[4].ToString()),
@@ -307,6 +304,17 @@ public class ChequeController : Controller {
                         Quincena = Convert.ToInt32(df[0]),
                         TipoCheque = "PensionAlimenticia"
                     };
+
+                    if (ultimoChequeEmpleado != null) {
+                        cheque.RfcEmpleado = ultimoChequeEmpleado.RfcEmpleado;
+                        cheque.ClavePresupuestal = ultimoChequeEmpleado.ClavePresupuestal;
+                        cheque.ClaveUbicacion = ultimoChequeEmpleado.ClaveUbicacion;
+                    }
+                    else {
+                        cheque.RfcEmpleado = row["RFC"].ToString();
+                        cheque.ClavePresupuestal = row["CVEPPTAL"].ToString();
+                        cheque.ClaveUbicacion = row["depSAP"].ToString();
+                    }
 
                     await GuardarCheque(cheque);
                 }

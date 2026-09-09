@@ -60,8 +60,7 @@ namespace RecursosHumanos.Controllers {
             string ConsultaRfc = $"SELECT * FROM RespaldoCFDI {BaseDatosConsulta }";
             DataTable ResCFDIS = global.ConsultaGeneral(ConsultaRfc, "IESYST");
             foreach (var grupo in ResCFDIS.AsEnumerable().GroupBy(x => x["BaseDatos"].ToString())) {
-                string BaseDatos = grupo.Key;
-
+                string BaseDatos = grupo.Key ?? "";
                 string connectionString = _configuration.GetConnectionString(BaseDatos);
 
                 using (var conexion = new SqlConnection(connectionString)) {
@@ -87,7 +86,7 @@ namespace RecursosHumanos.Controllers {
                         string fechaTimbrado = partesTimbrado[0].Replace("-", "");
                         string horaTimbrado = partesTimbrado.Length > 1 ? partesTimbrado[1] : "";
 
-                        var recibo = CargarCFDI(PrXML, "12", "ui", "bd", "gh");
+                        var recibo = ReciboNominaController.CargarCFDI(PrXML, "12", "ui", "bd", "gh");
 
                         string sqlActualizaProductoDetalle = @"
                             UPDATE Producto_Detalle
@@ -159,9 +158,125 @@ namespace RecursosHumanos.Controllers {
             return View(modelView);
         }
 
-        // GET: NominaController1/Delete/5
-        public ActionResult Delete(int id) {
-            return View();
+        public ActionResult CodigoPostalEmpleado() {
+
+            Global global = new Global(_coneccionService);
+
+            string ConsultaRfc = $"SELECT * FROM RespaldoCFDI";
+            DataTable ResCFDIS = new DataTable();
+            DataTable BasesDatos = global.BasesDatosOperativas();
+
+            var modelView = new NominaViewModel {
+                BaseDatos = "",
+                Models = ResCFDIS,
+                BasesDatos = BasesDatos
+            };
+
+            return View(modelView);
+        }
+
+
+        [HttpPost]
+        public ActionResult CodigoPostalEmpleado(string BaseDatosConsulta = "") {
+            Global global = new Global(_coneccionService);
+            string baseDatos = BaseDatosConsulta;
+            var sql = @$"
+                SELECT
+                    r.MeRfc,
+                    eg.ClkDet,
+                    eg.MeSATCPost AS CP_Actual,
+                    '' as CP_XML,                   
+                    '' as NOMBRECOMPLETO_XML,
+                    r.PrXML
+                FROM RespaldoCFDI r
+                INNER JOIN [{baseDatos}].dbo.Empleado e ON e.MeRfc = r.MeRfc
+                INNER JOIN [{baseDatos}].dbo.Empleado_Generales eg ON eg.ClkDet = e.ClkDet
+                WHERE r.PrXML IS NOT NULL AND r.BaseDatos = '{baseDatos}' AND r.ClkPr = 'PRO20261500'
+            ";
+
+            DataTable EmpleadosCodigoPostal = global.ConsultaGeneral(sql, "IESYST");
+
+            foreach (DataRow row in EmpleadosCodigoPostal.Rows) {
+                string xml = row["PrXML"].ToString();
+                string codigoPostal = "";
+                if (!string.IsNullOrEmpty(xml)) {
+                    ReciboModel Recibo = ReciboNominaController.CargarCFDI(xml, "", "", "", "");
+                    row["CP_XML"] = Recibo.codigoPostal;
+                    row["NOMBRECOMPLETO_XML"] = Recibo.nombre;
+                }
+            }
+
+            foreach (DataRow row in EmpleadosCodigoPostal.Rows.Cast<DataRow>().ToList()) {
+                string cpXml = row["CP_XML"]?.ToString().Trim() ?? "";
+                string cpActual = row["CP_Actual"]?.ToString().Trim() ?? "";
+
+                if (cpXml == cpActual) {
+                    row.Delete();
+                }
+            }
+
+            EmpleadosCodigoPostal.AcceptChanges();
+
+            string sqlActualizaEmpleado = @"
+                            UPDATE EMPG
+                            SET
+                                EMPG.MeSATCPost = @MeSATPost,
+                                EMPG.MeSATNomEmp = @MeSATNomEmp
+                            FROM Empleado_Generales AS EMPG
+                            INNER JOIN Empleado AS EMP
+                                ON EMP.ClkDet = EMPG.ClkDet
+                            WHERE EMP.ClkDet = @ClkDet ;
+                        ";
+
+            string connectionString = _configuration.GetConnectionString(baseDatos);
+            string Clkdets = "";
+
+            using (var conexion = new SqlConnection(connectionString)) {
+                conexion.Open();
+
+                foreach (DataRow EmpleadoCodigoPostal in EmpleadosCodigoPostal.Rows) {
+                    using (var cmd = new SqlCommand(sqlActualizaEmpleado, conexion)) {
+                        cmd.Parameters.AddWithValue("@MeSATPost", EmpleadoCodigoPostal["CP_XML"] ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@MeSATNomEmp", EmpleadoCodigoPostal["NOMBRECOMPLETO_XML"] ?? (object)DBNull.Value);
+                        cmd.Parameters.AddWithValue("@ClkDet", EmpleadoCodigoPostal["ClkDet"]);
+                        Clkdets += EmpleadoCodigoPostal["ClkDet"] + ",";
+                        try {
+                            cmd.ExecuteNonQuery();
+                        }
+                        catch (Exception ex) {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                }
+            }
+            DataTable BasesDatos = global.BasesDatosOperativas();
+            
+            if (Clkdets != "") {
+                var sqlEmpleadoCambiado = @$"SELECT   ClkDet, MeNoSegS, MeCurp, MeSATCPost, MeSATNomEmp, MeSATRegimen
+                FROM Empleado_Generales WHERE ClkDet IN ({Clkdets.TrimEnd(',')})";
+
+
+                DataTable EmpleadosCodigoPostalCambiados = global.ConsultaGeneral(sqlEmpleadoCambiado, baseDatos);
+
+                DataTable ResCFDIS = new DataTable();
+
+                var modelView = new NominaViewModel {
+                    BaseDatos = BaseDatosConsulta,
+                    Quincena = 15,
+                    BasesDatos = BasesDatos,
+                    Models = EmpleadosCodigoPostalCambiados
+                };
+                return View(modelView);
+            }
+            else {
+                var modelView = new NominaViewModel {
+                    BaseDatos = BaseDatosConsulta,
+                    Quincena = 15,
+                    BasesDatos = BasesDatos,
+                    Models = EmpleadosCodigoPostal
+                };
+                return View(modelView);
+            }
         }
 
         // POST: NominaController1/Delete/5
@@ -442,398 +557,6 @@ namespace RecursosHumanos.Controllers {
             };
             // Ya puedes trabajar con el DataTable
             return View("PerDedEmpleado", modelView);
-        }
-        public ReciboModel CargarCFDI(string vXml, string vQuincena, string vNombreArchivo, string clavePago, string nombreBaseDatos) {
-            string myXML = vXml;
-
-            XmlDocument xmlDoc = new XmlDocument();
-            Global global = new Global(_coneccionService);
-
-            int c;
-
-            xmlDoc.Load(new System.IO.StringReader(myXML));
-            ReciboModel reciboNomina = new ReciboModel();
-
-            reciboNomina.XML = myXML;
-            reciboNomina.BaseDatos = nombreBaseDatos;
-            reciboNomina.NombreArchivo = vNombreArchivo;
-
-            foreach (XmlAttribute atributo in xmlDoc.DocumentElement.Attributes) {
-                switch (atributo.Name) {
-                    case "fecha":
-                    case "Fecha":
-                        reciboNomina.noComprobante = atributo.Value.Substring(0, 4) + "-" + xmlDoc.DocumentElement.GetAttribute("Folio");
-
-                        reciboNomina.fechaEmision = atributo.Value.Replace("T", " ");
-                        break;
-
-                    case "descuento":
-                    case "Descuento":
-                        reciboNomina.totalDeducciones = Convert.ToDecimal(atributo.Value).ToString("N2");
-                        break;
-
-                    case "total":
-                    case "Total":
-                        reciboNomina.total = atributo.Value;
-                        break;
-                }
-            }
-
-            reciboNomina.totalPagar = Convert.ToDecimal(reciboNomina.total).ToString("N2");
-            //importeLetras = "Cinco pesos"; ////Letras(total);
-
-            for (c = 0; c < xmlDoc.DocumentElement.ChildNodes.Count; c++) {
-                if (xmlDoc.DocumentElement.ChildNodes[c].Name == "cfdi:Complemento") {
-                    for (int i = 0; i < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes.Count; i++) {
-                        switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Name) {
-                            case "nomina:Nomina":
-                                for (int j = 0; j < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes.Count; j++) {
-                                    decimal totalGravado = Convert.ToDecimal(xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].Attributes["TotalGravado"].Value);
-                                    decimal totalExento = Convert.ToDecimal(xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].Attributes["TotalExento"].Value);
-                                    reciboNomina.totalDeducciones = (totalGravado + totalExento).ToString("N2");
-                                }
-
-                                break;
-                        }
-                    }
-                }
-            }
-
-            reciboNomina.quincena = vQuincena;
-            for (c = 0; c < xmlDoc.DocumentElement.ChildNodes.Count; c++) {
-                switch (xmlDoc.DocumentElement.ChildNodes[c].Name) {
-                    case "cfdi:Conceptos":
-
-                        for (int i = 0; i < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes.Count; i++) {
-                            switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes[i].Name) {
-                                case "ValorUnitario":
-                                    reciboNomina.totalPercepciones = Convert.ToDecimal(xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes["ValorUnitario"].Value).ToString("N2");
-                                    break;
-
-                                case "valorUnitario":
-                                    reciboNomina.totalPercepciones = Convert.ToDecimal(xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes["valorUnitario"].Value).ToString("N2");
-                                    break;
-                            }
-                        }
-
-                        break;
-
-                    case "cfdi:Complemento":
-
-                        reciboNomina.fechaDePago = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes["FechaPago"].Value;
-                        reciboNomina.periodoDePago = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes["FechaInicialPago"].Value + " AL " + xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes["FechaFinalPago"].Value;
-
-                        for (int i = 0; i < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes.Count; i++) {
-                            switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Name) {
-                                case "nomina12:Nomina":
-                                    for (int x = 0; x < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes.Count; x++) {
-                                        if (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes[x].Name == "NumSeguridadSocial") {
-                                            string SeguridadSocial = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["NumSeguridadSocial"].Value;
-                                            reciboNomina.noSeguridadSocial = SeguridadSocial != "" ? SeguridadSocial : "0000000000";
-                                        }
-                                    }
-
-                                    for (int x = 0; x < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes.Count; x++) {
-                                        if (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes[x].Name == "Departamento") {
-                                            reciboNomina.centroDeTrabajo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Departamento"].Value;
-                                        }
-                                    }
-                                    var atributo = xmlDoc.DocumentElement
-                                        .ChildNodes[c]
-                                        .ChildNodes[i]
-                                        .ChildNodes[1]
-                                        .Attributes["Antigüedad"];
-
-                                    reciboNomina.antiguedad = atributo != null
-                                        ? obtenerAntiguedad(atributo.Value)
-                                        : ""; reciboNomina.CURP = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Curp"].Value;
-                                    reciboNomina.noEmpleado = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["NumEmpleado"].Value;
-                                    reciboNomina.puesto = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[1].Attributes["Puesto"].Value;
-
-                                    break;
-
-                                case "nomina:Nomina":
-
-                                    reciboNomina.noSeguridadSocial = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["NumSeguridadSocial"].Value;
-                                    reciboNomina.antiguedad = obtenerAntiguedad(xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["Antiguedad"].Value);
-                                    reciboNomina.CURP = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["CURP"].Value;
-                                    reciboNomina.noEmpleado = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["NumEmpleado"].Value;
-                                    reciboNomina.puesto = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["Puesto"].Value;
-                                    reciboNomina.centroDeTrabajo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["Departamento"].Value;
-
-                                    break;
-
-                                case "tfd:TimbreFiscalDigital":
-
-                                    reciboNomina.folioFiscal = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["UUID"].Value;
-                                    reciboNomina.fechaHoraCertificacion = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["FechaTimbrado"].Value;
-
-                                    for (int j = 0; j < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes.Count; j++) {
-                                        switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes[j].Name) {
-                                            case "Version":
-                                                reciboNomina.version = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["Version"].Value;
-                                                break;
-
-                                            case "version":
-                                                reciboNomina.version = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["version"].Value;
-                                                break;
-
-                                            case "RfcProvCertif":
-                                                reciboNomina.rfcProveedor = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["RfcProvCertif"].Value;
-                                                break;
-
-                                            case "SelloCFD":
-                                                reciboNomina.cadenaOriginalSAT = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["SelloCFD"].Value;
-                                                break;
-
-                                            case "selloCFD":
-                                                reciboNomina.cadenaOriginalSAT = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["selloCFD"].Value;
-                                                break;
-
-                                            case "SelloSAT":
-                                                reciboNomina.selloDigitalSAT = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["SelloSAT"].Value;
-                                                break;
-
-                                            case "selloSAT":
-                                                reciboNomina.selloDigitalSAT = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["selloSAT"].Value;
-                                                break;
-
-                                            case "NoCertificadoSAT":
-                                                reciboNomina.certificadoSAT = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["NoCertificadoSAT"].Value;
-                                                break;
-
-                                            case "noCertificadoSAT":
-                                                reciboNomina.certificadoSAT = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Attributes["noCertificadoSAT"].Value;
-                                                break;
-                                        }
-                                    }
-
-                                    break;
-                            }
-                        }
-
-                        break;
-
-                    case "cfdi:Emisor":
-
-                        switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes.Count) {
-                            case 0:
-                                reciboNomina.regimenFiscal = xmlDoc.DocumentElement.ChildNodes[c].Attributes["RegimenFiscal"].Value;
-                                break;
-
-                            case 1:
-                                reciboNomina.regimenFiscal = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[0].Attributes["Regimen"].Value;
-                                break;
-
-                            case 2:
-                                reciboNomina.regimenFiscal = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[1].Attributes["Regimen"].Value;
-                                break;
-                        }
-
-                        break;
-
-                    case "cfdi:Receptor":
-
-                        for (int i = 0;
-                             i < xmlDoc.DocumentElement.ChildNodes[c].Attributes.Count;
-                             i++) {
-                            switch (xmlDoc.DocumentElement.ChildNodes[c].Attributes[i].Name) {
-                                case "Nombre":
-                                    reciboNomina.nombre = xmlDoc.DocumentElement.ChildNodes[c].Attributes["Nombre"].Value;
-                                    break;
-
-                                case "Rfc":
-                                    reciboNomina.rfc = xmlDoc.DocumentElement.ChildNodes[c].Attributes["Rfc"].Value;
-                                    break;
-
-                                case "DomicilioFiscalReceptor":
-                                    reciboNomina.codigoPostal = xmlDoc.DocumentElement.ChildNodes[c].Attributes["DomicilioFiscalReceptor"].Value;
-                                    break;
-
-                                case "nombre":
-                                    reciboNomina.nombre = xmlDoc.DocumentElement.ChildNodes[c].Attributes["nombre"].Value;
-                                    break;
-
-                                case "rfc":
-                                    reciboNomina.rfc = xmlDoc.DocumentElement.ChildNodes[c].Attributes["rfc"].Value;
-                                    break;
-                            }
-                        }
-
-                        break;
-                }
-            }
-
-            reciboNomina.selloDigitalCFDI = "||"
-                + reciboNomina.version + "|"
-                + reciboNomina.folioFiscal + "|"
-                + reciboNomina.fechaHoraCertificacion + "|"
-                + reciboNomina.rfcProveedor + "|"
-                + reciboNomina.cadenaOriginalSAT + "|"
-                + reciboNomina.certificadoSAT + "||";
-
-            string total = reciboNomina.total ?? "0.00";
-            string totalSAT = new string('0', 18 - total.Substring(0, total.Length - 3).Length) + total + "0000";
-            string fe = reciboNomina.cadenaOriginalSAT.Substring(reciboNomina.cadenaOriginalSAT.Length - 8);
-
-            reciboNomina.qrVerificador =
-                "https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?&id="
-                + reciboNomina.folioFiscal
-                + "&re=SSS970311993"
-                + "&rr=" + reciboNomina.rfc
-                + "&tt=" + totalSAT
-                + "&fe=" + fe;
-
-            //ArchivoController archivo = new ArchivoController();
-            string NombreArchivo = vNombreArchivo + "_" + reciboNomina.rfc + "_" + reciboNomina.nombre;
-            reciboNomina.CodigoQR = ArchivoController.GenerarQR(reciboNomina.qrVerificador);
-            reciboNomina.importeLetras = Global.Letras(reciboNomina.totalPagar);
-
-            string Clave = "";
-            string Concepto = "";
-            string TextImporte = "";
-
-            List<ConceptosModel> conceptos = new List<ConceptosModel>();
-            List<Percepcion> Percepciones = new List<Percepcion>();
-            List<DeduccionModel> Deducciones = new List<DeduccionModel>();
-
-            for (c = 0; c < xmlDoc.DocumentElement.ChildNodes.Count; c++) {
-                if (xmlDoc.DocumentElement.ChildNodes[c].Name == "cfdi:Complemento") {
-                    for (int i = 0; i < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes.Count; i++) {
-                        switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].Name) {
-                            case "nomina12:Nomina":
-                                for (int j = 0; j < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes.Count; j++) {
-                                    switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].Name) {
-                                        case "nomina12:Percepciones":
-                                            for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
-                                                XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
-                                                Clave = nodo.Attributes["Clave"].Value;
-                                                Concepto = nodo.Attributes["Concepto"].Value;
-                                                decimal importe = Convert.ToDecimal(nodo.Attributes["ImporteGravado"].Value) + Convert.ToDecimal(nodo.Attributes["ImporteExento"].Value);
-                                                TextImporte = importe.ToString("N2");
-                                                Percepciones.Add(new Percepcion {
-                                                    Clave = Clave,
-                                                    Concepto = Concepto,
-                                                    TextImporte = TextImporte,
-                                                    Importe = importe
-                                                });
-                                            }
-
-                                            break;
-
-                                        case "nomina12:Deducciones":
-
-                                            for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
-                                                XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
-                                                Clave = nodo.Attributes["Clave"].Value;
-                                                Concepto = nodo.Attributes["Concepto"].Value;
-                                                Decimal importe = Convert.ToDecimal(nodo.Attributes["Importe"].Value);
-                                                TextImporte = importe.ToString("N2");
-                                                Deducciones.Add(new DeduccionModel {
-                                                    Clave = Clave,
-                                                    Concepto = Concepto,
-                                                    TextImporte = TextImporte,
-                                                    Importe = importe
-                                                });
-                                            }
-
-                                            break;
-
-                                        case "nomina12:OtrosPagos":
-
-                                            for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
-                                                XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
-
-                                                Clave = nodo.Attributes["Clave"].Value;
-                                                Concepto = nodo.Attributes["Concepto"].Value;
-                                                Decimal importe = Convert.ToDecimal(nodo.Attributes["Importe"].Value);
-                                                TextImporte = importe.ToString("N2");
-
-                                                Percepciones.Add(new Percepcion {
-                                                    Clave = Clave,
-                                                    Concepto = Concepto,
-                                                    TextImporte = TextImporte,
-                                                    Importe = importe
-                                                });
-                                            }
-                                            break;
-                                    }
-                                }
-                                break;
-
-                            case "nomina:Nomina":
-                                for (int j = 0; j < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes.Count; j++) {
-                                    switch (xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].Name) {
-                                        case "nomina:Percepciones":
-                                            for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
-                                                XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
-
-                                                Clave = nodo.Attributes["Clave"].Value;
-                                                Concepto = nodo.Attributes["Concepto"].Value;
-                                                decimal importe = Convert.ToDecimal(nodo.Attributes["ImporteGravado"].Value) + Convert.ToDecimal(nodo.Attributes["ImporteExento"].Value);
-
-                                                TextImporte = importe.ToString("N2");
-
-                                                Percepciones.Add(new Percepcion {
-                                                    Clave = Clave,
-                                                    Concepto = Concepto,
-                                                    TextImporte = TextImporte,
-                                                    Importe = importe
-                                                });
-                                            }
-
-                                            break;
-
-                                        case "nomina:Deducciones":
-
-                                            for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
-                                                XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
-
-                                                Clave = nodo.Attributes["Clave"].Value;
-                                                Concepto = nodo.Attributes["Concepto"].Value;
-                                                decimal importe = Convert.ToDecimal(nodo.Attributes["ImporteGravado"].Value) + Convert.ToDecimal(nodo.Attributes["ImporteExento"].Value);
-
-                                                TextImporte = importe.ToString("N2");
-
-                                                Deducciones.Add(new DeduccionModel {
-                                                    Clave = Clave,
-                                                    Concepto = Concepto,
-                                                    TextImporte = TextImporte,
-                                                    Importe = importe
-                                                });
-                                            }
-
-                                            break;
-
-                                        case "nomina:OtrosPagos":
-                                            for (int k = 0; k < xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes.Count; k++) {
-                                                XmlNode nodo = xmlDoc.DocumentElement.ChildNodes[c].ChildNodes[i].ChildNodes[j].ChildNodes[k];
-
-                                                Clave = nodo.Attributes["Clave"].Value;
-                                                Concepto = nodo.Attributes["Concepto"].Value;
-                                                decimal importe = Convert.ToDecimal(nodo.Attributes["ImporteGravado"].Value) + Convert.ToDecimal(nodo.Attributes["ImporteExento"].Value);
-                                                TextImporte = importe.ToString("N2");
-
-                                                Percepciones.Add(new Percepcion {
-                                                    Clave = Clave,
-                                                    Concepto = Concepto,
-                                                    TextImporte = TextImporte,
-                                                    Importe = importe
-                                                });
-                                            }
-
-                                            break;
-                                    }
-                                }
-
-                                break;
-                        }
-                    }
-                }
-            }
-            reciboNomina.Deducciones = Deducciones;
-            reciboNomina.Percepciones = Percepciones;
-            return reciboNomina;
         }
         public string obtenerAntiguedad(string antiguedad) {
 

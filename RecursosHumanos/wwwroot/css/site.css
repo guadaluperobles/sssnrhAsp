@@ -131,3 +131,69 @@ main {
 .container-rows {
     font-size: clamp(12px, 1vw, 16px) !important;
 }
+
+.switch-container {
+    display: inline-block;
+}
+
+.switch-input {
+    display: none;
+}
+
+.switch-label {
+    width: 95px;
+    height: 25px;
+    border-radius: 20px;
+    background: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    transition: .3s;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+    .switch-label::before {
+        content: "";
+        position: absolute;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: white;
+        left: 2px;
+        transition: .3s;
+    }
+
+.switch-text {
+    position: absolute;
+    z-index: 1;
+}
+
+.activo-text {
+    display: none;
+}
+
+.inactivo-text {
+    display: block;
+    margin-left: 25px;
+}
+
+.switch-input:checked + .switch-label {
+    background: #198754;
+}
+
+    .switch-input:checked + .switch-label::before {
+        transform: translateX(68px);
+    }
+
+    .switch-input:checked + .switch-label .activo-text {
+        display: block;
+        margin-right: 25px;
+    }
+
+    .switch-input:checked + .switch-label .inactivo-text {
+        display: none;
+    }

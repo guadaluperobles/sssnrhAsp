@@ -31,7 +31,8 @@ namespace RecursosHumanos.Model
         private string? _selloDigitalSAT;
         private string? _certificadoSAT;
         private string? _selloDigitalCFDI;
-        private string? _version;
+        private string? _version; 
+        private string? _ClavePago;
         private string? _rfcProveedor;
         private string? _fechaHoraCertificacion;
         private string? _qrVerificador;
@@ -74,7 +75,7 @@ namespace RecursosHumanos.Model
         public string antiguedad { get { return _antiguedad; } set { _antiguedad = value; } }
         public string XML { get { return _XML; } set { _XML = value; } }
         public string codigoPostal { get { return _codigoPostal; } set { _codigoPostal = value; } }
-        
+        public string ClavePago { get { return _ClavePago; } set { _ClavePago = value; } }
         public string NombreArchivo { get { return _NombreArchivo; } set { _NombreArchivo = value; } }
         public string BaseDatos { get { return _BaseDatos; } set { _BaseDatos = value; } }
         public byte[] CodigoQR { get { return _CodigoQR; } set { _CodigoQR = value; } }

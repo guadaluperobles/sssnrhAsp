@@ -1,11 +1,25 @@
 ﻿@using System.Data
-@model System.Data.DataTable
+@using RecursosHumanos.Data
+@using RecursosHumanos.Model
+@inject ConeccionService _coneccionService
 
-<label>Seleccione la base de datos</label>
-<select class="form-select" name="BaseDatosConsulta">
+@{
+    Global global = new Global(_coneccionService);
+    DataTable BasesDatos = global.BasesDatosOperativas();
+
+    string baseDatosSeleccionada = ViewBag.BaseDatosConsulta?.ToString() ?? "";
+}
+
+
+<label for="BaseDatosConsulta">Seleccione la base de datos</label>
+
+<select class="form-control" id="BaseDatosConsulta" name="BaseDatosConsulta">
     <option value="">Todas</option>
-    @foreach (DataRow item in Model.Rows)
+
+    @foreach (DataRow item in BasesDatos.Rows)
     {
-        <option value="@item["BaseDatos"]">@item["Descripcion"]</option>
+        <option value="@item["BaseDatos"]" selected="@(ViewBag.BaseDatosConsulta?.ToString() == item["BaseDatos"].ToString())">
+            @item["Descripcion"]
+        </option>
     }
 </select>
