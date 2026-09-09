@@ -11,6 +11,7 @@ using RecursosHumanos.ViewModel;
 namespace RecursosHumanos.Controllers {
     public class BuscadorController : Controller {
         private readonly ConeccionService _coneccionService;
+        private readonly IWebHostEnvironment _env;
 
         public BuscadorController(ConeccionService coneccionService) {
             _coneccionService = coneccionService;
@@ -26,14 +27,15 @@ namespace RecursosHumanos.Controllers {
             return View(model);
         }
         [HttpPost]
-        public IActionResult Index(string localizar, bool? activo) {
+        public IActionResult Index(string localizar, string activo) {
             Global global = new Global(_coneccionService);
             string texto = (localizar ?? "").Replace(" ", "");
-            bool valorActivo = activo ?? false;
+             bool valorActivo = activo == "on";
             string buscarActivo = valorActivo ? " AND RIGHT(CAST(MeIndMe AS VARCHAR(2)), 1) = '0'" : "";
             string consulta = $"{ConsultasModel.BuscarEmpleado} LIKE '%{texto}%' {buscarActivo}";
             DataTable Empleados = global.ConsultaGeneral(consulta);
 
+            
             var modelo = new CustomTable {
                 Datos = Empleados.Rows.Cast<DataRow>(),
                 Columnas = Global.GenerarColumnas(

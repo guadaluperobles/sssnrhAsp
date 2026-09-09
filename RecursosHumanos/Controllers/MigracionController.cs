@@ -42,35 +42,37 @@ namespace RecursosHumanos.Controllers {
             string resultado = "";
 
             resultado += crearMigracion(numeroOrigen, numeroDestino, bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaEmpleado(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaEmpleado_Terceros(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaEscolares(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaEstacionamiento(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaExperiencia_Lab(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaFamiliares(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaAcumuladoA_DIMM(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaFUMP(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaProducto_Detalle(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaPlantilla_Detalle(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaPerDed_Producto(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaAcumulado_Anual(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaMovimiento_Nomina(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaPerDed_AcumuladoAnual(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaPerDed_Empleado(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaPension_Alimenticia(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaSarFovissste_Extraord(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaPerDedExt_Empleado(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaEmpleado_Generales(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += moverTablaHistorico_Movimiento(bd.BaseDatosOrigen, bd.BaseDatosDestino);
-            resultado += CambiarEstatus(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+            if (!string.IsNullOrEmpty(resultado) && !resultado.Contains("ERROR:")) {
+                resultado += moverTablaEmpleado(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaEmpleado_Terceros(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaEscolares(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaEstacionamiento(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaExperiencia_Lab(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaFamiliares(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaAcumuladoA_DIMM(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaFUMP(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaProducto_Detalle(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaPlantilla_Detalle(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaPerDed_Producto(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaAcumulado_Anual(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaMovimiento_Nomina(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaPerDed_AcumuladoAnual(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaPerDed_Empleado(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaPension_Alimenticia(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaSarFovissste_Extraord(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaPerDedExt_Empleado(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaEmpleado_Generales(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += moverTablaHistorico_Movimiento(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+                resultado += CambiarEstatus(bd.BaseDatosOrigen, bd.BaseDatosDestino);
+            }
 
             return View("Index", resultado);
         }
         private string crearMigracion(int NumeroOrigen, int NumeroDestino, string BaseDatosOrigen, string BaseDatosDestino) {
             DateTime fecha = DateTime.Now;
-            string query = @$"INSERT INTO {BaseDatosDestino}.dbo._MigracionControl (ClkDetOrigen, BDOrigen, ClkDetDestino, FechaMigracion, Estatus)
+            string query = @$"INSERT INTO {BaseDatosDestino}.dbo._MigracionControl (ClkDetOrigen, BDOrigen, ClkDetDestino, FechaMigracion)
                 VALUES({NumeroOrigen}, '{BaseDatosOrigen}', {NumeroDestino}, {fecha.ToString("ddMMyyyy")})";
-            string Mensaje = $"Migración creada correctamente Base de datos {BaseDatosOrigen} con ({NumeroOrigen}) a {BaseDatosDestino} con ({NumeroDestino})";
+            string Mensaje = $"<strong> Base de datos {BaseDatosOrigen} con ({NumeroOrigen}) a {BaseDatosDestino} con ({NumeroDestino}) </strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaEmpleado(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -87,7 +89,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Empleado {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Empleado {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaEmpleado_Terceros(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -99,7 +101,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet  AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Empleado_Terceros {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Empleado_Terceros {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaEscolares(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -112,7 +114,7 @@ namespace RecursosHumanos.Controllers {
         
             ";
 
-            string Mensaje = $"Migración creada correctamente Escolares {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Escolares {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaEstacionamiento(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -123,7 +125,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
   
             ";
-            string Mensaje = $"Migración creada correctamente Estacionamiento {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Estacionamiento {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaExperiencia_Lab(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -134,7 +136,7 @@ namespace RecursosHumanos.Controllers {
                     FROM {BaseDatosOrigen}.dbo.Experiencia_Lab e
                     INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
-            string Mensaje = $"Migración creada correctamente Experiencia_Lab {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Experiencia_Lab {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaFamiliares(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -146,7 +148,7 @@ namespace RecursosHumanos.Controllers {
                     INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet  AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Familiares {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Familiares {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaAcumuladoA_DIMM(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -156,7 +158,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente AcumuladoA_DIMM {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>AcumuladoA_DIMM {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaFUMP(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -173,7 +175,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet  AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente FUMP {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>FUMP {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaProducto_Detalle(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -189,7 +191,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Producto_Detalle {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Producto_Detalle {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaPlantilla_Detalle(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -203,7 +205,7 @@ namespace RecursosHumanos.Controllers {
                 JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetDestino = e.ClkDet    AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Plantilla_Detalle {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Plantilla_Detalle {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaPerDed_Producto(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -214,7 +216,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND  mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente PerDed_Producto {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>PerDed_Producto {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaAcumulado_Anual(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -229,7 +231,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Acumulado_Anual {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Acumulado_Anual {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaMovimiento_Nomina(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -251,7 +253,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Movimiento_Nomina {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Movimiento_Nomina {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaPerDed_AcumuladoAnual(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -262,7 +264,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente PerDed_AcumuladoAnual {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>PerDed_AcumuladoAnual {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaPerDed_Empleado(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -273,7 +275,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc  ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente PerDed_Empleado {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>PerDed_Empleado {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaPension_Alimenticia(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -286,7 +288,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Pension_Alimenticia {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Pension_Alimenticia {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaSarFovissste_Extraord(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -298,7 +300,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente SarFovissste_Extraord {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>SarFovissste_Extraord {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaPerDedExt_Empleado(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -309,7 +311,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente PerDedExt_Empleado {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>PerDedExt_Empleado {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaEmpleado_Generales(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -327,7 +329,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Empleado_Generales {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Empleado_Generales {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string moverTablaHistorico_Movimiento(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -343,7 +345,7 @@ namespace RecursosHumanos.Controllers {
                 INNER JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetOrigen = e.ClkDet  AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
-            string Mensaje = $"Migración creada correctamente Historico_Movimiento {BaseDatosOrigen} a {BaseDatosDestino}";
+            string Mensaje = $"<strong>Historico_Movimiento {BaseDatosOrigen} a {BaseDatosDestino}</strong>";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
         private string CambiarEstatus(string BaseDatosOrigen, string BaseDatosDestino) {
@@ -352,7 +354,7 @@ namespace RecursosHumanos.Controllers {
                 WHERE Estatus = 'PENDIENTE'
             ";
 
-            string Mensaje = $"Migración creada correctamente  {BaseDatosDestino}";
+            string Mensaje = $"Migración creada correctamente {BaseDatosDestino}";
             return Consulta(query, BaseDatosDestino, Mensaje);
         }
 
@@ -360,10 +362,10 @@ namespace RecursosHumanos.Controllers {
             try {
                 Global global = new Global(_coneccionService);
                 global.ConsultaGeneral(query, bd);
-                return $"OK: {mensaje}\n";
+                return $"OK: Migración creada correctamente {mensaje} <br/>";
             }
             catch (Exception ex) {
-                return $"ERROR: {mensaje}\n{ex.Message}";
+                return $"ERROR: al {mensaje}<hr/>{ex.Message}<hr/> <br/>";
             }
         }
     }
