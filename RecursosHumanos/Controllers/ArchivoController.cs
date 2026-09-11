@@ -130,24 +130,25 @@ namespace RecursosHumanos.Controllers {
 
             return Ok();
         }
-        private async Task LeerTxt(IFormFile archivo) {
+        public static async Task<string[]> LeerTxt(IFormFile archivo) {
+            var plazasVacantes = new List<string>();
+
             using var reader = new StreamReader(archivo.OpenReadStream());
 
             while (!reader.EndOfStream) {
                 string? linea = await reader.ReadLineAsync();
 
                 if (!string.IsNullOrWhiteSpace(linea)) {
-                    Console.WriteLine(linea);
+                    plazasVacantes.Add(linea);
                 }
             }
+
+            return plazasVacantes.ToArray();
         }
         private async Task LeerExcel(IFormFile archivo) {
             using var stream = archivo.OpenReadStream();
-
             using var reader = ExcelReaderFactory.CreateReader(stream);
-
             var ds = reader.AsDataSet();
-
             DataTable tabla = ds.Tables[0];
 
             foreach (DataRow fila in tabla.Rows) {
@@ -199,29 +200,20 @@ namespace RecursosHumanos.Controllers {
 
             return dt;
         }
-        /*public static FileContentResult ExportarExcel(DataTable dt,string nombreArchivo) {
-            using var workbook = new XLWorkbook();
-            using var stream = new MemoryStream();
-
-            var fecha = DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss");
-            workbook.Worksheets.Add(dt, "Datos");
-            workbook.SaveAs(stream);
-
-            return new FileContentResult(
-                stream.ToArray(),
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-                FileDownloadName = $"{fecha} {nombreArchivo}.xlsx"
-            };
-        }*/
 
         public static FileContentResult ExportarExcel( Dictionary<string, DataTable> tablas,string nombreArchivo) {
             using var workbook = new XLWorkbook();
 
             foreach (var tabla in tablas) {
-                workbook.Worksheets.Add(
-                    tabla.Value,
-                    tabla.Key
-                );
+                var worksheet = workbook.Worksheets.Add(tabla.Value, tabla.Key);
+                var rango = worksheet.RangeUsed();
+
+                if (rango != null) {
+                    rango.Style.Fill.PatternType = XLFillPatternValues.None;
+                    rango.Style.Font.FontColor = XLColor.Black;
+                    rango.Style.Border.OutsideBorder = XLBorderStyleValues.None;
+                    rango.Style.Border.InsideBorder = XLBorderStyleValues.None;
+                }
             }
 
             using var stream = new MemoryStream();

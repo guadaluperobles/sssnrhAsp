@@ -1,0 +1,15 @@
+﻿@using System.Data
+@using RecursosHumanos.Data
+@using RecursosHumanos.Model
+@inject ConeccionService _coneccionService
+
+<label for="Quincena">Quincena;</label>
+<select class="form-control" id="Quincena" name="Quincena">
+    <option value="">Seleccione la Quincena</option>
+    @for (int i = 1; i <= 24; i++)
+    {
+        <option value="@i" selected="@(ViewBag.Quincena?.ToString() == i.ToString())">
+            @i.ToString("D2")
+        </option>
+    }
+</select>

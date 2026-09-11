@@ -28,6 +28,16 @@
         modulos.Add(
         new MenuItem
         {
+            Vista = "Empleados",
+            Controlador = "Empleado",
+            SubModulos = new List<MenuItem>
+            {
+                new MenuItem    {   Vista = "Layout SERICA",                                                    Controlador = "Empleado",    Accion = "LayoutSERICA"  },
+            }
+        });
+        modulos.Add(
+        new MenuItem
+        {
             Vista = "Nomina",
             Controlador = "Nomina",
             SubModulos = new List<MenuItem>
@@ -39,7 +49,9 @@
                 new MenuItem    {   Vista = "Subir PerDed_Empleado",                                            Controlador = "Nomina",    Accion = "PerDedEmpleado"  },
                 new MenuItem    {   Vista = "Borrar Contenido de base de datos",                                Controlador = "Nomina",    Accion = "PrimerPaso"  },
             }
-        }); modulos.Add(
+        });
+        
+        modulos.Add(
         new MenuItem
         {
             Vista = "Reportes Nomina",
@@ -70,9 +82,9 @@
             Controlador = "Transparencia",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Plazas Vacantes",                                                   Controlador = "TransparenciaIX" },
-                new MenuItem    {   Vista = "Remuneraciones Brutas y Netas",                                     Controlador = "TransparenciaVII"},
-                new MenuItem    {   Vista = "Personas Jubiladas y Pensionadas",                                  Controlador = "TransparenciaXL"}
+                new MenuItem    {   Vista = "Plazas Vacantes",                                                   Controlador = "Transparencia",    Accion = "TransparenciaIX" },
+                new MenuItem    {   Vista = "Remuneraciones Brutas y Netas",                                     Controlador = "Transparencia",    Accion = "TransparenciaVII"},
+                new MenuItem    {   Vista = "Personas Jubiladas y Pensionadas",                                  Controlador = "Transparencia",    Accion = "TransparenciaXL"}
             }
         });
 

@@ -1,0 +1,8 @@
+﻿<label for="Ejercicio">Ejercicio</label>
+<select id="Ejercicio" name="Ejercicio" class="form-select">
+    <option value="">Seleccione un Año</option>
+    @for (int anio = DateTime.Now.Year - 7;  anio <= DateTime.Now.Year + 2;  anio++)
+    {
+        <option value="@anio">@anio</option>
+    }
+</select>

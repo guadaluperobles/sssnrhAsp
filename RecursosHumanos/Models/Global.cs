@@ -346,5 +346,28 @@ namespace RecursosHumanos.Model {
                     return null;
             }
         }
+        public static DataTable ToDataTable<T>(List<T> lista) {
+            DataTable tabla = new DataTable(typeof(T).Name);
+
+            var propiedades = typeof(T).GetProperties();
+
+            foreach (var propiedad in propiedades) {
+                tabla.Columns.Add(
+                    propiedad.Name,
+                    Nullable.GetUnderlyingType(propiedad.PropertyType)
+                        ?? propiedad.PropertyType
+                );
+            }
+
+            foreach (var item in lista) {
+                var valores = propiedades
+                    .Select(p => p.GetValue(item) ?? DBNull.Value)
+                    .ToArray();
+
+                tabla.Rows.Add(valores);
+            }
+
+            return tabla;
+        }
     }
 }
