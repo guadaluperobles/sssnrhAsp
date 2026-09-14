@@ -21,7 +21,12 @@ namespace RecursosHumanos.Controllers {
         }
         [HttpPost]
         public async Task<ActionResult> TransparenciaIX(int Ejercicio, int Trimestre, IFormFile archivo) {
-            string[] plazasVacantes = await ArchivoController.LeerTxt(archivo);
+
+            if (archivo != null && archivo.Length > 0) {
+                string[] plazasVacantes = await ArchivoController.LeerTxt(archivo);
+                var plazasVacantesDT = LeerPlazasVacantes(plazasVacantes);
+            }
+
 
             return View(plazasVacantes);
         }

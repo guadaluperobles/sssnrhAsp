@@ -1,0 +1,17 @@
+﻿@using (Html.BeginForm("TransparenciaIX", "Transparencia", FormMethod.Post))
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <label>Ejercicio:</label>
+                <partial name="_SelectEjercicio" />
+            </div>
+            <div class="col-3">
+                <partial name="_SelectTrimestre" />
+            </div>
+            <div class="col-1">
+                <button type="submit" class="form-control btn-primary">Buscar</button>
+            </div>
+        </div>
+    </div>
+}
