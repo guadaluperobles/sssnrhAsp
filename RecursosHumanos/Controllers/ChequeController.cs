@@ -269,11 +269,15 @@ public class ChequeController : Controller {
     }
     private async Task<IActionResult> GuardarExcel(DataTable re, int Ejercicio,int Quincena,int NumeroCheque) {
         try {
+            //DataTable filtrado = re.AsEnumerable().Where(r =>  r.Field<string>(4)?.Contains("PENSIONES IMSS-BIENESTAR", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
             DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true || r.Field<string>(4)?.Contains("PENSIONES IMSS-BIENESTAR", StringComparison.OrdinalIgnoreCase) == true).CopyToDataTable();
+            //DataTable filtrado = re.AsEnumerable().Where(r => r.Field<string>(4)?.Contains("CHEQUE", StringComparison.OrdinalIgnoreCase) == true ).CopyToDataTable();
 
             foreach (DataRow row in filtrado.Rows) {
                 var identificador = row["Descripcion"]?.ToString()?.Trim().ToUpper();
-                if (identificador == "CHEQUE" || identificador == "PENSIONES IMSS-BIENESTAR") {
+                long cuenta = row.IsNull("CuentaBancaria") ? 0 : Convert.ToInt64(row["CuentaBancaria"]);
+                
+                if ((identificador == "CHEQUE" || identificador == "PENSIONES IMSS-BIENESTAR") && cuenta == 0) {
                     var nombreBeneficiario = $"{row["Nombre"].ToString()} {row["apPaterno"].ToString()} {row["apMaterno"].ToString()}";
                     var nombreEmpleado = $"{row["Nombre_1"].ToString()} {row["apPaterno_1"].ToString()} {row["apMaterno_1"].ToString()}";
                     var numeroEmpleado = Convert.ToInt32(row["NumEmp_1"].ToString());
@@ -284,6 +288,7 @@ public class ChequeController : Controller {
                     var digito = (ultimoCheque?.NumeroCheque ?? 0) + 1;
                     DateTime fecha = DateTime.Now;
                     string[] df = DatosFecha(fecha);
+
 
                     var cheque = new Cheque {
                         ClkDet = Convert.ToInt32(numeroEmpleado),

@@ -5,8 +5,9 @@
 <div class="container">
     <form method="post" asp-controller="Empleado" asp-action="LayoutSERICA">
         <div class="row">
-            <div class="col-md-6"></div>
-                <div class="col-md-2">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-2">
                 <partial name="_SelectEjercicio"
                          view-data='new ViewDataDictionary(ViewData)
                          {
@@ -22,7 +23,30 @@
                          }' />
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-excel mt-4">
+
+                <div class="form-group">
+                    <div class="switch-container">
+                        <input type="checkbox"
+                               class="switch-input"
+                               id="Activo"
+                               name="Activo"
+                        @(ViewBag.Activo ? "checked" : "")>
+
+                        <label class="switch-label" for="Activo">
+                            <span class="switch-text activo-text">411</span>
+                            <span class="switch-text inactivo-text">610</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary mt-4">
+                    Buscar
+                </button>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-excel mt-4"
+                        asp-action="LayoutSERICAExcel">
                     <i class="bi bi-file-earmark-excel-fill"></i>
                     Descargar Excel
                 </button>

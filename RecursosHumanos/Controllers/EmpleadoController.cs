@@ -26,17 +26,38 @@ namespace RecursosHumanos.Controllers {
         public ActionResult Create() {
             return View();
         }
-
         public ActionResult LayoutSERICA() {
-            var ContenidoSERICA = Global.ToDataTable(SERICA());
+            ViewBag.Mensaje = "Consulta de empleados";
+            ViewBag.Ejercicio = 2026;
+            ViewBag.Quincena = 17;
+            ViewBag.Activo = true;
+
+            string buscar = " AND (SUBSTRING(e.MeClvPag, 5, 3) = '610') ";
+            var ContenidoSERICA = Global.ToDataTable(SERICA(buscar));
             return View(ContenidoSERICA);
         }
-        // POST: EmpleadoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LayoutSERICA(int Ejercicio, int Quincena) {
+        public ActionResult LayoutSERICA(string Activo) {
+            bool valorActivo = Activo == "on";
+            string buscar = valorActivo ? " AND (SUBSTRING(e.MeClvPag, 5, 3) <> '610') ": " AND (SUBSTRING(e.MeClvPag, 5, 3) = '610') " ;
+            var ContenidoSERICA = Global.ToDataTable(SERICA(buscar));
+
+            ViewBag.Activo = valorActivo;
+
+            return View(ContenidoSERICA);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult LayoutSERICAExcel(int Ejercicio, int Quincena, string Activo) {
+            bool valorActivo = Activo == "on";
+            string buscar = valorActivo ? " AND (SUBSTRING(e.MeClvPag, 5, 3) <> '610') " : " AND (SUBSTRING(e.MeClvPag, 5, 3) = '610') ";
             string nombreArchivo = $"";
-            var ContenidoSERICA = Global.ToDataTable(SERICA());
+            var ContenidoSERICA = Global.ToDataTable(SERICA(buscar));
+
+            ViewBag.Ejercicio = Ejercicio;
+            ViewBag.Quincena = Quincena;
+            ViewBag.Activo = Activo;
 
             var tablas = new Dictionary<string, DataTable>{
                     { "Hoja 1", ContenidoSERICA }
@@ -45,7 +66,7 @@ namespace RecursosHumanos.Controllers {
             
         }
 
-        private List<LayoutSERICA> SERICA() {
+        private List<LayoutSERICA> SERICA(string buscar) {
 
             List<LayoutSERICA> empleadosSERICA = new List<LayoutSERICA>();
             Global global = new Global(_coneccionService);
@@ -68,7 +89,7 @@ namespace RecursosHumanos.Controllers {
                 WHERE (e.MeIndMe = '10' OR  e.MeIndMe = '20') AND (SUBSTRING(e.MeClvPag, 5, 3) = '411') AND pde.MePDClave='03' AND (hme.HmQnaAp > 201312) AND (hme.HmCodMov = 7203) AND (hme.HmObs LIKE '% 03 del issste%')
             ";
 
-            string sqlEmpleados = @"
+            string sqlEmpleados = @$"
                 SELECT     
                     e.ClkDet,
                     eg.MeCurp, 
@@ -83,7 +104,7 @@ namespace RecursosHumanos.Controllers {
                 FROM Empleado as e
                 INNER JOIN PerDed_Empleado as pde ON e.ClkDet = pde.ClkDet
                 INNER JOIN Empleado_Generales as eg ON e.ClkDet = eg.ClkDet
-                WHERE (e.MeIndMe = '10' OR e.MeIndMe = '20') AND pde.MePDClave='03'
+                WHERE (e.MeIndMe = '10' OR e.MeIndMe = '20') {buscar} AND pde.MePDClave='03'
             ";
 
             string sqlProductos = @"
@@ -115,8 +136,8 @@ namespace RecursosHumanos.Controllers {
                         ClkDet,  HmQnaAp, HmFchIni, HmFchTer, HmTabPt, HmVPuesto, HmPuesto, HmGpoPto, HmNumPto,  
                         HmTmbc, HmDias, HmHrExt, HmHrExtTr, HmObs, HmUsrCp, HmFchCp, HmHraCp, HmUsrCc, HmFchCc, 
                         HmHraCc, HmOrigen, HmIndR, HmDatCom
-                    FROM            Historico_Movimiento
-                    WHERE    ClkDet = {ClkDet} and (HmQnaAp > 201312) AND (HmCodMov = 7203) AND (HmObs LIKE '% 03 del issste%')
+                    FROM  Historico_Movimiento
+                    WHERE ClkDet = {ClkDet} and  (HmQnaAp > 201312) AND (substring(HmCodMov,1,1) = 7) AND ((HmObs LIKE '%PRESTAMO%') and (HmObs LIKE '%ISSSTE%'))
                     ORDER BY HmQnaAp DESC
                 ";
 
