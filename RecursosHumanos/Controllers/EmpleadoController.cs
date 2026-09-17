@@ -124,11 +124,11 @@ namespace RecursosHumanos.Controllers {
                 string MeNomAP = row["MeNomAP"].ToString();
                 string MeNomAM = row["MeNomAM"].ToString();
                 string MeNoSegS = string.IsNullOrWhiteSpace(row["MeNoSegS"]?.ToString())  ?"00000000000" : row["MeNoSegS"].ToString();
-                string MeNoIssste = string.IsNullOrWhiteSpace(row["MeNoIssste"]?.ToString()) ?  "0000000"  : row["MeNoIssste"].ToString();
+                string NoIssste = row["MeNoIssste"]?.ToString();
+                string MeNoIssste = string.IsNullOrWhiteSpace(NoIssste) ? "0000000": NoIssste.Length >= 7? NoIssste.Substring(NoIssste.Length - 7): NoIssste.PadLeft(7, '0');
 
                 string MePDVVenc = row["MePDVVenc"].ToString();
                 string MePDVVigI = row["MePDVVigI"].ToString();
-
                 string BaseDatos = row["BaseDatos"].ToString();
 
                 string sqlComentario = @$"

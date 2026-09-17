@@ -200,9 +200,9 @@ namespace RecursosHumanos.Controllers {
 	                ClkGpoPto, ClkNumPto, mc.ClkDetDestino AS ClkDet, PpNoEmpP, PpNoEmpS, PpEdMpi, PpVCTrab, PpCTrab, PpCTrabDist, 
                     PpTabPt, PpVPuesto, PpPuesto, PpVPClvPag, PpClvPag, PpPtoEdo, PpPtoFun, PpUAdmva, PpIMando, PpTmbc, PpNivel, PpRegimen,
                     PpRango, PpJrnda, PpPrcPt, PpEfDel, PpEfAl, PpICrn, PpCndV, PpIndR
-                FROM {BaseDatosOrigen}.dbo.Plantilla_Detalle ptINNER 
+                FROM {BaseDatosOrigen}.dbo.Plantilla_Detalle pt INNER 
                 JOIN {BaseDatosDestino}.dbo.Empleado e ON e.MeGpoPto COLLATE Modern_Spanish_CI_AS = ClkGpoPto COLLATE Modern_Spanish_CI_AS AND e.MeNumPto COLLATE Modern_Spanish_CI_AS = ClkNumPto  
-                JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetDestino = e.ClkDet    AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
+                JOIN {BaseDatosDestino}.dbo._MigracionControl mc ON mc.ClkDetDestino = e.ClkDet AND mc.BDOrigen = '{BaseDatosOrigen}' AND mc.Estatus = 'PENDIENTE';
             ";
 
             string Mensaje = $"<strong>Plantilla_Detalle {BaseDatosOrigen} a {BaseDatosDestino}</strong>";

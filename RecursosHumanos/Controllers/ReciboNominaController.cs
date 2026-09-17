@@ -48,7 +48,6 @@ namespace RecursosHumanos.Controllers {
                 EjercicioFin = ejercicioFin,
                 QuincenaInicio = quincenaInicio,
                 QuincenaFin = quincenaFin,
-    
             };
 
             string ComplementarConsulta = "";
@@ -153,18 +152,17 @@ namespace RecursosHumanos.Controllers {
                 if (ComplementarConsulta != "") {
                     ComplementarConsulta += " AND ";
                 }
-
                 ComplementarConsulta += $" CONCAT(emp.MeRfc, CAST(pd.ClkDet AS VARCHAR)) like '%{numeroEmpleado}%'";
             }
+
             //ConsultaRespaldoCFDI
             Global global = new Global(_coneccionService);
 
             DataTable recibosCFDI = global.ConsultaGeneral(ConsultasModel.ConsultaCFDI + " WHERE " + ComplementarConsulta + " ORDER BY pc.PrQna DESC");
-            ComplementarConsulta = ComplementarConsulta.Replace("emp.", "").Replace("pd.", "").Replace("pc.", "");
-            DataTable recibosRespaldo = global.ConsultaGeneral(ConsultasModel.ConsultaRespaldoCFDI + " WHERE " + ComplementarConsulta + " ORDER BY PrQna DESC", "IESYST");
+            //ComplementarConsulta = ComplementarConsulta.Replace("emp.", "").Replace("pd.", "").Replace("pc.", "");
+            //DataTable recibosRespaldo = global.ConsultaGeneral(ConsultasModel.ConsultaRespaldoCFDI + " WHERE " + ComplementarConsulta + " ORDER BY PrQna DESC", "IESYST");
             
-
-            recibosCFDI.Merge(recibosRespaldo);
+            //recibosCFDI.Merge(recibosRespaldo);
 
             if (recibosCFDI.Rows.Count > 0)
                 recibosCFDI = recibosCFDI.AsEnumerable().GroupBy(row => row.Field<string>("PrUUID")).Select(g => g.First()).CopyToDataTable();

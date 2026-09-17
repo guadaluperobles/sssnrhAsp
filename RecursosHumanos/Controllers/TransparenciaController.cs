@@ -73,7 +73,7 @@ namespace RecursosHumanos.Controllers {
                         tipoPersonal,
                         areaAdscripcion,
                         estatus,
-                        "", @Trimestre@Trimestre@Trimestre@Trimestre@Trimestre@Trimestre@Trimestre
+                        "",
                         "",
                         "DIRECCION GENERAL DE RECURSOS HUMANOS",
                         "fecha Actualización",

@@ -39,7 +39,9 @@
         <thead>
             <tr>
                 <th>Base de Datos</th>
-                <th>Ejercicio</th>
+                <th>Nombre</th>
+                <th>RFC</th>
+                <th>Ejercicio Lupin</th>
                 <th>Quincena</th>
                 <th>Producto</th>
                 <th>UUID</th>
@@ -50,8 +52,10 @@
         <tbody>
             @foreach (DataRow row in Model.Recibos.Rows)
             {
-                <tr >
-                    <td>@row["BaseDatos"]</td>
+                <tr class="align-items-center">
+                    <td >@row["BaseDatos"]</td>
+                    <td>@row["NombreEmpleado"]</td>
+                    <td>@row["MeRfc"]</td>
                     <td>@row["PrAno"]</td>
                     <td>@row["PrQna"]</td>
                     <td>@row["ClkPr"]</td>

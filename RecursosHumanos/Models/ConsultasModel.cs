@@ -6,6 +6,8 @@ namespace RecursosHumanos.Models {
             SELECT
                 pc.PrAno as PrAno,
                 RIGHT('0' + CAST(pc.PrQna AS VARCHAR), 2) AS PrQna,
+                emp.MeRfc as MeRfc,               
+                CONCAT(emp.MeNomEmp, ' ', emp.MeNomAP, ' ', emp.MeNomAM) AS NombreEmpleado,             
                 pd.ClkPr as ClkPr,
                 pd.PrNeto as PrNeto,
                 pd.PrUUID as PrUUID,
