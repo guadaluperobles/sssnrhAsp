@@ -23,12 +23,13 @@ namespace RecursosHumanos.Controllers {
         [HttpPost]
         public async Task<ActionResult> TransparenciaIX(int Ejercicio, int Trimestre, IFormFile archivo) {
 
-            Global global = new Global(_coneccionService);
             DataTable archivoPlazasVacantes = new DataTable();
             DataTable Conglomerado = new DataTable();
             DataTable Resultado = new DataTable();
+            Global global = new Global(_coneccionService);
 
             if (archivo != null && archivo.Length > 0) {
+
                 string[] plazasVacantes = await ArchivoController.LeerTxt(archivo);
                 var plazasVacantesDT = LeerPlazasVacantes(plazasVacantes);
 
@@ -72,7 +73,7 @@ namespace RecursosHumanos.Controllers {
                         tipoPersonal,
                         areaAdscripcion,
                         estatus,
-                        "",
+                        "", @Trimestre@Trimestre@Trimestre@Trimestre@Trimestre@Trimestre@Trimestre
                         "",
                         "DIRECCION GENERAL DE RECURSOS HUMANOS",
                         "fecha Actualización",
@@ -82,11 +83,18 @@ namespace RecursosHumanos.Controllers {
             }
 
             string consultaLocal = "";
+
             if (Ejercicio > 0) {
                 consultaLocal += $" DECLARE @Anio			INT = {Ejercicio}; ";
             }
+            else {
+                return View();
+            }
             if (Trimestre > 0) {
-                consultaLocal += $" DECLARE @Anio			INT = {Trimestre}; ";
+                consultaLocal += $" DECLARE @Trimestre			INT = {Trimestre}; ";
+            }
+            else {
+                return View();
             }
 
 
@@ -113,6 +121,50 @@ namespace RecursosHumanos.Controllers {
             Resultado.Columns.Add("nota");
 
             consultaLocal = consultaLocal + ConsultasModel.ConsultaBuscarPuestos;
+
+            DataTable resultadoConsulta = global.ConsultaGeneral(consultaLocal);
+
+            foreach (DataRow r in resultadoConsulta.Rows) {
+
+                Resultado.Rows.Add(
+                    "2026",
+                    "fecha inicio",
+                    "fecha fin",
+                    "",
+                    r[4],
+                    r[3],
+                    r[12],
+                    r[6],
+                    "Ocupado",
+                    r[10],
+                    "",
+                    "DIRECCION GENERAL DE RECURSOS HUMANOS",
+                    "fecha Actualización",
+                    ""
+                    );
+            }
+
+            DataTable plazasConfianza = Resultado.AsEnumerable().Where(r => r.Field<string>("tipoPlaza") == "Confianza").CopyToDataTable();
+            DataTable plazasBase = Resultado.AsEnumerable().Where(r => r.Field<string>("tipoPlaza") == "Base").CopyToDataTable();
+            DataTable plazasOcupadasBase = plazasBase.AsEnumerable().Where(r => r.Field<string>("Estatus") == "Ocupado").CopyToDataTable();
+            DataTable plazasOcupadasConfianza = plazasConfianza.AsEnumerable().Where(r => r.Field<string>("Estatus") == "Ocupado").CopyToDataTable();
+            DataTable plazasVacantesBase = plazasBase.AsEnumerable().Where(r => r.Field<string>("Estatus") == "Vacante").CopyToDataTable();
+            DataTable plazasVacantesConfianza = plazasConfianza.AsEnumerable().Where(r => r.Field<string>("Estatus") == "Vacante").CopyToDataTable();
+            DataTable plazasOcupadasConfianzaHombres = plazasOcupadasConfianza.AsEnumerable().Where(r => r.Field<string>("Sexo") == "H").CopyToDataTable();
+            DataTable plazasOcupadasConfianzaMujeres = plazasOcupadasConfianza.AsEnumerable().Where(r => r.Field<string>("Sexo") == "M").CopyToDataTable();
+            DataTable plazasOcupadasBaseHombres = plazasOcupadasBase.AsEnumerable().Where(r => r.Field<string>("Sexo") == "H").CopyToDataTable();
+            DataTable plazasOcupadasBaseMujeres = plazasOcupadasBase.AsEnumerable().Where(r => r.Field<string>("Sexo") == "M").CopyToDataTable();
+
+            ViewBag.plazasConfianza = plazasConfianza;
+            ViewBag.plazasBase = plazasBase;
+            ViewBag.plazasOcupadasBase = plazasOcupadasBase;
+            ViewBag.plazasOcupadasConfianza = plazasOcupadasConfianza;
+            ViewBag.plazasVacantesBase = plazasVacantesBase;
+            ViewBag.plazasVacantesConfianza = plazasVacantesConfianza;
+            ViewBag.plazasOcupadasConfianzaHombres = plazasOcupadasConfianzaHombres;
+            ViewBag.plazasOcupadasConfianzaMujeres = plazasOcupadasConfianzaMujeres;
+            ViewBag.plazasOcupadasBaseHombres = plazasOcupadasBaseHombres;
+            ViewBag.plazasOcupadasBaseMujeres = plazasOcupadasBaseMujeres;
 
             return View( );
         }
