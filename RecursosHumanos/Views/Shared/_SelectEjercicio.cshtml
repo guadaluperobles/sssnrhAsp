@@ -3,6 +3,6 @@
     <option value="">Seleccione un Año</option>
     @for (int anio = DateTime.Now.Year - 7;  anio <= DateTime.Now.Year + 2;  anio++)
     {
-        <option value="@anio">@anio</option>
+        <option value="@anio" selected="@(ViewBag.Ejercicio == anio)">@anio</option>
     }
 </select>

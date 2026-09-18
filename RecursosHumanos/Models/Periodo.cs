@@ -7,6 +7,7 @@
         private string _Fin;
         private string _Pago;
         private string _Mes;
+
         public int Id { get { return _Id; } set { _Id = value; } }
         public string Descripcion { get { return _Descripcion; } set { _Descripcion = value; } }
         public string Quincenas { get { return _Quincenas; } set { _Quincenas = value; } }
@@ -17,18 +18,18 @@
 
         public List<Periodo> trimestres() {
             List<Periodo> Per = new List<Periodo> {
-                new Periodo { Id = 1, Descripcion = "1 Trimestre (Enero, Febrero, Marzo)" ,         Quincenas = "1,2,3,4,5,6"},
-                new Periodo { Id = 2, Descripcion = "2 Trimestre (Abril, Mayo, Junio)" ,            Quincenas = "7,8,9,10,11,12"},
-                new Periodo { Id = 3, Descripcion = "3 Trimestre (Julio, Agosto, Septiembre)",      Quincenas = "13,14,15,16,17,18"},
-                new Periodo { Id = 4, Descripcion = "4 Trimestre (Octubre, Noviembre, Diciembre)",  Quincenas = "19,20,21,22,23,24" }
+                new Periodo { Id = 1, Descripcion = "1 Trimestre (Enero, Febrero, Marzo)" ,         Quincenas = "1,2,3,4,5,6",          Inicio = "01",  Fin = "03",  Mes = "01" },
+                new Periodo { Id = 2, Descripcion = "2 Trimestre (Abril, Mayo, Junio)" ,            Quincenas = "7,8,9,10,11,12",       Inicio = "04",  Fin = "06",  Mes = "01" },
+                new Periodo { Id = 3, Descripcion = "3 Trimestre (Julio, Agosto, Septiembre)",      Quincenas = "13,14,15,16,17,18",    Inicio = "07",  Fin = "09",  Mes = "01" },
+                new Periodo { Id = 4, Descripcion = "4 Trimestre (Octubre, Noviembre, Diciembre)",  Quincenas = "19,20,21,22,23,24",    Inicio = "10",  Fin = "12",  Mes = "01" }
             };
             return Per;
         }
         public List<Periodo> cuatrimestres() {
             List<Periodo> Per = new List<Periodo> {
-                new Periodo { Id = 1, Descripcion = "1 Cuatrimestre (Enero, Febrero, Marzo, Abril)",                Quincenas = "1,2,3,4,5,6,7,8" },
-                new Periodo { Id = 2, Descripcion = "2 Cuatrimestre (Mayo, Junio, Julio, Agosto)",                  Quincenas = "9,10,11,12,13,14,15,16" },
-                new Periodo { Id = 3, Descripcion = "3 Cuatrimestre (Septiembre, Octubre, Noviembre, Diciembre)",   Quincenas = "17,18,19,20,21,22,23,24" }
+                new Periodo { Id = 1, Descripcion = "1 Cuatrimestre (Enero, Febrero, Marzo, Abril)",                Quincenas = "1,2,3,4,5,6,7,8",          Inicio = "01",  Fin = "04"},
+                new Periodo { Id = 2, Descripcion = "2 Cuatrimestre (Mayo, Junio, Julio, Agosto)",                  Quincenas = "9,10,11,12,13,14,15,16",   Inicio = "05",  Fin = "08"},
+                new Periodo { Id = 3, Descripcion = "3 Cuatrimestre (Septiembre, Octubre, Noviembre, Diciembre)",   Quincenas = "17,18,19,20,21,22,23,24",  Inicio = "09",  Fin = "12"}
             };
             return Per;
         }

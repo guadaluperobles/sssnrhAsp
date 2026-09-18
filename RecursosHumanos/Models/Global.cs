@@ -346,6 +346,10 @@ namespace RecursosHumanos.Model {
                     return null;
             }
         }
+        public static DataTable Filtrar( DataTable tabla, Func<DataRow, bool> filtro) {
+            var filas = tabla.AsEnumerable().Where(filtro);
+            return filas.Any() ? filas.CopyToDataTable() : tabla.Clone();
+        }
         public static DataTable ToDataTable<T>(List<T> lista) {
             DataTable tabla = new DataTable(typeof(T).Name);
 

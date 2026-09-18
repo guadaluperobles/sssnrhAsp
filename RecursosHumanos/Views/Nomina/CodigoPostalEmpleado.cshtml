@@ -5,7 +5,6 @@
 @{
     ViewData["Title"] = "Actualiza CP Empleados.";
 }
-<div class="container">
     <form asp-action="CodigoPostalEmpleado" asp-controller="Nomina" method="post" enctype="multipart/form-data">
         <div class="row">
             <div class="col-6 align-content-end">
@@ -18,12 +17,9 @@
             </div>
         </div>
     </form>
-</div>
 <div class="clearfix"></div>
-<div class="container">
     <div class="row">
         <div class="col-12">
             <partial name="_Tabla" model="Model.Models" />
         </div>
     </div>
-</div>

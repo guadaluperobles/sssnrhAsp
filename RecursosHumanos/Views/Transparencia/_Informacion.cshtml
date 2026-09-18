@@ -1,21 +1,72 @@
-﻿@*
+﻿@using System.Data
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    DataTable Resultado = ViewBag.Resultado ?? new DataTable();
 }
-<table class="table table-bordered">
+<table class="table">
     <tr>
-        <td>Denominación del área</td>
-        <td>Denominación del puesto (Redactados con perspectiva de género)</td>
-        <td>Clave o nivel de puesto</td>
-        <td>Tipo de plaza (catálogo)</td>
-        <td>Área de adscripción</td>
+        <th>Ejercicio</th>
+        <th>
+            Fecha de inicio 
+        </th>
+        <th>
+            Fecha de término 
+        </th>
+        <th>
+            Denominación del área
+        </th>
+        <th>
+            Denominación del puesto 
+        </th>
+        <th>
+            Clave o nivel de puesto
+        </th>
+        <th>
+            Tipo de plaza 
+        </th>
+        <th>
+            Área de adscripción
+        </th>
+        <th>
+            Por cada puesto estado
+        </th>
+        <th>
+            Sexo (catálogo)
+        </th>
+        <th>
+           hipervínculo a las convocatorias 
+        </th>
+        <th>
+            Área(s) responsable(s) 
+        </th>
+        <th>
+            Fecha de actualización
+        </th>
+        <th>
+            Nota
+        </th>
     </tr>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-    </tr>
+    @foreach (DataRow dr in Resultado.Rows)
+    {
+        string sexo = dr[9].ToString();
+        <tr>
+            <td>@dr[0]</td>
+            <td>@dr[1]</td>
+            <td>@dr[2]</td>
+            <td>@dr[3]</td>
+            <td>@dr[4]</td>
+            <td>@dr[5]</td>
+            <td>@dr[6]</td>
+            <td>@dr[7]</td>
+            <td>@dr[8]</td>
+            <td>@sexo </td>
+            <td>@dr[10] </td>
+            <td>@dr[11]</td>
+            <td>@dr[12]</td>
+            <td>@dr[13]</td>
+        </tr>
+    
+    }
 </table>
