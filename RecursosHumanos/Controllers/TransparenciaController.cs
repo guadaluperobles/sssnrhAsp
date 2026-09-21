@@ -332,25 +332,28 @@ namespace RecursosHumanos.Controllers {
             }
 
             DataTable plazasConfianza = Global.Filtrar(Resultado, r => r.Field<string>("tipoPlaza") == "Confianza");
-            DataTable plazasBase = Global.Filtrar(Resultado, r => r.Field<string>("tipoPlaza") == "Base");
-            DataTable plazasOcupadasBase = Global.Filtrar(plazasBase, r => r.Field<string>("Estatus") == "Ocupado");
             DataTable plazasOcupadasConfianza = Global.Filtrar(plazasConfianza, r => r.Field<string>("Estatus") == "Ocupado");
-            DataTable plazasVacantesBase = Global.Filtrar(plazasBase, r => r.Field<string>("Estatus") == "Vacante");
             DataTable plazasVacantesConfianza = Global.Filtrar(plazasConfianza, r => r.Field<string>("Estatus") == "Vacante");
             DataTable plazasOcupadasConfianzaHombres = Global.Filtrar(plazasOcupadasConfianza, r => r.Field<string>("Sexo") == "Hombre");
             DataTable plazasOcupadasConfianzaMujeres = Global.Filtrar(plazasOcupadasConfianza, r => r.Field<string>("Sexo") == "Mujer");
+
+            DataTable plazasBase = Global.Filtrar(Resultado, r => r.Field<string>("tipoPlaza") == "Base");
+            DataTable plazasOcupadasBase = Global.Filtrar(plazasBase, r => r.Field<string>("Estatus") == "Ocupado");
+            DataTable plazasVacantesBase = Global.Filtrar(plazasBase, r => r.Field<string>("Estatus") == "Vacante");
             DataTable plazasOcupadasBaseHombres = Global.Filtrar(plazasOcupadasBase, r => r.Field<string>("Sexo") == "Hombre");
             DataTable plazasOcupadasBaseMujeres = Global.Filtrar(plazasOcupadasBase, r => r.Field<string>("Sexo") == "Mujer");
 
             ViewBag.Resultado = Resultado;
+
             ViewBag.plazasConfianza = plazasConfianza;
-            ViewBag.plazasBase = plazasBase;
-            ViewBag.plazasOcupadasBase = plazasOcupadasBase;
-            ViewBag.plazasOcupadasConfianza = plazasOcupadasConfianza;
-            ViewBag.plazasVacantesBase = plazasVacantesBase;
             ViewBag.plazasVacantesConfianza = plazasVacantesConfianza;
+            ViewBag.plazasOcupadasConfianza = plazasOcupadasConfianza;
             ViewBag.plazasOcupadasConfianzaHombres = plazasOcupadasConfianzaHombres;
             ViewBag.plazasOcupadasConfianzaMujeres = plazasOcupadasConfianzaMujeres;
+
+            ViewBag.plazasBase = plazasBase;
+            ViewBag.plazasOcupadasBase = plazasOcupadasBase;
+            ViewBag.plazasVacantesBase = plazasVacantesBase;
             ViewBag.plazasOcupadasBaseHombres = plazasOcupadasBaseHombres;
             ViewBag.plazasOcupadasBaseMujeres = plazasOcupadasBaseMujeres;
 
