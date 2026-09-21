@@ -165,5 +165,103 @@ namespace RecursosHumanos.Models {
                 SUBSTRING(pd.prclvpag,5,3)<>'610'
         ";
 
+
+        public static string ConsultaTotalPercepcionesEmpleados = @" 
+            DECLARE @FechaInicio    DATE;
+            DECLARE @FechaFin       DATE;
+            SET @FechaInicio =
+               CASE @Trimestre
+                    WHEN 1 THEN DATEFROMPARTS( @Anio,1,1)
+                    WHEN 2 THEN DATEFROMPARTS( @Anio,4,1)
+                    WHEN 3 THEN DATEFROMPARTS( @Anio,7,1)
+                   WHEN 4 THEN DATEFROMPARTS( @Anio,10,1)
+                END;
+            SET @FechaFin =
+                CASE @Trimestre
+                    WHEN 1 THEN DATEFROMPARTS( @Anio,3,31)
+                    WHEN 2 THEN DATEFROMPARTS( @Anio,6,30)
+                    WHEN 3 THEN DATEFROMPARTS( @Anio,9,30)
+                   WHEN 4 THEN DATEFROMPARTS( @Anio,12,31)
+               END;
+            ; WITH Datos AS
+            (
+                SELECT
+            --    pd.ClkPr,
+            --    emp.MeCTrab,
+            --    emp.MeNumPto,
+            --    pc.PrQna,
+            --    emp.ClkDet                                      as 'noEmp',
+                pc.PrAno                                        as 'ejercicio',
+                CONVERT(VARCHAR(10), @FechaInicio, 103)			as 'fechaInicioPeriodo',
+                CONVERT( VARCHAR(10), @FechaFin, 103)			as 'fechaFinPeriodo',
+	            'Empleada (o)'									as 'tipoSujetoObligado',
+                pue.PtPtoSHCP									as 'claveNivelPuesto',
+                pue.PtDsc1										as 'descripcionPuesto',
+	            'Denominación'									as 'descripcionCargo',
+                ct.CtDsc										as 'areaAdscripcion', 
+                emp.MeNomEmp									as 'nombre',
+                emp.MeNomAP										as 'primerApellido',
+                emp.MeNomAm										as 'segundoApellido',
+                CASE emp.MeSexo
+                    WHEN 'H' THEN 'Hombre'
+                    WHEN 'M' THEN 'Mujer'
+                    ELSE ''
+                END                                             AS 'sexo',
+                pd.PrTPer										as 'montoRemuredacionMensualBruta', 
+	            'MXN'											as 'tipoMonedaBruta',
+                pd.PrNeto										as 'montoRemuredacionMensualNeta', 
+	            'MXN'											as 'tipoMonedaNeta',
+	            ''												as 'Tabla_140',
+	            ''												as 'Tabla_141',
+	            ''												as 'Tabla_142',
+	            ''												as 'Tabla_143',
+	            ''												as 'Tabla_144',
+	            ''												as 'Tabla_145',
+	            ''												as 'Tabla_146',
+	            ''												as 'Tabla_147',
+	            ''												as 'Tabla_148',
+	            ''												as 'Tabla_149',
+	            ''												as 'Tabla_155',
+	            ''												as 'Tabla_150',
+	            ''												as 'Tabla_151',
+	            'DIRECCION GENERAL DE RECURSOS HUMANOS'		    as 'AreaResponsable',
+	            '24/4/2026'										as 'fechaActualizacion',
+	            ''      										as 'nota',
+	            emp.MeRfc									    as 'rfc',
+	            empgen.MeCurp								    as 'curp',
+                CASE SUBSTRING(empgen.MeCurp, 11, 1)
+                    WHEN 'H' THEN 'Hombre'
+                    WHEN 'M' THEN 'Mujer'
+                    ELSE ''
+                END                                             AS 'sexoCURP',
+                CASE emp.MeSexo
+                    WHEN 'H' THEN 'Hombre'
+                    WHEN 'M' THEN 'Mujer'
+                    ELSE ''
+                END                                             AS 'sexoBD',
+                    ROW_NUMBER() OVER(
+                        PARTITION BY emp.ClkDet
+                       ORDER BY pd.PrTPer DESC
+                    ) AS RN
+                FROM Producto_Detalle pd
+            INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
+            INNER JOIN Centro_Trabajo AS ct ON pd.PrVCTrab = ct.ClkCtVer AND pd.PrCtrab = ct.ClkCt
+            JOIN Empleado AS emp ON pd.ClkDet = emp.ClkDet
+            JOIN Empleado_Generales AS empgen ON empgen.ClkDet = emp.ClkDet
+            JOIN Puesto AS pue ON pue.ClkPtVer = emp.MeVPuesto AND pue.ClkPt = emp.MePuesto
+                WHERE
+                   pc.PrAno = @Anio
+                    AND pd.ClkPr LIKE 'PRO%'
+                    AND (
+                        (@Trimestre = 1 AND pc.PrQna BETWEEN 1 AND 6) OR
+                        ( @Trimestre = 2 AND pc.PrQna BETWEEN 7 AND 12) OR
+                         ( @Trimestre = 3 AND pc.PrQna BETWEEN 13 AND 18) OR
+                          ( @Trimestre = 4 AND pc.PrQna BETWEEN 19 AND 24)
+                    )
+            )
+            SELECT *
+            FROM Datos
+            WHERE RN = 1";
+
     }
 }

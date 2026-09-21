@@ -2,4 +2,103 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
+    ViewData["Title"] = "Transparencia / LGT65 / VII / Remuneraciones Brutas y Netas";
+    ViewBag.Accion = "TransparenciaVII";
+    ViewBag.AccionExcel = "TransparenciaVIIExcel";
 }
+<div class="row">
+    <div class="col-md-12 align-content-end">
+        <partial name="_Form" view-data="ViewData" />
+    </div>
+    <div class="clearfix"><hr /></div>
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" id="tabPrincipal" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Resumen" active>VII</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla140"> 140</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla141"> 141</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla142"> 142</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla143"> 143</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla144"> 144</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla145"> 145</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla146"> 146</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla147"> 147</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla148"> 148</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla149"> 149</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla151"> 151</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Tabla155"> 155</a>
+            </li>
+        </ul>
+    </div>
+    <div class=" col-md-12">
+        <div class="tab-content">
+            <div id="Resumen" class="tab-pane fade show active">
+                <partial name="_ResumenVII" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla140" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla141" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla142" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla143" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla144" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla145" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla146" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla147" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla148" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla149" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla150" view-data="ViewData" />
+            </div>
+            <div id="Tabla151" class="tab-pane fade">
+                <partial name="_Tabla151" view-data="ViewData" />
+            </div>
+            <div id="Tabla155" class="tab-pane fade">
+                <partial name="_Tabla155" view-data="ViewData" />
+            </div>
+        </div>
+    </div>
+</div>
+

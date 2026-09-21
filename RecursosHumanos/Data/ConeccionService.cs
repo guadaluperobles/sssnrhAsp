@@ -55,14 +55,5 @@ namespace RecursosHumanos.Data {
                 throw;
             }
         }
-
     }
-    /**
-    Tablas
-    Intercalacion : Modern_Spanish_CI_AS
-
-    Formalizados_IB 
-    Intercalacion : Traditional_Spanish_CI_AS
-
-    */
 }

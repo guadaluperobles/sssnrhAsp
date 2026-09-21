@@ -32,7 +32,7 @@ namespace RecursosHumanos.Controllers {
             ViewBag.Quincena = 17;
             ViewBag.Activo = true;
 
-            string buscar = " AND (SUBSTRING(e.MeClvPag, 5, 3) = '610') ";
+            string buscar = " AND (SUBSTRING(e.MeClvPag, 5, 3) <> '610') ";
             var ContenidoSERICA = Global.ToDataTable(SERICA(buscar));
             return View(ContenidoSERICA);
         }

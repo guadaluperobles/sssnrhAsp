@@ -1,55 +1,60 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-@{ViewData["Title"] = "Reporte SERICA";}
-    <form method="post" asp-controller="Empleado" asp-action="LayoutSERICA">
-        <div class="row">
-            <div class="col-md-2">
-            </div>
-            <div class="col-md-2">
-                <partial name="_SelectEjercicio"
-                         view-data='new ViewDataDictionary(ViewData)
-                         {
-                             ["Id"] = "EjercicioNomina",
-                             ["Name"] = "EjercicioNomina"
-                         }' />
-            </div>
-            <div class="col-md-2">
-                <partial name="_SelectQuincena" view-data='new ViewDataDictionary(ViewData)
-                         {
-                             ["Id"] = "Quincena",
-                             ["Name"] = "Quincena"
-                         }' />
-            </div>
-            <div class="col-md-2">
+@{
+    ViewData["Title"] = "Reporte SERICA";
+}
+<form method="post" asp-controller="Empleado" asp-action="LayoutSERICA">
+    <div class="row  align-items-end">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-2">
+            <partial name="_SelectEjercicio"
+                     view-data='new ViewDataDictionary(ViewData)
+                     {
+                         ["Id"] = "EjercicioNomina",
+                         ["Name"] = "EjercicioNomina"
+                     }' />
+        </div>
+        <div class="col-md-2">
+            <partial name="_SelectQuincena"
+                     view-data='new ViewDataDictionary(ViewData)
+                     {
+                         ["Id"] = "Quincena",
+                         ["Name"] = "Quincena"
+                     }' />
+        </div>
+        <div class="col-md-2">
 
-                <div class="form-group">
-                    <div class="switch-container">
-                        <input type="checkbox"
-                               class="switch-input"
-                               id="Activo"
-                               name="Activo"
-                        @(ViewBag.Activo ? "checked" : "")>
+            <div class="form-group">
+                <div class="switch-container">
+                    <input type="checkbox"
+                           class="switch-input"
+                           id="Activo"
+                           name="Activo"
+                            @(ViewBag.Activo ? "checked" : "")
+                           onchange="this.form.submit()"
+                           >
 
-                        <label class="switch-label" for="Activo">
-                            <span class="switch-text activo-text">411</span>
-                            <span class="switch-text inactivo-text">610</span>
-                        </label>
-                    </div>
+                    <label class="switch-label" for="Activo">
+                        <span class="switch-text activo-text">411</span>
+                        <span class="switch-text inactivo-text">610</span>
+                    </label>
                 </div>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary mt-4">
-                    Buscar
-                </button>
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-excel mt-4"
-                        asp-action="LayoutSERICAExcel">
-                    <i class="bi bi-file-earmark-excel-fill"></i>
-                    Descargar Excel
-                </button>
-            </div>
         </div>
-    </form>
-    <partial name="_Tabla" model="Model"/>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary mt-4">
+                Buscar
+            </button>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-excel mt-4"
+                    asp-action="LayoutSERICAExcel">
+                <i class="bi bi-file-earmark-excel-fill"></i>
+                Descargar Excel
+            </button>
+        </div>
+    </div>
+</form>
+<partial name="_Tabla" model="Model" />
