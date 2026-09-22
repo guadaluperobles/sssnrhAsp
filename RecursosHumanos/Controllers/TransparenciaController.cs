@@ -331,27 +331,26 @@ namespace RecursosHumanos.Controllers {
         public ActionResult TransparenciaVII() {
             int ejercicio = DateTime.Now.Year;
             int trimestre = ((DateTime.Now.Month - 1) / 3) + 1;
-            DataTable Resultado = new DataTable();
+            Dictionary<string, DataTable> Resultado = new Dictionary<string, DataTable>();
 
             ResultadosTransparenciaVII(ejercicio, trimestre, Resultado);
             return View();
         }
         [HttpPost]
         public ActionResult TransparenciaVII(int Ejercicio, int Trimestre) {
-            DataTable Resultado = new DataTable();
+            Dictionary<string, DataTable> Resultado = new Dictionary<string, DataTable>();
             ResultadosTransparenciaVII(Ejercicio, Trimestre, Resultado);
-            return View();
+            return View("TransparenciaVII");
         }
         [HttpPost]
         public ActionResult TransparenciaVIIExcel(int Ejercicio, int Trimestre) {
-            DataTable Resultado = new DataTable();
+            Dictionary<string, DataTable> Resultado = new Dictionary<string, DataTable>();
 
-            var tablas = new Dictionary<string, DataTable> { { "Hoja 1", ResultadosTransparenciaVII(Ejercicio, Trimestre, Resultado) } };
-            ArchivoController.ExportarExcel(tablas, $"LGT65_VII_{Ejercicio}_{Trimestre}");
+            ArchivoController.ExportarExcel(ResultadosTransparenciaVII(Ejercicio, Trimestre, Resultado), $"LGT65_VII_{Ejercicio}_{Trimestre}");
 
             return View("TransparenciaVII");
         }
-        private DataTable ResultadosTransparenciaVII(int Ejercicio, int Trimestre, DataTable Resultado = null) {
+        private Dictionary<string, DataTable> ResultadosTransparenciaVII(int Ejercicio, int Trimestre, Dictionary<string, DataTable> Resultado = null) {
             string consultaLocal = "";
             Global global = new Global(_coneccionService);
 
@@ -369,8 +368,11 @@ namespace RecursosHumanos.Controllers {
             }
 
             List<TransparenciaVIIModel> resultadoPrincipal = new List<TransparenciaVIIModel>();
+
             consultaLocal = consultaLocal + ConsultasModel.ConsultaTotalPercepcionesEmpleados;
             DataTable resultadoConsulta = global.ConsultaGeneral(consultaLocal);
+
+            resultadoPrincipal = RecorrerConsultaIIV(resultadoConsulta, Trimestre, Ejercicio);
 
             DataTable rPrincipal = new DataTable();
             DataTable tTabla140 = new DataTable();
@@ -523,6 +525,16 @@ namespace RecursosHumanos.Controllers {
                         );
                     }
                 }
+                else {
+                    tTabla143.Rows.Add(
+                                i,
+                                "n/a",
+                                0.00,
+                                0.00,
+                                "MXN",
+                                "Mensual"
+                            );
+                }
 
                 rPrincipal.Rows.Add(
                     dr.ejercicio,
@@ -561,7 +573,7 @@ namespace RecursosHumanos.Controllers {
                     );
             }
 
-            for (int k = 0; k < tTabla143.Rows.Count; k++) {
+            for (int k = 1; k < tTabla143.Rows.Count; k++) {
                 tTabla140.Rows.Add(k, "n/a", "0.00", "0.00", "MXN", "MENSUAL");
                 tTabla141.Rows.Add(k, "n/a", "n/a");
                 tTabla142.Rows.Add(k, "n/a", "0.00", "0.00", "MXN", "MENSUAL");
@@ -594,7 +606,83 @@ namespace RecursosHumanos.Controllers {
             ViewBag.Ejercicio = Ejercicio;
             ViewBag.Trimestre = Trimestre;
 
-            return rPrincipal;
+            var tablas = new Dictionary<string, DataTable> {
+                { "Reporte de Formatos", rPrincipal } ,
+                { "Tabla_140", tTabla140 } ,
+                { "Tabla_141", tTabla141 } ,
+                { "Tabla_142", tTabla142 } ,
+                { "Tabla_143", tTabla143 } ,
+                { "Tabla_144", tTabla144 } ,
+                { "Tabla_145", tTabla145 } ,
+                { "Tabla_146", tTabla146 } ,
+                { "Tabla_147", tTabla147 } ,
+                { "Tabla_148", tTabla148 } ,
+                { "Tabla_149", tTabla149 } ,
+                { "Tabla_155", tTabla155 } ,
+                { "Tabla_150", tTabla150 } ,
+                { "Tabla_151", tTabla151 }
+            };
+            return tablas;
+        }
+
+        private List<TransparenciaVIIModel> RecorrerConsultaIIV(DataTable dt, int t, int a) {
+            List<TransparenciaVIIModel> DT = new List<TransparenciaVIIModel>();
+
+            foreach (DataRow dr in dt.Rows) {
+                //801634
+                TransparenciaVIIModel model = new TransparenciaVIIModel();
+
+                model.ejercicio = Convert.ToString(dr[0]);
+                model.fechaInicioPeriodo = (string)dr[1];
+                model.fechaFinPeriodo = (string)dr[2];
+                model.tipoSujetoObligado = (string)dr[3];
+                model.claveNivelPuesto = (string)dr[4];
+                model.descripcionPuesto = (string)dr[5];
+                model.descripcionCargo = (string)dr[6];
+                model.areaAdscripcion = (string)dr[7];
+                model.nombre = (string)dr[8];
+                model.primerApellido = (string)dr[9];
+                model.segundoApellido = (string)dr[10];
+                model.sexo = (string)dr[11];
+                model.montoRemuredacionMensualBruta = Convert.ToString(dr[12]);
+                model.tipoMonedaBruta = (string)dr[13];
+                model.montoRemuredacionMensualNeta = Convert.ToString(dr[14]);
+                model.tipoMonedaNeta = (string)dr[15];
+                model.tabla143 = BuscarComplemento((string)dr[32], t, a);
+                model.AreaResponsable = (string)dr[29];
+                model.fechaActualizacion = (string)dr[2];
+                model.nota = (string)dr[20];
+
+                DT.Add(model);
+            }
+            return DT;
+        }
+
+        private List<Tabla143Model> BuscarComplemento(string rfc, int t, int a) {
+            Global global = new Global(_coneccionService);
+            List<Tabla143Model> dt = new List<Tabla143Model>();
+
+            string ComplementarConsulta = $"DECLARE @rfc VARCHAR(15) = '{rfc}' DECLARE @anio int= {a};  DECLARE @Trimestre int= {t}";
+
+            DataTable dt2 = global.ConsultaGeneral(ComplementarConsulta + ConsultasModel.ConsultaBuscarComplementos, "IESYS_SYSNGFCRSP");
+            if (dt2.Rows.Count > 0) {
+                dt.Add(new Tabla143Model());
+
+                dt[0].Id = "1";
+                dt[0].Denominacion = "COMPENSACIÓN GARANTIZADA";
+                dt[0].MontoBruto = (string)dt2.Rows[0][4].ToString();
+                dt[0].MontoNeto = (string)dt2.Rows[0][5].ToString();
+                dt[0].TipoMoneda = "MXN";
+                dt[0].Periodicidad = "Mensual";
+
+
+                Console.WriteLine(rfc);
+            }
+            else {
+                Console.WriteLine($" nel {rfc}");
+            }
+
+            return dt;
         }
         #endregion
         #region LGT65 XL
@@ -615,14 +703,116 @@ namespace RecursosHumanos.Controllers {
         public ActionResult TransparenciaXLExcel(int Ejercicio, int Trimestre) {
             DataTable Resultado = new DataTable();
 
-            var tablas = new Dictionary<string, DataTable> { { "Hoja 1", ResultadosTransparenciaVII(Ejercicio, Trimestre, Resultado) } };
+            var tablas = new Dictionary<string, DataTable> { { "Hoja 1", ResultadosTransparenciaXL(Ejercicio, Trimestre, Resultado) } };
             ArchivoController.ExportarExcel(tablas, $"LGT65_VII_{Ejercicio}_{Trimestre}");
 
             return View();
         }
         private DataTable ResultadosTransparenciaXL(int Ejercicio, int Trimestre, DataTable Resultado = null) {
 
+
+
+            Global global = new Global(_coneccionService);
+            consultaLocal = consultaLocal + ConsultasModel.ConsultaTotalPercepcionesEmpleados;
+
+            DataTable BasesDatos = cnn.CargarBasesDatos();
+            DataTable resultadoConsulta = new DataTable();
+
+            List<TransparenciaXLModel> lstXL = new List<TransparenciaXLModel>();
+            TransparenciaController trans = new TransparenciaController();
+
+            string consultaLocal = consulta.consultaTransparencia;
+            int txtAnio = (int)comboBoxAnio.SelectedItem;
+            int txtTrim = (int)comboBoxTrimestre.SelectedValue;
+
+            //AND( Historico_Movimiento.HmFchIni > 20260331)
+            switch (txtTrim) {
+                case 1:
+                    msj.Mensaje(txtEstatus, $"Selecciono el primer trimestre {txtAnio} {comboBoxTrimestre.Text}");
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}0101 AND {txtAnio}0331";
+                    break;
+                case 2:
+                    msj.Mensaje(txtEstatus, $"Selecciono el segundo trimestre {txtAnio} {comboBoxTrimestre.Text}");
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}0401 AND {txtAnio}0631";
+                    break;
+                case 3:
+                    msj.Mensaje(txtEstatus, $"Selecciono el tercer trimestre {txtAnio} {comboBoxTrimestre.Text}");
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}0701 AND {txtAnio}1031";
+                    break;
+                case 4:
+                    msj.Mensaje(txtEstatus, $"Selecciono el cuarto trimestre {txtAnio} {comboBoxTrimestre.Text}");
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}1101 AND {txtAnio}1231";
+                    break;
+                default:
+                    Console.WriteLine("Opción no válida");
+                    break;
+            }
+
+            foreach (DataRow row in BasesDatos.Rows) {
+                string descripcion = row["Descripcion"].ToString();
+                string baseDatos = row["BaseDatos"].ToString();
+
+                if (baseDatos == "" || baseDatos == "LUFEN")
+                    continue;
+
+
+                DataTable dtTemp = cnn.consultaGeneral(consultaLocal, baseDatos, baseDatos);
+
+                if (resultadoConsulta == null) {
+                    resultadoConsulta = dtTemp.Clone();
+                    resultadoConsulta.Columns.Add("BaseDatos", typeof(string));
+                }
+
+                dtTemp.Columns.Add("BaseDatos", typeof(string));
+
+                foreach (DataRow r in dtTemp.Rows)
+                    r["BaseDatos"] = descripcion;
+
+                resultadoConsulta.Merge(dtTemp);
+            }
+            //Recorre el resulta de la consulta  
+            lstXL = trans.RecorrerConsultaXL(resultadoConsulta, txtTrim, txtAnio);
+
+            gridResultadoConsulta.DataSource = lstXL;
+            gridResultadoConsulta.RowHeadersVisible = false;
+            gridResultadoConsulta.AutoGenerateColumns = true;
+            gridResultadoConsulta.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
             return Resultado;
+        }
+        private List<TransparenciaXLModel> RecorrerConsultaXL(DataTable dt, int trimestre, int anio) {
+            List<TransparenciaXLModel> XL = new List<TransparenciaXLModel>();
+            string fecha = DateTime.Today.ToString("dd/MM/yyyy");
+            var dato = Trimestre(trimestre, anio);
+
+            HashSet<string> RFCs = new HashSet<string>();
+
+            foreach (DataRow Row in dt.Rows) {
+
+                TransparenciaXLModel model = new TransparenciaXLModel();
+                string productDetalle = Row[0].ToString();
+
+                if (!RFCs.Add(Row[2].ToString()))
+                    continue;
+
+                model.ejercicio = anio.ToString();
+                model.fechaInicioPeriodo = dato.FechaInicio;
+                model.fechaFinPeriodo = dato.FechaFin;
+                model.estatus = "";
+                model.tipoJuvilacionPension = Row[9].ToString();
+                model.nombre = Row[8].ToString();
+                model.primerApellido = Row[6].ToString();
+                model.segundoApellido = Row[7].ToString();
+                model.sexo = Row[1].ToString() == "M" ? "Mujer" : "Hombre";
+                model.montoPorcion = "";
+                model.periodicidadMonto = "";
+                model.AreaResponsable = "DIRECCION GENERAL DE RECURSOS HUMANOS";
+                model.fechaActualizacion = fecha;
+                model.nota = Row[10].ToString();
+
+                XL.Add(model);
+            }
+            return XL;
         }
         #endregion
     }

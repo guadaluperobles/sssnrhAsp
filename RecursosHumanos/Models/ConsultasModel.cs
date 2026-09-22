@@ -197,7 +197,7 @@ namespace RecursosHumanos.Models {
 	            'Empleada (o)'									as 'tipoSujetoObligado',
                 pue.PtPtoSHCP									as 'claveNivelPuesto',
                 pue.PtDsc1										as 'descripcionPuesto',
-	            'Denominación'									as 'descripcionCargo',
+	            pue.PtDsc1  									as 'descripcionCargo',
                 ct.CtDsc										as 'areaAdscripcion', 
                 emp.MeNomEmp									as 'nombre',
                 emp.MeNomAP										as 'primerApellido',
@@ -263,5 +263,52 @@ namespace RecursosHumanos.Models {
             FROM Datos
             WHERE RN = 1";
 
+        public static string ConsultaBuscarComplementos = @"
+                DECLARE @QnaInicio SMALLINT;
+                DECLARE @QnaFin SMALLINT;
+
+                SET @QnaInicio =
+                    CASE @Trimestre
+                        WHEN 1 THEN 1
+                        WHEN 2 THEN 7
+                        WHEN 3 THEN 13
+                        WHEN 4 THEN 19
+                    END;
+
+                SET @QnaFin =
+                    CASE @Trimestre
+                        WHEN 1 THEN 6
+                        WHEN 2 THEN 12
+                        WHEN 3 THEN 18
+                        WHEN 4 THEN 24
+                    END;
+
+                SELECT TOP 1
+                    pc.PrAno,
+                    pc.PrQna,
+                    pd.ClkPr,
+                    pd.ClkDet,
+                    pd.PrTPer,
+                    pd.PrNeto,
+                    emp.MeRfc
+                FROM Producto_Detalle AS pd
+                JOIN Empleado AS emp
+                    ON pd.ClkDet = emp.ClkDet
+                INNER JOIN Producto_Control AS pc
+                    ON pd.ClkPr = pc.ClkPr
+                WHERE emp.MeRfc = @rfc
+                  AND pc.PrAno = @anio
+                  AND pd.PrNmCheq IN (
+                        SELECT PrNmCheq
+                        FROM Producto_Detalle pd2
+                        INNER JOIN Empleado emp2 ON pd2.ClkDet = emp2.ClkDet
+                        INNER JOIN Producto_Control pc2 ON pd2.ClkPr = pc2.ClkPr
+                        WHERE emp2.MeRfc = @rfc AND pc2.PrAno = @anio AND 
+                            (pc2.PrQna BETWEEN @QnaInicio AND @QnaFin) 
+                        GROUP BY PrNmCheq
+                        HAVING COUNT(*) = 1
+                  )
+                ORDER BY pc.PrQna DESC;
+        ";
     }
 }

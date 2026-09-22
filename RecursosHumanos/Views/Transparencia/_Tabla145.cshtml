@@ -1,64 +1,9 @@
-﻿@*
+﻿@using System.Data
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 
 @{
-    int plazasVacantesConfianza = ViewBag.plazasVacantesConfianza?.Rows.Count ?? 0;
-    int plazasVacantesBase = ViewBag.plazasVacantesBase?.Rows.Count ?? 0;
-    int plazasVacantesCB = plazasVacantesConfianza + plazasVacantesBase;
-
-    int plazasOcupadasConfianza = ViewBag.plazasOcupadasConfianza?.Rows.Count ?? 0;
-    int plazasOcupadasBase = ViewBag.plazasOcupadasBase?.Rows.Count ?? 0;
-    int plazasOcupadasCB = plazasOcupadasConfianza + plazasOcupadasBase;
-
-    int plazasOcupadasConfianzaMujeres = ViewBag.plazasOcupadasConfianzaMujeres?.Rows.Count ?? 0;
-    int plazasOcupadasBaseMujeres = ViewBag.plazasOcupadasBaseMujeres?.Rows.Count ?? 0;
-    int plazasOcupadasBCMujeres = plazasOcupadasConfianzaMujeres + plazasOcupadasBaseMujeres;
-
-    int plazasOcupadasConfianzaHombres = ViewBag.plazasOcupadasConfianzaHombres?.Rows.Count ?? 0;
-    int plazasOcupadasBaseHombres = ViewBag.plazasOcupadasBaseHombres?.Rows.Count ?? 0;
-    int plazasOcupadasCBHombres = plazasOcupadasBaseHombres + plazasOcupadasConfianzaHombres;
-
-    int total = plazasOcupadasCBHombres + plazasOcupadasBCMujeres +  plazasVacantesCB;
-    int totalConfianza = plazasOcupadasConfianzaHombres + plazasOcupadasConfianzaMujeres  + plazasVacantesConfianza;
-    int totalBase = plazasVacantesBase +  plazasOcupadasBaseMujeres + plazasOcupadasBaseHombres;
+    DataTable Resultado = ViewBag.tTabla145;
 }
-<table class="table table-bordered">
-    <tr>
-        <th></th>
-        <th>Plazas de Confianza</th>
-        <th>Plazas de Base</th>
-        <th>Total</th>
-    </tr>
-    <tr>
-        <th>Vacantes</th>
-        <td>@plazasVacantesConfianza</td>
-        <td>@plazasVacantesBase</td>
-        <td>@plazasVacantesCB</td>
-    </tr>
-    <tr>
-        <th>Ocupadas</th>
-        <td>@plazasOcupadasConfianza </td>
-        <td>@plazasOcupadasBase </td>
-        <td>@plazasOcupadasCB</td>
-    </tr>
-    <tr>
-        <th>Mujeres</th>
-        <td>@plazasOcupadasConfianzaMujeres</td>
-        <td>@plazasOcupadasBaseMujeres</td>
-        <td>@plazasOcupadasBCMujeres</td>
-    </tr>
-    <tr>
-        <th>Hombres</th>
-        <td>@plazasOcupadasConfianzaHombres</td>
-        <td>@plazasOcupadasBaseHombres</td>
-        <td>@plazasOcupadasCBHombres</td>
-    </tr>
-    <tr>
-        <th>Total</th>
-        <th>@totalConfianza</th>
-        <th>@totalBase</th>
-        <th>@total</th>
-    </tr>
-
-</table>
+<partial name="_Tabla" model="Resultado" />

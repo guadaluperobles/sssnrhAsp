@@ -3,6 +3,7 @@
         public string Vista { get; set; }
         public string Controlador { get; set; }
         public string Accion { get; set; }
+        public string Icono { get; set; }
         public List<MenuItem> SubModulos { get; set; } = new();
     }
 }
