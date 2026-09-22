@@ -94,9 +94,7 @@ main {
 }
 
 #sidebar {
-    top: 0;
-    left: 0;
-    min-width: 265px !important;
+    min-width: 250px !important;
     height: 83vh;
     overflow-y: auto;
     z-index: 1000;
