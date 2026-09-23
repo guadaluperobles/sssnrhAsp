@@ -1,15 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
-using RecursosHumanos.ViewModel;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using RecursosHumanos.Models;
+using RecursosHumanos.ViewModel;
 using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class ValidarCentrosTrabajoController : Controller {
         private readonly ConeccionService _coneccionService;
         private readonly IWebHostEnvironment _env;

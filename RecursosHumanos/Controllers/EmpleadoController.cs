@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Text.RegularExpressions;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class EmpleadoController : Controller {
         private readonly ConeccionService _coneccionService;
         public EmpleadoController(ConeccionService coneccionService, IConfiguration configuration) {

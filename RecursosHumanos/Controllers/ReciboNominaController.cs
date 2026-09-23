@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
 using RecursosHumanos.Data;
@@ -12,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class ReciboNominaController : Controller {
         private readonly ConeccionService _coneccionService;
         private readonly IWebHostEnvironment _env;

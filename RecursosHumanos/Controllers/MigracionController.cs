@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml.Office2010.PowerPoint;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Humanizer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecursosHumanos.Data;
@@ -9,6 +10,7 @@ using System.Net.NetworkInformation;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class MigracionController : Controller {
         // GET: MigracionController
         private readonly ConeccionService _coneccionService;

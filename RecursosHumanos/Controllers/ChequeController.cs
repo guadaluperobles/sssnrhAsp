@@ -1,4 +1,5 @@
 using Azure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.CodeAnalysis.Differencing;
@@ -10,14 +11,13 @@ using RecursosHumanos.Models;
 using RecursosHumanos.ViewModel;
 using System.Data;
 using static System.Runtime.InteropServices.JavaScript.JSType;
-
+[Authorize]
 public class ChequeController : Controller {
     private readonly ApplicationDbContext _context;
 
     public ChequeController(ApplicationDbContext context) {
         _context = context;
     }
-
     // GET: CHEQUES
     public async Task<IActionResult> Index() {
         

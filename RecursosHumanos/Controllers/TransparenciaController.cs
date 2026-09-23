@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
@@ -7,6 +8,7 @@ using System.Data;
 using System.Security.Principal;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class TransparenciaController : Controller {
         // GET: TransparenciaControllerprivate readonly ConeccionService _coneccionService;
     

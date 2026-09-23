@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
@@ -8,6 +9,7 @@ using RecursosHumanos.ViewModel;
 using System.Data;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class SeguroRiesgoProfesionalController : Controller {
 
         private readonly ApplicationDbContext _context;

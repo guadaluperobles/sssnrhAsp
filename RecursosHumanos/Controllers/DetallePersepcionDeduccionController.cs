@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class DetallePersepcionDeduccionController : Controller {
         // GET: TransparenciaIXController
         public ActionResult Index() {

@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Spreadsheet;
 using Humanizer;
 using Humanizer.Configuration;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RecursosHumanos.Controllers {
+    [Authorize]
     public class NominaController : Controller {
         // GET: NominaController1
         private readonly ConeccionService _coneccionService;
