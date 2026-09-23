@@ -690,9 +690,7 @@ namespace RecursosHumanos.Controllers {
             int ejercicio = DateTime.Now.Year;
             int trimestre = ((DateTime.Now.Month - 1) / 3) + 1;
             DataTable Resultado = new DataTable();
-
             ResultadosTransparenciaXL(ejercicio, trimestre, Resultado);
-
             return View();
         }
         [HttpPost]
