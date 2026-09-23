@@ -165,7 +165,6 @@ namespace RecursosHumanos.Models {
                 SUBSTRING(pd.prclvpag,5,3)<>'610'
         ";
 
-
         public static string ConsultaTotalPercepcionesEmpleados = @" 
             DECLARE @FechaInicio    DATE;
             DECLARE @FechaFin       DATE;
@@ -309,6 +308,23 @@ namespace RecursosHumanos.Models {
                         HAVING COUNT(*) = 1
                   )
                 ORDER BY pc.PrQna DESC;
+        ";
+        public static string ConsultaTransparencia = @"
+            SELECT        
+                Historico_Movimiento.ClkDet, 
+                MeSexo, 
+                Historico_Movimiento.HmRfcA, 
+                Historico_Movimiento.HmCodMov, 
+                Historico_Movimiento.HmQnaAp, 
+                Historico_Movimiento.HmFchIni, 
+                Empleado.MeNomAP, 
+                Empleado.MeNomAM,    
+                Empleado.MeNomEmp, 
+                Movimiento.CvDsc 
+            FROM Historico_Movimiento 
+            INNER JOIN Empleado ON Historico_Movimiento.ClkDet = Empleado.ClkDet 
+            INNER JOIN Movimiento ON Historico_Movimiento.HmCodMov = Movimiento.ClkMov 
+            WHERE (Historico_Movimiento.HmCodMov = 1102 )
         ";
     }
 }

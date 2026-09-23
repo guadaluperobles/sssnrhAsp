@@ -4,6 +4,7 @@ using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using RecursosHumanos.Models;
 using System.Data;
+using System.Security.Principal;
 
 namespace RecursosHumanos.Controllers {
     public class TransparenciaController : Controller {
@@ -153,8 +154,7 @@ namespace RecursosHumanos.Controllers {
                 }
             }
             var tablas = new Dictionary<string, DataTable>{{ "Hoja 1", ResultadosTransparenciaIX(Ejercicio, Trimestre, Resultado) }  };
-            ArchivoController.ExportarExcel(tablas, $"LGT65_IX_{Ejercicio}_{Trimestre}");
-            return View("TransparenciaIX");
+            return ArchivoController.ExportarExcel(tablas, $"LGT65_IX_{Ejercicio}_{Trimestre}");
         }
         private DataTable LeerPlazasVacantes(string[] PlazasVacantes) {
             DataTable Resultado = new DataTable();
@@ -279,8 +279,8 @@ namespace RecursosHumanos.Controllers {
 
                 Resultado.Rows.Add(
                     "2026",
-                    periodoActual.Inicio + "/" + Ejercicio.ToString(),
-                    DateTime.DaysInMonth(Ejercicio, Convert.ToInt32(periodoActual.Fin)) + "/" +periodoActual.Fin + "/" + Ejercicio.ToString(),
+                    "01/" + periodoActual.Inicio + "/" + Ejercicio.ToString(),
+                    DateTime.DaysInMonth(Ejercicio, Convert.ToInt32(periodoActual.Fin)) + "/" + periodoActual.Fin + "/" + Ejercicio.ToString(),
                     "",
                     r[4],
                     r[3],
@@ -348,7 +348,7 @@ namespace RecursosHumanos.Controllers {
 
             ArchivoController.ExportarExcel(ResultadosTransparenciaVII(Ejercicio, Trimestre, Resultado), $"LGT65_VII_{Ejercicio}_{Trimestre}");
 
-            return View("TransparenciaVII");
+            return ArchivoController.ExportarExcel(ResultadosTransparenciaVII(Ejercicio, Trimestre, Resultado), $"LGT65_VII_{Ejercicio}_{Trimestre}");
         }
         private Dictionary<string, DataTable> ResultadosTransparenciaVII(int Ejercicio, int Trimestre, Dictionary<string, DataTable> Resultado = null) {
             string consultaLocal = "";
@@ -690,7 +690,9 @@ namespace RecursosHumanos.Controllers {
             int ejercicio = DateTime.Now.Year;
             int trimestre = ((DateTime.Now.Month - 1) / 3) + 1;
             DataTable Resultado = new DataTable();
+
             ResultadosTransparenciaXL(ejercicio, trimestre, Resultado);
+
             return View();
         }
         [HttpPost]
@@ -702,88 +704,54 @@ namespace RecursosHumanos.Controllers {
         [HttpPost]
         public ActionResult TransparenciaXLExcel(int Ejercicio, int Trimestre) {
             DataTable Resultado = new DataTable();
-
-            var tablas = new Dictionary<string, DataTable> { { "Hoja 1", ResultadosTransparenciaXL(Ejercicio, Trimestre, Resultado) } };
-            ArchivoController.ExportarExcel(tablas, $"LGT65_VII_{Ejercicio}_{Trimestre}");
-
-            return View();
+            var tablas = new Dictionary<string, DataTable> { { $"LGT65_XL_{Ejercicio}_{Trimestre}", ResultadosTransparenciaXL(Ejercicio, Trimestre, Resultado) } };
+            return ArchivoController.ExportarExcel(tablas, $"LGT65_XL_{Ejercicio}_{Trimestre}");
         }
         private DataTable ResultadosTransparenciaXL(int Ejercicio, int Trimestre, DataTable Resultado = null) {
 
-
-
             Global global = new Global(_coneccionService);
-            consultaLocal = consultaLocal + ConsultasModel.ConsultaTotalPercepcionesEmpleados;
-
-            DataTable BasesDatos = cnn.CargarBasesDatos();
             DataTable resultadoConsulta = new DataTable();
-
             List<TransparenciaXLModel> lstXL = new List<TransparenciaXLModel>();
-            TransparenciaController trans = new TransparenciaController();
-
-            string consultaLocal = consulta.consultaTransparencia;
-            int txtAnio = (int)comboBoxAnio.SelectedItem;
-            int txtTrim = (int)comboBoxTrimestre.SelectedValue;
+            string consultaLocal = ConsultasModel.ConsultaTransparencia;
 
             //AND( Historico_Movimiento.HmFchIni > 20260331)
-            switch (txtTrim) {
+            switch (Trimestre) {
                 case 1:
-                    msj.Mensaje(txtEstatus, $"Selecciono el primer trimestre {txtAnio} {comboBoxTrimestre.Text}");
-                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}0101 AND {txtAnio}0331";
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {Ejercicio}0101 AND {Ejercicio}0331";
                     break;
                 case 2:
-                    msj.Mensaje(txtEstatus, $"Selecciono el segundo trimestre {txtAnio} {comboBoxTrimestre.Text}");
-                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}0401 AND {txtAnio}0631";
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {Ejercicio}0401 AND {Ejercicio}0631";
                     break;
                 case 3:
-                    msj.Mensaje(txtEstatus, $"Selecciono el tercer trimestre {txtAnio} {comboBoxTrimestre.Text}");
-                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}0701 AND {txtAnio}1031";
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {Ejercicio}0701 AND {Ejercicio}1031";
                     break;
                 case 4:
-                    msj.Mensaje(txtEstatus, $"Selecciono el cuarto trimestre {txtAnio} {comboBoxTrimestre.Text}");
-                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {txtAnio}1101 AND {txtAnio}1231";
+                    consultaLocal += $"AND Historico_Movimiento.HmFchIni BETWEEN {Ejercicio}1101 AND {Ejercicio}1231";
                     break;
                 default:
                     Console.WriteLine("Opción no válida");
                     break;
             }
 
-            foreach (DataRow row in BasesDatos.Rows) {
-                string descripcion = row["Descripcion"].ToString();
-                string baseDatos = row["BaseDatos"].ToString();
+            resultadoConsulta = global.ConsultaGeneral(consultaLocal);
+            lstXL = RecorrerConsultaXL(resultadoConsulta, Trimestre, Ejercicio);
 
-                if (baseDatos == "" || baseDatos == "LUFEN")
-                    continue;
+            ViewBag.Resultado = Global.ToDataTable(lstXL);
+
+            ViewBag.Ejercicio = Ejercicio;
+            ViewBag.Trimestre = Trimestre;
 
 
-                DataTable dtTemp = cnn.consultaGeneral(consultaLocal, baseDatos, baseDatos);
-
-                if (resultadoConsulta == null) {
-                    resultadoConsulta = dtTemp.Clone();
-                    resultadoConsulta.Columns.Add("BaseDatos", typeof(string));
-                }
-
-                dtTemp.Columns.Add("BaseDatos", typeof(string));
-
-                foreach (DataRow r in dtTemp.Rows)
-                    r["BaseDatos"] = descripcion;
-
-                resultadoConsulta.Merge(dtTemp);
-            }
-            //Recorre el resulta de la consulta  
-            lstXL = trans.RecorrerConsultaXL(resultadoConsulta, txtTrim, txtAnio);
-
-            gridResultadoConsulta.DataSource = lstXL;
-            gridResultadoConsulta.RowHeadersVisible = false;
-            gridResultadoConsulta.AutoGenerateColumns = true;
-            gridResultadoConsulta.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-            return Resultado;
+            return Global.ToDataTable(lstXL);
         }
         private List<TransparenciaXLModel> RecorrerConsultaXL(DataTable dt, int trimestre, int anio) {
             List<TransparenciaXLModel> XL = new List<TransparenciaXLModel>();
             string fecha = DateTime.Today.ToString("dd/MM/yyyy");
-            var dato = Trimestre(trimestre, anio);
+            Periodo per = new Periodo();
+
+            List<Periodo> periodos = per.trimestres();
+            Periodo? periodoActual = periodos.FirstOrDefault(x => x.Id == trimestre);
+
 
             HashSet<string> RFCs = new HashSet<string>();
 
@@ -796,8 +764,8 @@ namespace RecursosHumanos.Controllers {
                     continue;
 
                 model.ejercicio = anio.ToString();
-                model.fechaInicioPeriodo = dato.FechaInicio;
-                model.fechaFinPeriodo = dato.FechaFin;
+                model.fechaInicioPeriodo = "01/" + periodoActual.Inicio + "/" + anio.ToString();
+                model.fechaFinPeriodo = DateTime.DaysInMonth(anio, Convert.ToInt32(periodoActual.Fin)) + "/" + periodoActual.Fin + "/" + anio.ToString();
                 model.estatus = "";
                 model.tipoJuvilacionPension = Row[9].ToString();
                 model.nombre = Row[8].ToString();
