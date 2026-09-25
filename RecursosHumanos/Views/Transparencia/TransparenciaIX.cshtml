@@ -1,43 +1,46 @@
 ﻿@{
     ViewData["Title"] = "Transparencia / LGT65 / IX /Plazas vacantes y ocupadas";
     ViewBag.Accion = "TransparenciaIX"; 
-    ViewBag.AccionExcel = "TransparenciaIXExcel"; 
+    ViewBag.AccionExcel = "TransparenciaIXExcel";
+    ViewBag.SubirArchivo = true;
 }
-    <div class="row">
-        <div class="col-md-12 align-content-end">
-            <partial name="_Form" view-data="ViewData" />
-        </div>
-        <div class="clearfix"><hr /></div>
-        <div class="col-md-12">
-            <ul class="nav nav-tabs" id="tabPrincipal" role="tablist">
-                <li class="nav-item" >
-                    <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Resumen" active>Resumen (IX.2)</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Informacion">Información (IX.1)</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" data-bs-target="#PlazasOcupadas">Plazas Ocupadas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-toggle="tab" data-bs-target="#PlazasVacantes">Plazas Vacantes</a>
-                </li>
-            </ul>
-        </div>
-        <div class=" col-md-12">
-            <div class="tab-content">
-                <div id="Resumen" class="tab-pane fade show active">
-                    <partial name="_Resumen" view-data="ViewData" />
-                </div>
-                <div id="Informacion" class="tab-pane fade">
-                    <partial name="_Informacion" view-data="ViewData" />
-                </div>
-                <div id="PlazasOcupadas" class="tab-pane fade">
-                    <partial name="_PlazasOcupadas" view-data="ViewData" />
-                </div>
-                <div id="PlazasVacantes" class="tab-pane fade">
-                    <partial name="_PlazasVacantes" view-data="ViewData" />
-                </div>
+<div class="row">
+    <div class="col-md-12 align-content-end">
+
+        <partial name="_Form" view-data="ViewData" />
+        
+    </div>
+    <div class="clearfix"><hr /></div>
+    <div class="col-md-12">
+        <ul class="nav nav-tabs" id="tabPrincipal" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Resumen" active>Resumen (IX.2)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#Informacion">Información (IX.1)</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#PlazasOcupadas">Plazas Ocupadas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" data-bs-target="#PlazasVacantes">Plazas Vacantes</a>
+            </li>
+        </ul>
+    </div>
+    <div class=" col-md-12">
+        <div class="tab-content">
+            <div id="Resumen" class="tab-pane fade show active">
+                <partial name="_Resumen" view-data="ViewData" />
+            </div>
+            <div id="Informacion" class="tab-pane fade">
+                <partial name="_Informacion" view-data="ViewData" />
+            </div>
+            <div id="PlazasOcupadas" class="tab-pane fade">
+                <partial name="_PlazasOcupadas" view-data="ViewData" />
+            </div>
+            <div id="PlazasVacantes" class="tab-pane fade">
+                <partial name="_PlazasVacantes" view-data="ViewData" />
             </div>
         </div>
     </div>
+</div>

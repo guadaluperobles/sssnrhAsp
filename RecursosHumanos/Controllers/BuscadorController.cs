@@ -28,14 +28,18 @@ namespace RecursosHumanos.Controllers {
         }
         [HttpPost]
         public IActionResult Index(string localizar, string activo) {
-            Global global = new Global(_coneccionService);
+
+            bool valorActivo = activo == "on";
+            bool esNumerico = !string.IsNullOrWhiteSpace(localizar) && localizar.All(char.IsDigit);
+
             string texto = (localizar ?? "").Replace(" ", "");
-             bool valorActivo = activo == "on";
             string buscarActivo = valorActivo ? " AND RIGHT(CAST(MeIndMe AS VARCHAR(2)), 1) = '0'" : "";
             string consulta = $"{ConsultasModel.BuscarEmpleado} LIKE '%{texto}%' {buscarActivo}";
+
+            Global global = new Global(_coneccionService);
             DataTable Empleados = global.ConsultaGeneral(consulta);
 
-            
+
             var modelo = new CustomTable {
                 Datos = Empleados.Rows.Cast<DataRow>(),
                 Columnas = Global.GenerarColumnas(

@@ -52,7 +52,6 @@ namespace RecursosHumanos.Controllers {
             
             return View("ActualizaCFDI", modelView);
         }
-
         [HttpPost]
         public ActionResult ActualizarCFDIEmpleado(string BaseDatosConsulta = "") {
 
@@ -177,7 +176,35 @@ namespace RecursosHumanos.Controllers {
             return View(modelView);
         }
 
+        public ActionResult Isrtp() {
 
+            Global global = new Global(_coneccionService);
+
+            int ejercicio = DateTime.Now.Year;
+            int mes = DateTime.Now.Month;
+
+            ViewBag.EjercicioFin = ejercicio;
+            ViewBag.MesFin = mes;
+
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Isrtp(int EjercicioInicio = 0, int EjercicioFin = 0, int MesInicio = 0, int MesFin = 0) {
+
+            Global global = new Global(_coneccionService);
+
+            string ConsultaRfc = $"SELECT * FROM RespaldoCFDI";
+            DataTable ResCFDIS = new DataTable();
+            DataTable BasesDatos = global.BasesDatosOperativas();
+
+
+            ViewBag.EjercicioInicio = EjercicioInicio;
+            ViewBag.EjercicioFin = EjercicioFin;
+            ViewBag.MesInicio = MesInicio;
+            ViewBag.MesFin = MesFin;
+
+            return View();
+        }
         [HttpPost]
         public ActionResult CodigoPostalEmpleado(string BaseDatosConsulta = "") {
             Global global = new Global(_coneccionService);
@@ -669,7 +696,7 @@ namespace RecursosHumanos.Controllers {
             return View("PerDedEmpleado", modelView);
         }
 
-        public DataTable ProcesarExcel(IFormFile archivo) {
+        private DataTable ProcesarExcel(IFormFile archivo) {
             DataTable dt;
 
 
@@ -741,6 +768,12 @@ namespace RecursosHumanos.Controllers {
             }
 
             return dt;
+        }
+        private DataTable obtenerISRTP(int EjercicioInicio, int EjercicioFin, int MesInicio, int MesFin) {
+            DataTable resultado = new DataTable();
+
+
+            return resultado;
         }
 
     }

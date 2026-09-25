@@ -1,7 +1,19 @@
-﻿@using (Html.BeginForm((string)ViewBag.Accion, "Transparencia", FormMethod.Post))
+﻿@using (Html.BeginForm((string)ViewBag.Accion, "Transparencia", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <div class="row align-items-end">
-        <div class="col-2"></div>
+        <div class="col-2">
+            @if (ViewBag.SubirArchivo is bool subirArchivo && subirArchivo)
+            {
+                <a class="btn btn-secondary"
+                   data-bs-toggle="collapse"
+                   href="#collapseImport"
+                   role="button"
+                   aria-expanded="false"
+                   aria-controls="collapseImport">
+                    Agregar archivo
+                </a>
+            }
+        </div>
         <div class="col-3">
             <label>Ejercicio:</label>
             <partial name="_SelectEjercicio" view-data="ViewData" />
@@ -20,6 +32,22 @@
                 <i class="bi bi-file-earmark-excel-fill"></i>
                 Descargar Excel
             </button>
+        </div>
+        <div class="collapse" id="collapseImport">
+            <div class="card card-body">
+                <div class="row align-items-end">
+                    <div class="col-6"></div>
+
+                    <div class="col-4">
+                        <input type="file" name="archivo" class="form-control" />
+                    </div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-primary" style="width: 100%">
+                            @(ViewData["Texto"] != null ? @ViewData["Texto"] : "Subir")
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 }

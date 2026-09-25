@@ -253,7 +253,7 @@ namespace RecursosHumanos.Model {
         public DataTable BasesDatosOperativas() {
             return _coneccionService?.CargarBasesDatosOperativas();
         }
-        public DataTable ConsultaGeneral(string consulta, string baseDatos = "") {
+        public DataTable ConsultaGeneral(string consulta, string baseDatos = "", bool crsp = true) {
             DataTable dataTable = new DataTable();
             DataTable BasesDatos = _coneccionService.CargarBasesDatosOperativas();
 
@@ -273,6 +273,9 @@ namespace RecursosHumanos.Model {
                     baseDatos = row["BaseDatos"].ToString();
 
                     if (baseDatos == "" || baseDatos == "LUFEN")
+                        continue;
+
+                    if (!crsp && baseDatos.Contains("CRSP") ) 
                         continue;
 
                     DataTable dtTemp = _coneccionService.EjecutarConsulta(baseDatos, consulta);
