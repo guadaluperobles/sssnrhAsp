@@ -8,6 +8,7 @@ using RecursosHumanos.Model;
 using RecursosHumanos.Models;
 using RecursosHumanos.ViewModel;
 using System.Data;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -265,18 +266,26 @@ namespace RecursosHumanos.Controllers {
         }
         public IActionResult GenerarReporte(string UUID) {
             try {
+                var cultura = new CultureInfo("es-MX");
+                CultureInfo.CurrentCulture = cultura;
+                CultureInfo.CurrentUICulture = cultura;
                 LocalReport reporte = new LocalReport();
+
                 var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptReciboNomina.rdlc");
+
                 if (!System.IO.File.Exists(ruta)) {
                     throw new Exception(ruta);
                 }
-                reporte.ReportPath = ruta;
-                var resibo = ObtenerDatos(UUID);
-                var resibos = new List<ReciboModel> { resibo };
 
-                reporte.DataSources.Add(new ReportDataSource("dsReciboNomina", resibos));
-                reporte.DataSources.Add(new ReportDataSource("dsPercepciones", resibo.Percepciones));
-                reporte.DataSources.Add(new ReportDataSource("dsDeducciones", resibo.Deducciones));
+                reporte.ReportPath = ruta;
+
+                var recibo = ObtenerDatos(UUID);
+
+                var recibos = new List<ReciboModel> { recibo };
+
+                reporte.DataSources.Add(new ReportDataSource("dsReciboNomina", recibos));
+                reporte.DataSources.Add(new ReportDataSource("dsPercepciones", recibo.Percepciones));
+                reporte.DataSources.Add(new ReportDataSource("dsDeducciones", recibo.Deducciones));
 
                 byte[] pdf = reporte.Render("PDF");
 
@@ -291,16 +300,6 @@ namespace RecursosHumanos.Controllers {
             Global global = new Global(_coneccionService);//BuscarRespaldoCFDI
             string consulta = $"{ConsultasModel.BuscarCFDI} WHERE pd.PrUUID = '{UUID}'";
             DataTable recibosCFDI = global.ConsultaGeneral(consulta);
-
-            /**
-             * Obtiene datos de la tabla de respaldos 
-            string consultaR = $"{ConsultasModel.BuscarRespaldoCFDI} WHERE PrUUID = '{UUID}'";
-            DataTable recibosRespaldo = global.ConsultaGeneral(consultaR, "IESYST");
-            recibosCFDI.Merge(recibosRespaldo);
-            
-            if (recibosCFDI.Rows.Count > 0)
-                recibosCFDI = recibosCFDI.AsEnumerable().GroupBy(row => row.Field<string>("PrUUID")).Select(g => g.First()).CopyToDataTable();
-            /**/
 
             if (recibosCFDI == null || recibosCFDI.Rows.Count == 0) {
                 return null;

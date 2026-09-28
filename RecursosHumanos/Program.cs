@@ -3,9 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using IdentityUser = Microsoft.AspNetCore.Identity.IdentityUser;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var culturaMX = new CultureInfo("es-MX");
+
+var localizationOptions = new RequestLocalizationOptions {
+    DefaultRequestCulture = new RequestCulture(culturaMX),
+    SupportedCultures = new[] { culturaMX },
+    SupportedUICultures = new[] { culturaMX }
+};
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("IESYST") ?? throw new InvalidOperationException("Cadena de Coneccion string (DefaultConnection) no se encuentra");
 
@@ -20,6 +29,7 @@ builder.Services.AddScoped<ConeccionService>();
 builder.Services.AddScoped<Global>();
 
 var app = builder.Build();
+app.UseRequestLocalization(localizationOptions);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

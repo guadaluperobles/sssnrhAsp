@@ -10,6 +10,7 @@ using RecursosHumanos.Model;
 using RecursosHumanos.Models;
 using RecursosHumanos.ViewModel;
 using System.Data;
+using System.Globalization;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 [Authorize]
 public class ChequeController : Controller {
@@ -365,6 +366,10 @@ public class ChequeController : Controller {
             string ruta;
             var cheque = await _context.Cheque.FirstOrDefaultAsync(x => x.Id == id);
 
+            var cultura = new CultureInfo("es-MX");
+            CultureInfo.CurrentCulture = cultura;
+            CultureInfo.CurrentUICulture = cultura;
+
             if (cheque.TipoCheque == "Chequera")
                 ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptImpresionChequera.rdlc");
             else
@@ -403,6 +408,10 @@ public class ChequeController : Controller {
     }
     public async Task<IActionResult> GenerarReporteFirmas(int id) {
         try {
+            var cultura = new CultureInfo("es-MX");
+            CultureInfo.CurrentCulture = cultura;
+            CultureInfo.CurrentUICulture = cultura;
+
             var ruta = Path.Combine(Directory.GetCurrentDirectory(), "Reportes", "rptFirmaCheque.rdlc");
 
             if (!System.IO.File.Exists(ruta)) {
