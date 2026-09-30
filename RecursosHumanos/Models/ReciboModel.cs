@@ -27,6 +27,7 @@ namespace RecursosHumanos.Model
         private string? _puesto;
         private string? _total;
         private string? _importeLetras;
+        private string? _FONAC;
         private string? _cadenaOriginalSAT;
         private string? _selloDigitalSAT;
         private string? _certificadoSAT;
@@ -62,6 +63,7 @@ namespace RecursosHumanos.Model
         public string totalPercepciones { get { return _totalPercepciones; } set { _totalPercepciones = value; } }
         public string totalDeducciones { get { return _totalDeducciones; } set { _totalDeducciones = value; } }
         public string totalPagar { get { return _totalPagar; } set { _totalPagar = value; } }
+        public string FONAC { get { return _FONAC; } set { _FONAC = value; } }
         public string total { get { return _total; } set { _total = value; } }
         public string importeLetras { get { return _importeLetras; } set { _importeLetras = value; } }
         public string cadenaOriginalSAT { get { return _cadenaOriginalSAT; } set { _cadenaOriginalSAT = value; } }

@@ -87,7 +87,7 @@ namespace RecursosHumanos.Controllers {
                         string fechaTimbrado = partesTimbrado[0].Replace("-", "");
                         string horaTimbrado = partesTimbrado.Length > 1 ? partesTimbrado[1] : "";
 
-                        var recibo = ReciboNominaController.CargarCFDI(PrXML, "12", "ui", "bd", "gh");
+                        var recibo = ReciboNominaController.CargarCFDI(PrXML, "12", "ui", "bd", "gh", global);
 
                         string sqlActualizaProductoDetalle = @"
                             UPDATE Producto_Detalle
@@ -229,7 +229,7 @@ namespace RecursosHumanos.Controllers {
                 string xml = row["PrXML"].ToString();
                 string codigoPostal = "";
                 if (!string.IsNullOrEmpty(xml)) {
-                    ReciboModel Recibo = ReciboNominaController.CargarCFDI(xml, "", "", "", "");
+                    ReciboModel Recibo = ReciboNominaController.CargarCFDI(xml, "", "", "", "", global);
                     row["CP_XML"] = Recibo.codigoPostal;
                     row["NOMBRECOMPLETO_XML"] = Recibo.nombre;
                 }

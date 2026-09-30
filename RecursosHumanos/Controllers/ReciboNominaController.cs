@@ -241,7 +241,7 @@ namespace RecursosHumanos.Controllers {
                 string BaseDatos = r["BaseDatos"].ToString();
 
                 //https://localhost:7281/ReciboNomina/AnalizarRespaldo
-                ReciboModel recibo = CargarCFDI(xml, quincena.ToString(), "", "", BaseDatos);
+                ReciboModel recibo = CargarCFDI(xml, quincena.ToString(), "", "", BaseDatos, global);
 
                 string rfc = recibo.rfc;
                 string FechaTimbrado = recibo.fechaEmision;
@@ -307,10 +307,18 @@ namespace RecursosHumanos.Controllers {
             DataRow rcb = recibosCFDI.Rows[0];
             string nombreArchivo = rcb[1].ToString() + "_" + rcb[2].ToString() + "_" + rcb[5].ToString();
 
-            var recibo = CargarCFDI(rcb[6].ToString(), rcb[2].ToString(), nombreArchivo, rcb[3].ToString(), rcb[7].ToString());
+            var recibo = CargarCFDI(rcb[6].ToString(), rcb[2].ToString(), nombreArchivo, rcb[3].ToString(), rcb[7].ToString(), global);
+
             return recibo;
         }
-        public static ReciboModel CargarCFDI(string vXml, string vQuincena, string vNombreArchivo, string clavePago, string nombreBaseDatos) {
+        public static ReciboModel CargarCFDI(
+            string vXml, 
+            string vQuincena, 
+            string vNombreArchivo, 
+            string clavePago, 
+            string nombreBaseDatos,
+            Global global
+            ) {
             
             ReciboModel reciboNomina = new ReciboModel();
             XmlDocument xmlDoc = new XmlDocument();
@@ -688,7 +696,13 @@ namespace RecursosHumanos.Controllers {
             reciboNomina.ClavePago = clavePago;
             reciboNomina.Deducciones = Deducciones;
             reciboNomina.Percepciones = Percepciones;
-
+            reciboNomina.FONAC = ObtenerFonac(
+                reciboNomina.fechaEmision,
+                reciboNomina.quincena,
+                Convert.ToInt32(reciboNomina.noEmpleado),
+                nombreBaseDatos,
+                global
+                ); 
             return reciboNomina;
         }
         public static string obtenerAntiguedad(string antiguedad) {
@@ -739,6 +753,39 @@ namespace RecursosHumanos.Controllers {
         }
         private static XmlNode? GetNodo(XmlDocument xmlDoc, int c, int i, int j) {
             return xmlDoc.DocumentElement?.ChildNodes[c]?.ChildNodes[i]?.ChildNodes[j];
+        }
+        private static string ObtenerFonac(string fechaEmision, string quincena, int ClkDet, string baseDatos, Global global) {
+            Double Fonac = 0.00;
+            string[] fechaEmic = fechaEmision.Split("-");
+            int PeriodoEmision = Convert.ToInt32(fechaEmic[0]); //19047
+
+            /*
+            string ObtenerPerDedProducto = @$"SELECT * from PerDed_Producto where clkdet = {ClkDet} AND PrPDClave = '21' AND (ClkPr like 'PRO{añoEmision-1}%' or ClkPr like 'PRO{añoEmision}%' )  
+                ORDER BY ClkPr";
+            */
+            int PeriodoInicio = PeriodoEmision;
+            int PeriodoFin = PeriodoEmision;
+
+            if (Convert.ToInt32(quincena) >= 14)
+                PeriodoFin++;
+            else
+                PeriodoInicio--;
+
+            string ObtenerPerDedProducto = @$"SELECT*
+                    FROM            PerDed_Producto
+                    INNER JOIN Producto_Control ON PerDed_Producto.ClkPr = Producto_Control.ClkPr
+                    WHERE
+                    (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21') AND (Producto_Control.PrAno = {PeriodoInicio}) AND (Producto_Control.PrQna >= 14) OR
+                    (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21') AND(Producto_Control.PrAno = {PeriodoFin}) AND(Producto_Control.PrQna <= 13)";
+
+            DataTable RegistrosFONAC = global.ConsultaGeneral(ObtenerPerDedProducto, baseDatos);
+
+            foreach (DataRow RegistroFONAC in RegistrosFONAC.Rows) {
+                if(Convert.ToUInt32(RegistroFONAC["PrQna"]) <= Convert.ToUInt32(quincena))
+                Fonac += Convert.ToDouble(RegistroFONAC["PrPDImporte"]);
+            }
+
+            return Fonac.ToString("N2", CultureInfo.InvariantCulture);
         }
     }
 }
