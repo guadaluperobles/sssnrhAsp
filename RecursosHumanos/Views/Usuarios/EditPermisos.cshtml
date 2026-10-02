@@ -1,0 +1,26 @@
+@model RecursosHumanos.Models.UserPermisosViewModel
+@{
+    ViewData["Title"] = "Editar Permisos";
+}
+
+<div class="container">
+    <h2>Editar permisos de @Model.Email</h2>
+    <form asp-action="EditPermisos" method="post">
+        <input type="hidden" asp-for="UserId" />
+        <div class="row">
+            @for (int i = 0; i < Model.Permisos.Count; i++)
+            {
+                <div class="col-md-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="Permisos[i].Selected" />
+                        <label class="form-check-label">@Model.Permisos[i].Nombre</label>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-action="Index" class="btn btn-light">Volver</a>
+        </div>
+    </form>
+</div>

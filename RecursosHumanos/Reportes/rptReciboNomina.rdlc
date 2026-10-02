@@ -2987,7 +2987,11 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>=First(Fields!FONAC.Value, "dsReciboNomina")</Value>
+                    <Value>=IIF(
+    Fields!FONAC.Value &lt;&gt; "0.00",
+  First(Fields!FONAC.Value, "dsReciboNomina"),
+  ""
+)</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
                       <FontWeight>Bold</FontWeight>
@@ -3057,9 +3061,21 @@
               <Paragraph>
                 <TextRuns>
                   <TextRun>
-                    <Value>ACUM FONAC:</Value>
+                    <Value>=IIF(
+    Fields!FONAC.Value &lt;&gt; "0.00",
+  "ACUM FONAC:",
+  ""
+)</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Format>0.00;(0.00)</Format>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value xml:space="preserve"> </Value>
+                    <Style>
+                      <FontSize>9pt</FontSize>
                       <FontWeight>Bold</FontWeight>
                     </Style>
                   </TextRun>

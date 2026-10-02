@@ -771,8 +771,8 @@ namespace RecursosHumanos.Controllers {
             else
                 PeriodoInicio--;
 
-            string ObtenerPerDedProducto = @$"SELECT*
-                    FROM            PerDed_Producto
+            string ObtenerPerDedProducto = @$"SELECT *
+                    FROM PerDed_Producto
                     INNER JOIN Producto_Control ON PerDed_Producto.ClkPr = Producto_Control.ClkPr
                     WHERE
                     (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21') AND (Producto_Control.PrAno = {PeriodoInicio}) AND (Producto_Control.PrQna >= 14) OR

@@ -1,0 +1,12 @@
+@model RecursosHumanos.Models.PermisoVistaModel
+@{
+    ViewData["Title"] = Model?.Id == null ? "Nuevo Permiso" : "Editar Permiso";
+}
+
+    <div class="row">
+        <div class="col-8"></div>
+        <div class="col-4" style="text-align: end">
+            <a class="btn btn-light" asp-action="Index">Volver</a>
+        </div>
+    </div>
+    <partial name="_Form" model="Model" />

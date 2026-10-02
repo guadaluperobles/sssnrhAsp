@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecursosHumanos.Data;
 
@@ -11,9 +12,11 @@ using RecursosHumanos.Data;
 namespace RecursosHumanos.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261002185504_CrearPermisoVista")]
+    partial class CrearPermisoVista
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -387,37 +390,6 @@ namespace RecursosHumanos.Data.Migrations
                     b.ToTable("PermisoVistaModel");
                 });
 
-            modelBuilder.Entity("RecursosHumanos.Models.UsuarioPermiso", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Creado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Editado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("Eliminado")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("PermisoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PermisoId");
-
-                    b.ToTable("UsuarioPermiso");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -467,15 +439,6 @@ namespace RecursosHumanos.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("RecursosHumanos.Models.UsuarioPermiso", b =>
-                {
-                    b.HasOne("RecursosHumanos.Models.PermisoVistaModel", "Permiso")
-                        .WithMany()
-                        .HasForeignKey("PermisoId");
-
-                    b.Navigation("Permiso");
                 });
 #pragma warning restore 612, 618
         }
