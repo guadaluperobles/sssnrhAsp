@@ -34,9 +34,9 @@
                         <td>@item.Creado.ToLocalTime().ToString("g")</td>
                         <td>@item.CreadoPor</td>
                         <td>
-                            <a asp-controller="Notas" asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                            <a asp-controller="Notas" asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                            <a asp-controller="Notas" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                            <a class="btn btn-edit" asp-controller="Notas" asp-action="Edit" asp-route-id="@item.Id">Editar</a> 
+                            <a class="btn btn-info"  asp-controller="Notas" asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                            <a class="btn btn-delete" asp-controller="Notas" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
                         </td>
                     </tr>
                 }

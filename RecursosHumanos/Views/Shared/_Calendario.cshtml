@@ -1,7 +1,10 @@
-﻿
-@*
+﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+
+@using System.Text.Json
+@using RecursosHumanos.ViewModel;
+@model List<EventoModel>
 
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.css" rel="stylesheet" />
 
@@ -16,11 +19,36 @@
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.18/index.global.min.js"></script>
 
+<div class="modal fade" id="modalNota" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitulo"></h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <p id="modalDescripcion"></p>
+                <p id="modalInicio"></p>
+                <p id="modalFin"></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
     var calendarEl = document.getElementById('calendar');
+    var eventos = @Html.Raw(JsonSerializer.Serialize(Model));
 
+    console.log(eventos)
     var calendar = new FullCalendar.Calendar(calendarEl, {
         locale: 'es',
         initialView: 'dayGridMonth',
@@ -30,15 +58,20 @@
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-
-        events: [
-            {
-                title: 'Reunión',
-                start: '2026-07-25'
-            },
-        ]
-    });
+        }, 
+        events:eventos,
+        eventClick: function(info) {
+            var evento = info.event;
+            document.getElementById('modalTitulo').textContent = evento.title;
+            document.getElementById('modalDescripcion').textContent = evento.extendedProps.description || '';
+            document.getElementById('modalInicio').textContent = evento.start ? evento.start.toLocaleString('es-MX') : '';
+            document.getElementById('modalFin').textContent = evento.end ? evento.end.toLocaleString('es-MX') : '';
+            var modal = new bootstrap.Modal(
+                document.getElementById('modalNota')
+            )
+            modal.show();
+        }
+        });
 
     calendar.render();
 
