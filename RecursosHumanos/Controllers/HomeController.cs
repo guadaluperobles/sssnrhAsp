@@ -24,10 +24,8 @@ namespace RecursosHumanos.Controllers {
                 title = n.Titulo,
                 description = n.Contenido,
                 start = n.Fecha,
-                textColor = $"rgb({n.TipoNota.ColorR},{n.TipoNota.ColorG},{n.TipoNota.ColorB})",
                 backgroundColor = $"rgb({n.TipoNota.ColorR},{n.TipoNota.ColorG},{n.TipoNota.ColorB})",
-                borderColor= "rgb(105,1,65)",
-
+                borderColor= $"rgb({n.TipoNota.ColorR},{n.TipoNota.ColorG},{n.TipoNota.ColorB})",
             }).ToList();
 
             return View(eventos);
