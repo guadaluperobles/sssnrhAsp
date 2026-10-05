@@ -1,0 +1,42 @@
+@model RecursosHumanos.Models.Nota
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<h2>Crear Nota</h2>
+
+<form asp-controller="Notas" asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Titulo"></label>
+        <input asp-for="Titulo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contenido"></label>
+        <textarea asp-for="Contenido" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <div>
+            <input asp-for="EsParaTodos" type="checkbox" /> Para todos
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="TipoNotaId">Tipo de nota</label>
+            <select asp-for="TipoNotaId"
+                    class="form-control"
+                    asp-items="ViewBag.TipoNotaId">
+            </select>
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="Fecha">Fecha</label>
+            <input asp-for="Fecha" class="form-control" type="datetime-local" />
+        </div>
+        <div class="mt-2">
+            <label asp-for="UsuarioId">Usuario (si no es para todos)</label>
+            <select asp-for="UsuarioId" class="form-control">
+                <option value="">-- Ninguno --</option>
+                @foreach (var u in (IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>)ViewData["Usuarios"]) {
+                    <option value="@u.Id">@u.Email</option>
+                }
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Crear</button>
+    <a asp-controller="Notas" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

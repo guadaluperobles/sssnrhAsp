@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecursosHumanos.Data;
 
@@ -11,9 +12,11 @@ using RecursosHumanos.Data;
 namespace RecursosHumanos.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261005185346_CrearTablaNotasYTipos")]
+    partial class CrearTablaNotasYTipos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,26 +364,14 @@ namespace RecursosHumanos.Data.Migrations
                     b.Property<DateTime>("Creado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreadoPor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("Editado")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("EditadoPor")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Eliminado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EliminadoPor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("EsParaTodos")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("TipoNotaId")
                         .HasColumnType("int");
@@ -460,20 +451,11 @@ namespace RecursosHumanos.Data.Migrations
                     b.Property<DateTime>("Creado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreadoPor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("Editado")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EditadoPor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("Eliminado")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("EliminadoPor")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()

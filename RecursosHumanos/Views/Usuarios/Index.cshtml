@@ -18,6 +18,7 @@
                 <tr>
                     <td>@user.Email</td>
                     <td>
+                        <a asp-action="Edit" asp-route-id="@user.Id" class="btn btn-sm btn-info">Info</a>
                         <a asp-action="EditRoles" asp-route-id="@user.Id" class="btn btn-sm btn-info">Roles</a>
                         <a asp-action="EditPermisos" asp-route-id="@user.Id" class="btn btn-sm btn-secondary">Permisos</a>
                     </td>

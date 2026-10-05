@@ -1,0 +1,45 @@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@model RecursosHumanos.Models.Nota
+
+<h2>Editar Nota</h2>
+
+<form asp-controller="Notas" asp-action="Edit" method="post">
+    <input asp-for="Id" type="hidden" />
+    <div class="form-group">
+        <label asp-for="Titulo"></label>
+        <input asp-for="Titulo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Contenido"></label>
+        <textarea asp-for="Contenido" class="form-control"></textarea>
+    </div>
+    <div class="form-group">
+        <div>
+            <input asp-for="EsParaTodos" type="checkbox" /> Para todos
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="TipoNotaId">Tipo de nota</label>
+            <select asp-for="TipoNotaId"
+                    class="form-control"
+                    asp-items="ViewBag.TipoNotaId"></select>
+        </div>
+        <div class="form-group mt-2">
+            <label asp-for="Fecha">Fecha</label>
+            <input asp-for="Fecha"
+                   class="form-control"
+                   type="datetime-local"
+                   value="@Model.Fecha.ToLocalTime().ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+        <div class="mt-2">
+            <label asp-for="UsuarioId">Usuario (si no es para todos)</label>
+            <select asp-for="UsuarioId" class="form-control">
+                <option value="">-- Ninguno --</option>
+                @foreach (var u in (IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>)ViewData["Usuarios"]) {
+                    <option value="@u.Id" selected="@(Model.UsuarioId==u.Id ? "selected" : null)">@u.Email</option>
+                }
+            </select>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+    <a asp-controller="Notas" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

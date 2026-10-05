@@ -1,19 +1,17 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using RecursosHumanos.Data;
 using RecursosHumanos.Models;
 
 public class UsuariosController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly ApplicationDbContext _context;
-
-    public UsuariosController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
+    public UsuariosController(UserManager<IdentityUser> userManager, ApplicationDbContext context)
     {
         _userManager = userManager;
-        _roleManager = roleManager;
         _context = context;
     }
 
@@ -32,13 +30,18 @@ public class UsuariosController : Controller
         if (user == null) return NotFound();
 
         var model = new UserRolesViewModel { UserId = user.Id, Email = user.Email ?? string.Empty };
-        var roles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+        /*var roleManager = HttpContext.RequestServices.GetService(typeof(RoleManager<IdentityRole>)) as RoleManager<IdentityRole>;
+        if (roleManager == null)
+        {
+            return Problem("RoleManager no está disponible en el contenedor DI.");
+        }
+        var roles = await roleManager.Roles.Select(r => r.Name).ToListAsync();
         var userRoles = await _userManager.GetRolesAsync(user);
 
         foreach (var role in roles)
         {
             model.Roles.Add(new RoleSelection { RoleName = role ?? string.Empty, Selected = userRoles.Contains(role) });
-        }
+        }*/
 
         return View(model);
     }
@@ -64,8 +67,7 @@ public class UsuariosController : Controller
     }
 
     // GET: Usuarios/EditPermisos/{id}
-    public async Task<IActionResult> EditPermisos(string id)
-    {
+    public async Task<IActionResult> EditPermisos(string id) {
         if (string.IsNullOrEmpty(id)) return NotFound();
         var user = await _userManager.FindByIdAsync(id);
         if (user == null) return NotFound();
@@ -74,8 +76,7 @@ public class UsuariosController : Controller
         var asignados = await _context.UsuarioPermiso.Where(up => up.UserId == id && up.Eliminado == null).Select(up => up.PermisoId).ToListAsync();
 
         var model = new UserPermisosViewModel { UserId = user.Id, Email = user.Email ?? string.Empty };
-        foreach (var p in permisos)
-        {
+        foreach (var p in permisos) {
             model.Permisos.Add(new PermisoSelection { Id = p.Id ?? 0, Nombre = p.Nombre ?? string.Empty, Selected = asignados.Contains(p.Id) });
         }
 
@@ -84,8 +85,7 @@ public class UsuariosController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditPermisos(UserPermisosViewModel model)
-    {
+    public async Task<IActionResult> EditPermisos(UserPermisosViewModel model) {
         if (model == null) return BadRequest();
         var user = await _userManager.FindByIdAsync(model.UserId);
         if (user == null) return NotFound();
@@ -94,21 +94,61 @@ public class UsuariosController : Controller
 
         // Eliminar relaciones que ya no están seleccionadas
         var seleccionados = model.Permisos.Where(p => p.Selected).Select(p => p.Id).ToHashSet();
-        foreach (var ex in existentes)
-        {
-            if (!seleccionados.Contains(ex.PermisoId ?? 0))
-            {
+        foreach (var ex in existentes) {
+            if (!seleccionados.Contains(ex.PermisoId ?? 0)) {
                 _context.UsuarioPermiso.Remove(ex);
             }
-            else
-            {
+            else {
                 seleccionados.Remove(ex.PermisoId ?? 0);
             }
         }
 
         // Agregar nuevas asignaciones restantes en seleccionados
-        foreach (var nuevoId in seleccionados)
-        {
+        foreach (var nuevoId in seleccionados) {
+            _context.UsuarioPermiso.Add(new UsuarioPermiso { UserId = model.UserId, PermisoId = nuevoId });
+        }
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    } // GET: Usuarios/EditPermisos/{id}
+    public async Task<IActionResult> Edit(string id) {
+        if (string.IsNullOrEmpty(id)) return NotFound();
+        var user = await _userManager.FindByIdAsync(id);
+        if (user == null) return NotFound();
+
+        var permisos = await _context.PermisoVistaModel.ToListAsync();
+        var asignados = await _context.UsuarioPermiso.Where(up => up.UserId == id && up.Eliminado == null).Select(up => up.PermisoId).ToListAsync();
+
+        var model = new UserPermisosViewModel { UserId = user.Id, Email = user.Email ?? string.Empty };
+        foreach (var p in permisos) {
+            model.Permisos.Add(new PermisoSelection { Id = p.Id ?? 0, Nombre = p.Nombre ?? string.Empty, Selected = asignados.Contains(p.Id) });
+        }
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(UserPermisosViewModel model) {
+        if (model == null) return BadRequest();
+        var user = await _userManager.FindByIdAsync(model.UserId);
+        if (user == null) return NotFound();
+
+        var existentes = await _context.UsuarioPermiso.Where(up => up.UserId == model.UserId).ToListAsync();
+
+        // Eliminar relaciones que ya no están seleccionadas
+        var seleccionados = model.Permisos.Where(p => p.Selected).Select(p => p.Id).ToHashSet();
+        foreach (var ex in existentes) {
+            if (!seleccionados.Contains(ex.PermisoId ?? 0)) {
+                _context.UsuarioPermiso.Remove(ex);
+            }
+            else {
+                seleccionados.Remove(ex.PermisoId ?? 0);
+            }
+        }
+
+        // Agregar nuevas asignaciones restantes en seleccionados
+        foreach (var nuevoId in seleccionados) {
             _context.UsuarioPermiso.Add(new UsuarioPermiso { UserId = model.UserId, PermisoId = nuevoId });
         }
 

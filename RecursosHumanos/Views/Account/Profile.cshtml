@@ -1,0 +1,16 @@
+@model Microsoft.AspNetCore.Identity.IdentityUser
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+<div class="container">
+    <h2>Perfil</h2>
+    <dl class="row">
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+        <dt class="col-sm-2">Usuario</dt>
+        <dd class="col-sm-10">@Model.UserName</dd>
+    </dl>
+
+    <a asp-action="ChangePassword" class="btn btn-primary">Cambiar contraseña</a>
+</div>

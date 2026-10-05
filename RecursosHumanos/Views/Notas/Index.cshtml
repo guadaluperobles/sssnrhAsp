@@ -1,0 +1,46 @@
+@model IEnumerable<RecursosHumanos.Models.Nota>
+@{
+    ViewData["Title"] = "Notas";
+}
+<div class="row">
+    <div class="col-md-12" style="text-align: end">
+        <button type="button"
+                class="btn btn-secondary"
+                onclick="location.href='@Url.Action("Create")'">
+            Agregar
+        </button>
+    </div>
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Para</th>
+                    <th>Fecha</th>
+                    <th>Creado</th>
+                    <th>Creado Por</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Titulo</td>
+                        <td>@item.TipoNota?.Nombre</td>
+                        <td>@(item.EsParaTodos ? "Todos" : item.UsuarioId)</td>
+                        <td>@item.Fecha.ToLocalTime().ToString("g")</td>
+                        <td>@item.Creado.ToLocalTime().ToString("g")</td>
+                        <td>@item.CreadoPor</td>
+                        <td>
+                            <a asp-controller="Notas" asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
+                            <a asp-controller="Notas" asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                            <a asp-controller="Notas" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

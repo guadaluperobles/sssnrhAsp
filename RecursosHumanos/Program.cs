@@ -47,6 +47,9 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+// Diagnóstico: comprobar si RoleManager está registrado en el contenedor
+var diagRoleManager = app.Services.GetService<RoleManager<IdentityRole>>();
+app.Logger.LogInformation($"DIAG: RoleManager registrado: {diagRoleManager != null}");
 
 app.MapStaticAssets();
 

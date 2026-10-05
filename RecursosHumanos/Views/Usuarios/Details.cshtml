@@ -1,0 +1,19 @@
+@model Microsoft.AspNetCore.Identity.IdentityUser
+@{
+    ViewData["Title"] = "Detalles de usuario";
+}
+
+<div class="container">
+    <h2>Detalles</h2>
+    <dl class="row">
+        <dt class="col-sm-2">Id</dt>
+        <dd class="col-sm-10">@Model.Id</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+
+        <dt class="col-sm-2">Email confirmado</dt>
+        <dd class="col-sm-10">@Model.EmailConfirmed</dd>
+    </dl>
+    <a asp-action="Index" class="btn btn-light">Volver</a>
+</div>

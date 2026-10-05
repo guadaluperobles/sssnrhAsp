@@ -1,0 +1,26 @@
+@model RecursosHumanos.Models.TipoNota
+
+<h2>Crear Tipo de Nota</h2>
+
+<form asp-controller="TipoNotas" asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Nombre"></label>
+        <input asp-for="Nombre" class="form-control" />
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label asp-for="ColorR">R</label>
+            <input asp-for="ColorR" class="form-control" type="number" min="0" max="255" />
+        </div>
+        <div class="form-group col-md-4">
+            <label asp-for="ColorG">G</label>
+            <input asp-for="ColorG" class="form-control" type="number" min="0" max="255" />
+        </div>
+        <div class="form-group col-md-4">
+            <label asp-for="ColorB">B</label>
+            <input asp-for="ColorB" class="form-control" type="number" min="0" max="255" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Crear</button>
+    <a asp-controller="TipoNotas" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>

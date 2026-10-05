@@ -1,0 +1,39 @@
+@model IEnumerable<RecursosHumanos.Models.TipoNota>
+@{
+    ViewData["Title"] = "Tipos de Nota";
+}
+<div class="row">
+    <div class="col-md-12" style="text-align: end">
+        <button type="button"
+                class="btn btn-secondary"
+                onclick="location.href='@Url.Action("Create")'">
+            Agregar
+        </button>
+    </div>
+    <div class="col-md-12">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Color</th>
+                    <th>Creado</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Nombre</td>
+                        <td style="background-color: rgb(@item.ColorR,@item.ColorG,@item.ColorB); width:80px;"></td>
+                        <td>@item.Creado.ToLocalTime().ToString("g")</td>
+                        <td>
+                            <a class="btn btn-edit" asp-controller="TipoNotas" asp-action="Edit" asp-route-id="@item.Id">Editar</a> 
+                            <a class="btn btn-delete" asp-controller="TipoNotas" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

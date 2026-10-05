@@ -33,7 +33,11 @@
             Controlador = "Empleado",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Layout (03) SERICA",                                                    Controlador = "Empleado",    Accion = "LayoutSERICA"  },
+                new MenuItem    {   
+                    Vista = "Layout (03) SERICA",
+                    Controlador = "Empleado",
+                    Accion = "LayoutSERICA"  
+                },
             }
         });
         modulos.Add(
@@ -43,12 +47,31 @@
             Controlador = "Nomina",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Migrar Empleado",                                                  Controlador = "Migracion" },
-                new MenuItem    {   Vista = "Actualizar CFDI Empleados",                                        Controlador = "Nomina",    Accion = "ActualizarCFDIEmpleado"  },
-                new MenuItem    {   Vista = "Actualizar CP Empleados",                                          Controlador = "Nomina",    Accion = "CodigoPostalEmpleado"  },
-                new MenuItem    {   Vista = "Clonar base de Datos",                                             Controlador = "Nomina",    Accion = "ClonarBaseDatos"  },
-                new MenuItem    {   Vista = "Subir PerDed_Empleado",                                            Controlador = "Nomina",    Accion = "PerDedEmpleado"  },
-                new MenuItem    {   Vista = "Borrar Contenido de base de datos",                                Controlador = "Nomina",    Accion = "PrimerPaso"  },
+                new MenuItem    {   
+                    Vista = "Migrar Empleado",
+                    Controlador = "Migracion" },
+                new MenuItem    {   
+                    Vista = "Actualizar CFDI Empleados",
+                    Controlador = "Nomina",    
+                    Accion = "ActualizarCFDIEmpleado"  
+                },
+                new MenuItem    {   
+                    Vista = "Actualizar CP Empleados",
+                    Controlador = "Nomina",    
+                    Accion = "CodigoPostalEmpleado"  },
+                new MenuItem    {   
+                    Vista = "Clonar base de Datos",
+                    Controlador = "Nomina",    
+                    Accion = "ClonarBaseDatos"  },
+                new MenuItem    {   
+                    Vista = "Subir PerDed_Empleado", 
+                    Controlador = "Nomina",    
+                    Accion = "PerDedEmpleado"  },
+                new MenuItem    {   
+                    Vista = "Borrar Contenido de base de datos",
+                    Controlador = "Nomina",    
+                    Accion = "PrimerPaso"  
+                },
             }
         });
         
@@ -59,11 +82,26 @@
             Controlador = "ReporteNomina",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "ISRTP",                                                            Controlador = "ISRTP" },
-                new MenuItem    {   Vista = "Detalle de percepciones y deducciones por tipo de nomina",         Controlador = "DetallePersepcionDeduccion"},
-                new MenuItem    {   Vista = "Seguro de riesgo profesional",                                     Controlador = "SeguroRiesgoProfesional" },
-                new MenuItem    {   Vista = "Condiciones Generales de trabajo",                                 Controlador = "CondicionGeneralTrabajo" },
-                new MenuItem    {   Vista = "Plantilla Sindicalizados",                                         Controlador = "PlantillaSindicalizados"}
+                new MenuItem    {   
+                    Vista = "ISRTP",
+                    Controlador = "ISRTP"
+                },
+                new MenuItem    {   
+                    Vista = "Detalle de percepciones y deducciones por tipo de nomina",
+                    Controlador = "DetallePersepcionDeduccion"
+                },
+                new MenuItem    {   
+                    Vista = "Seguro de riesgo profesional",
+                    Controlador = "SeguroRiesgoProfesional" 
+                },
+                new MenuItem    {   
+                    Vista = "Condiciones Generales de trabajo",
+                    Controlador = "CondicionGeneralTrabajo" 
+                },
+                new MenuItem    {   
+                    Vista = "Plantilla Sindicalizados",
+                    Controlador = "PlantillaSindicalizados"
+                }
             }
         });
         modulos.Add(
@@ -73,7 +111,10 @@
             Controlador = "ValidarCentrosTrabajo",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Para validad Ctros de Trab por BD en Productos de Pago",           Controlador = "CentroTrabajo"},
+                new MenuItem    {   
+                    Vista = "Para validad Ctros de Trab por BD en Productos de Pago",           
+                    Controlador = "CentroTrabajo"
+                },
             }
         });
         modulos.Add(
@@ -83,9 +124,21 @@
             Controlador = "Transparencia",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Plazas Vacantes",                                                   Controlador = "Transparencia",    Accion = "TransparenciaIX" },
-                new MenuItem    {   Vista = "Remuneraciones Brutas y Netas",                                     Controlador = "Transparencia",    Accion = "TransparenciaVII"},
-                new MenuItem    {   Vista = "Personas Jubiladas y Pensionadas",                                  Controlador = "Transparencia",    Accion = "TransparenciaXL"}
+                new MenuItem    {   
+                    Vista = "Plazas Vacantes",                                                   
+                    Controlador = "Transparencia",    
+                    Accion = "TransparenciaIX" 
+                },
+                new MenuItem    {   
+                    Vista = "Remuneraciones Brutas y Netas",
+                    Controlador = "Transparencia",    
+                    Accion = "TransparenciaVII"
+                },
+                new MenuItem    {   
+                    Vista = "Personas Jubiladas y Pensionadas",
+                    Controlador = "Transparencia",
+                    Accion = "TransparenciaXL"
+                }
             }
         });
 
@@ -96,16 +149,30 @@
             Controlador = "Administracion",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   Vista = "Notas",                                                           Controlador = "Nota" },
-                new MenuItem    {   Vista = "Consultas SQL",                                                   Controlador = "Consultas" },
+                new MenuItem    {
+                    Vista = "Notas",
+                    Controlador = "Notas"
+                },
+                new MenuItem    {
+                    Vista = "Tipos Notas",
+                    Controlador = "TipoNotas"
+                },
+                new MenuItem    {   
+                    Vista = "Consultas SQL",                                                   
+                    Controlador = "Consultas" 
+                },
+                new MenuItem    {   
+                    Vista = "Usuarios",                                                        
+                    Controlador = "Usuarios" 
+                },
             }
         });
     }
 
-
     var controladorActual = ViewContext.RouteData.Values["controller"]?.ToString();
     var accionActual = ViewContext.RouteData.Values["action"]?.ToString();
 }
+
 <ul id="menuPrincipal" class="nav navbar-nav nav-pills flex-column mb-auto">
     @foreach (var modulo in modulos)
     {
@@ -118,15 +185,11 @@
                 <a class="nav-link d-flex justify-content-between align-items-center"
                    data-bs-toggle="collapse"
                    href="#@idCollapse"
-                   role="button"
-                   aria-expanded="false"
                    aria-controls="@idCollapse"
                    style="color: #efc4a3;">
-
                     @modulo.Vista
                     <span>+</span>
                 </a>
-
                 <div class="collapse" id="@idCollapse">
                     <ul class="nav flex-column ms-3 mt-2">
                         @foreach (var sub in modulo.SubModulos)

@@ -1,0 +1,19 @@
+@model RecursosHumanos.Models.Nota
+
+<h2>Eliminar Nota</h2>
+
+<div>
+    <h4>¿Está seguro que desea eliminar esta nota?</h4>
+    <dl class="row">
+        <dt class="col-sm-2">Título</dt>
+        <dd class="col-sm-10">@Model.Titulo</dd>
+        <dt class="col-sm-2">Fecha</dt>
+        <dd class="col-sm-10">@Model.Fecha.ToLocalTime().ToString("g")</dd>
+    </dl>
+
+    <form asp-controller="Notas" asp-action="Delete" method="post">
+        <input asp-for="Id" type="hidden" />
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a asp-controller="Notas" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
