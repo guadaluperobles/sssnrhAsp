@@ -11,7 +11,7 @@
       <am:Name>MSRB</am:Name>
       <am:Version>15.1.30001.02</am:Version>
     </am:UpdatedBy>
-    <am:LastModifiedTimestamp>2026-09-30T20:33:43.5589567Z</am:LastModifiedTimestamp>
+    <am:LastModifiedTimestamp>2026-10-06T15:39:11.7518701Z</am:LastModifiedTimestamp>
   </am:AuthoringMetadata>
   <AutoRefresh>0</AutoRefresh>
   <DataSources>
@@ -2988,9 +2988,9 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=IIF(
-    Fields!FONAC.Value &lt;&gt; "0.00",
-  First(Fields!FONAC.Value, "dsReciboNomina"),
-  ""
+First(Fields!FONAC.Value, "dsReciboNomina") &lt;&gt; "0.00",
+    Format(First(Fields!FONAC.Value, "dsReciboNomina"), "N2"),
+    ""
 )</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
@@ -3062,9 +3062,9 @@
                 <TextRuns>
                   <TextRun>
                     <Value>=IIF(
-    Fields!FONAC.Value &lt;&gt; "0.00",
+First(Fields!FONAC.Value, "dsReciboNomina") &lt;&gt; "0.00",
   "ACUM FONAC:",
-  ""
+ ""
 )</Value>
                     <Style>
                       <FontSize>8pt</FontSize>
