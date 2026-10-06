@@ -18,16 +18,6 @@ namespace RecursosHumanos.Controllers {
         public ActionResult Index() {
             return View();
         }
-
-        // GET: EmpleadoController/Details/5
-        public ActionResult Details(int id) {
-            return View();
-        }
-
-        // GET: EmpleadoController/Create
-        public ActionResult Create() {
-            return View();
-        }
         public ActionResult LayoutSERICA() {
             ViewBag.Mensaje = "Consulta de empleados";
             ViewBag.Ejercicio = 2026;
@@ -66,6 +56,34 @@ namespace RecursosHumanos.Controllers {
                 };
             return ArchivoController.ExportarExcel(tablas, $"MPI26{Quincena}{Ejercicio}");
             
+        }
+        public ActionResult PlantillaEmpleados() {
+            ViewBag.Mensaje = "Plantilla de empleados";
+            var Contenido = new DataTable();
+            return View(Contenido);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PlantillaEmpleados(string CentroTrabajo) {
+            ViewBag.Mensaje = "Plantilla de empleados";
+            ViewBag.UnidadAdministrativa = CentroTrabajo;
+
+            var Contenido = Plantilla(CentroTrabajo);
+            return View(Contenido);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PlantillaEmpleadosExcel( string CentroTrabajo = "") {
+            string nombreArchivo = $"Plantilla Empleados " + CentroTrabajo != "" ? CentroTrabajo : " General";
+            var Contenido = Plantilla(CentroTrabajo);
+
+            ViewBag.UnidadAdministrativa = CentroTrabajo;
+
+            var tablas = new Dictionary<string, DataTable>{
+                    { "Hoja 1", Contenido }
+                };
+            return ArchivoController.ExportarExcel(tablas, nombreArchivo);
+
         }
 
         private List<LayoutSERICA> SERICA(string buscar) {
@@ -239,39 +257,15 @@ namespace RecursosHumanos.Controllers {
 
             return empleadosSERICA;
         }
+        private DataTable Plantilla(string buscar = "") {
+            DataTable dt = new DataTable();
+            Global global = new Global(_coneccionService);
+            buscar = $" AND mectrab IN ('{buscar}') AND mectrabdist IN ('{buscar}')";
+            string sql = ConsultasModel.PlantillaEmpleados + buscar;
 
-        // GET: EmpleadoController/Edit/5
-        public ActionResult Edit(int id) {
-            return View();
+            dt = global.ConsultaGeneral(sql);
+            return dt;
         }
 
-        // POST: EmpleadoController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection) {
-            try {
-                return RedirectToAction(nameof(Index));
-            }
-            catch {
-                return View();
-            }
-        }
-
-        // GET: EmpleadoController/Delete/5
-        public ActionResult Delete(int id) {
-            return View();
-        }
-
-        // POST: EmpleadoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection) {
-            try {
-                return RedirectToAction(nameof(Index));
-            }
-            catch {
-                return View();
-            }
-        }
     }
 }

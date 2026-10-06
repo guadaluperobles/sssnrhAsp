@@ -33,10 +33,15 @@
             Controlador = "Empleado",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {   
+                new MenuItem    {
+                    Vista = "Plantilla de Empleados",
+                    Controlador = "Empleado",
+                    Accion = "PlantillaEmpleados"
+                },
+                new MenuItem    {
                     Vista = "Layout (03) SERICA",
                     Controlador = "Empleado",
-                    Accion = "LayoutSERICA"  
+                    Accion = "LayoutSERICA"
                 },
             }
         });

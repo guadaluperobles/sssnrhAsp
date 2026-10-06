@@ -775,8 +775,8 @@ namespace RecursosHumanos.Controllers {
                     FROM PerDed_Producto
                     INNER JOIN Producto_Control ON PerDed_Producto.ClkPr = Producto_Control.ClkPr
                     WHERE
-                    (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21') AND (Producto_Control.PrAno = {PeriodoInicio}) AND (Producto_Control.PrQna >= 14) OR
-                    (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21') AND(Producto_Control.PrAno = {PeriodoFin}) AND(Producto_Control.PrQna <= 13)";
+                    (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21' OR PerDed_Producto.PrPDClave = '22') AND (Producto_Control.PrAno = {PeriodoInicio}) AND (Producto_Control.PrQna >= 14) OR
+                    (PerDed_Producto.ClkDet = {ClkDet}) AND (PerDed_Producto.PrPDClave = '21' OR PerDed_Producto.PrPDClave = '22') AND(Producto_Control.PrAno = {PeriodoFin}) AND(Producto_Control.PrQna <= 13)";
 
             DataTable RegistrosFONAC = global.ConsultaGeneral(ObtenerPerDedProducto, baseDatos);
 

@@ -1,0 +1,28 @@
+﻿@using System.Data
+@using RecursosHumanos.Data
+@using RecursosHumanos.Model
+@inject ConeccionService _coneccionService
+@{
+    string sql = ConsultasModel.CentrosTrabajo;
+    Global global = new Global(_coneccionService);
+    DataTable centros = global.ConsultaGeneral(sql, "IESYS_SYSNGFSON");
+}
+<label for="CentroTrabajo">Centro Trabajo</label>
+    <select class="form-control" id="CentroTrabajo" name="CentroTrabajo" multiple="multiple">
+    <option value="">Seleccione...</option>
+    @foreach (DataRow row in centros.Rows)
+    {
+        <option value="@row["Clave"]">
+            @row["Descripcion"]
+        </option>
+    }
+</select>
+<script type="text/javascript">
+    $(document).ready(function () {
+        console.log("lupin")
+        $('#CentroTrabajo').select2({
+            placeholder: 'Seleccione centros de trabajo',
+            width: '100%'
+        });
+    });
+</script>

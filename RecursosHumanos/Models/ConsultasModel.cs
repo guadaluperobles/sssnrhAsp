@@ -51,7 +51,98 @@ namespace RecursosHumanos.Models {
          pd.PrXML
          FROM Producto_Detalle AS pd
          INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
+";
+        public static string PlantillaEmpleados = @"
+        SELECT 
+            e.clkdet as nemp,CONVERT(VARCHAR,e.clkdet) as nempc,
+            e.merfc as rfc,
+            g.mecurp as curp,
+            g.menosegs as nss,
+            g.menoissste as issste,
+            e.menomemp+' '+e.menomap+' '+e.menomam as nombre2,
+            e.mepuesto as puesto,
+            e.menumpto as numpto,
+            p.ptdsc1 as dpuesto,
+            e.mectrab as ctrab,
+            c.ctdsc as dctrab,
+            e.mectrabdist as ctdist,
+            d.ctdsc as dctdist,
+            e.meindme as status,
+            substring(e.meclvpag,1,7) as ur,
+            e.mefechiist as feiinst,
+            e.mefechiram as feiram,
+            g.mefchNac as fecnac,
+            e.clkmov as mov,
+            e.mefchisit as fecham,
+            '' as etnia,
+            '' as diversidad,
+            '' as discap,
+            '' as funcion,
+            e.meclvpag as cvepag,
+            db_name()+'     ' as bd,
+            e.mesexo as sexo,
+            0 as hijos,
+            '' as rama,
+            '' as categoria,
+            '' as tcontrat,
+            '' as ffinmx,
+            '' as ffinedo,
+            999999.99 as bruto,
+            999999.99 as neto,
+            999999.99 as p30,
+            mejrnda as horario,
+            medlabist as dlabi,
+            medlabram as dlabr,
+            c.ctclues as cluest,
+            d.ctclues as cluesd,
+            substring(c.ctclvpp,8,6)+substring(e.meuadmva,7,6) as uadmva,
+            '' as ultord,
+            '' as antiguedad,
+            CONVERT(VARCHAR,metmbc)+'' as tpuesto
+            ,
+            menomap,
+            menomam,
+            menomemp,
+            i.clkinstp+' '+i.cvdsc as instpago,
+            mectabnco as ctabnco,
+            '' as ramo,
+            '' as pagad,
+            p.ptptoshcp as ptoshcp,
+            g.clknme as nivacad,
+            '' as ramashcp,
+            substring(meptofun,2,1) as turno,
+            substring(c.ctclvpp,8,12)+substring(e.meuadmva,7,6) as prog,
+            medomof as satdice,
+            g.mesatcpost as satcp,
+            g.mesatnomemp as satnombre
+         FROM empleado e,empleado_generales g,centro_trabajo c,centro_trabajo d,puesto p,instrumento_pago i
+         WHERE e.clkdet=g.clkdet
+         AND e.clkinstp=i.clkinstp
+         AND c.clkct=mectrab AND c.clkctver=mevctrab
+         AND d.clkct=mectrabdist AND d.clkctver=mevctrab
+         AND p.clkpt=mepuesto AND p.clkptver=mevpuesto
 "; 
+
+        public static string CentrosTrabajo = @"
+        WITH UltimaVersion AS
+        (
+            SELECT
+                ClkCtVer as V,
+	            ClkCt as Clave,
+	            CtDsc as Descripcion,
+                ROW_NUMBER() OVER (
+                    PARTITION BY ClkCt
+                    ORDER BY ClkCtVer DESC
+                ) AS rn
+            FROM Centro_Trabajo
+        )
+        SELECT
+            Clave,
+            Descripcion
+        FROM UltimaVersion
+        WHERE rn = 1
+        ORDER BY Clave;
+    ";
         public static string BuscarRespaldoCFDI = @"
          SELECT 
              ClkPr + CAST(ClkDet AS VARCHAR) AS ClkPr_ClkDet, 
