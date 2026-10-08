@@ -13,13 +13,7 @@
             </div>
         </div>
         <div class="col-3">
-            <label class="form-label">Color</label>
-
-            <input type="color" id="ColorPicker"  value="#690141" class="form-control form-control-color" title="Seleccionar color">
-
-            <input type="hidden" asp-for="ColorR" id="ColorR">
-            <input type="hidden" asp-for="ColorG" id="ColorG">
-            <input type="hidden" asp-for="ColorB" id="ColorB">
+            <partial name="_InputColor" />
         </div>
 
         <div class="col-6">

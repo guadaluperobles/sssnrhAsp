@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using RecursosHumanos.Data;
 using RecursosHumanos.Model;
 using RecursosHumanos.Models;
+using RecursosHumanos.ViewModel;
 using System.Data;
+using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 
 namespace RecursosHumanos.Controllers {
@@ -64,20 +66,20 @@ namespace RecursosHumanos.Controllers {
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PlantillaEmpleados(string CentroTrabajo) {
+        public ActionResult PlantillaEmpleados(List<string> CentroTrabajo) {
             ViewBag.Mensaje = "Plantilla de empleados";
-            ViewBag.UnidadAdministrativa = CentroTrabajo;
+            ViewBag.CentroTrabajo = CentroTrabajo;
 
             var Contenido = Plantilla(CentroTrabajo);
             return View(Contenido);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult PlantillaEmpleadosExcel( string CentroTrabajo = "") {
-            string nombreArchivo = $"Plantilla Empleados " + CentroTrabajo != "" ? CentroTrabajo : " General";
+        public ActionResult PlantillaEmpleadosExcel(List<string> CentroTrabajo) {
+            string nombreArchivo = $"Plantilla Empleados General";
             var Contenido = Plantilla(CentroTrabajo);
 
-            ViewBag.UnidadAdministrativa = CentroTrabajo;
+            ViewBag.CentroTrabajo = CentroTrabajo;
 
             var tablas = new Dictionary<string, DataTable>{
                     { "Hoja 1", Contenido }
@@ -257,14 +259,190 @@ namespace RecursosHumanos.Controllers {
 
             return empleadosSERICA;
         }
-        private DataTable Plantilla(string buscar = "") {
-            DataTable dt = new DataTable();
+        private DataTable Plantilla(List<string> buscar = null) {
+            buscar ??= [];
+            List<PlantillaEmpleadoModel> dt = new List<PlantillaEmpleadoModel>();
             Global global = new Global(_coneccionService);
-            buscar = $" AND mectrab IN ('{buscar}') AND mectrabdist IN ('{buscar}')";
-            string sql = ConsultasModel.PlantillaEmpleados + buscar;
+            string valores = string.Join(",",buscar.Select(x => $"'{x.Replace("'", "''")}'") );
 
-            dt = global.ConsultaGeneral(sql);
-            return dt;
+            string Buscar = $" AND mectrab IN ({valores}) AND mectrabdist IN ({valores})";
+            string sql = ConsultasModel.PlantillaEmpleados + Buscar;
+
+            foreach (DataRow dr in global.ConsultaGeneral(sql).Rows) {
+                string Estatus = dr[16]?.ToString() ?? "";
+                string Movimiento = dr[21]?.ToString() ?? "";
+                string tpuesto = dr[036]?.ToString() ?? "";
+
+                int intDlabi = Convert.ToInt32(dr[030]?.ToString() ?? "0") / 7;
+                int intDlabr = Convert.ToInt32(dr[031]?.ToString() ?? "0") / 7;
+
+                DateTime feiinst = Global.ObtenerFecha(dr[18].ToString() ?? "");
+                DateTime feiram = Global.ObtenerFecha(dr[19]?.ToString() ?? "");
+                DateTime fecnac = Global.ObtenerFecha(dr[20]?.ToString() ?? "");
+                DateTime fecham = Global.ObtenerFecha(dr[22]?.ToString() ?? "");
+
+                string SueldoBruto = dr[027]?.ToString() ?? "";
+                string SueldoNeto = dr[028]?.ToString() ?? "";
+
+                decimal numeroSueldoBruto = Global.ObtenerDecimal(SueldoBruto);
+                decimal numeroSueldoNeto = Global.ObtenerDecimal(SueldoNeto);
+
+                numeroSueldoBruto = numeroSueldoBruto * 2;
+                numeroSueldoNeto = numeroSueldoNeto * 2;//ObtenerFecha
+
+                SueldoBruto = numeroSueldoBruto.ToString("F2");
+                SueldoNeto = numeroSueldoNeto.ToString("F2");
+
+                string tPto1 = "";
+                string tPto2 = "";
+                string tPto3 = "";
+
+                string Estatus1 = "";
+                string Estatus2 = "";
+
+                switch (int.Parse(tpuesto[0].ToString())) {
+                    case 1:
+                        tPto1 = "Presupuestal";
+                        break;
+                    case 2:
+                        tPto1 = "Eventual";
+                        break;
+                    case 3:
+                        tPto1 = "Lista de raya";
+                        break;
+                    case 4:
+                        tPto1 = "Medica";
+                        break;
+                    default:
+                        tPto1 = "";
+                        break;
+                }
+
+                switch (int.Parse(tpuesto[1].ToString())) {
+                    case 1:
+                        tPto2 = "Base";
+                        break;
+                    case 2:
+                        tPto2 = "Confianza";
+                        break;
+                    case 3:
+                        tPto2 = "Honorarios";
+                        break;
+                    case 4:
+                        tPto2 = "medico residente";
+                        break;
+                    case 5:
+                        tPto2 = "medico interno de pregrado";
+                        break;
+                    case 6:
+                        tPto2 = "Pasante en servicio social ";
+                        break;
+                    default:
+                        tPto2 = "";
+                        break;
+                }
+
+                switch (int.Parse(tpuesto[2].ToString())) {
+                    case 1:
+                        tPto3 = "Propiedad";
+                        break;
+                    case 2:
+                        tPto3 = "Interina limitada";
+                        break;
+                    case 3:
+                        tPto3 = "Provisional";
+                        break;
+                    default:
+                        tPto1 = "";
+                        break;
+                }
+
+                switch (int.Parse(Estatus[0].ToString())) {
+                    case 1:
+                        Estatus1 = "Registro con proceso posterior";
+                        break;
+                    case 2:
+                        Estatus1 = "Registro sin proceso posterior ";
+                        break;
+                    default:
+                        Estatus1 = "";
+                        break;
+                }
+                switch (int.Parse(Estatus[1].ToString())) {
+                    case 0:
+                        Estatus2 = "Activo";
+                        break;
+                    case 1:
+                    case 2:
+                        Estatus2 = "Licencia";
+                        break;
+                    case 3:
+                        Estatus2 = "Baja temporal";
+                        break;
+                    case 4:
+                        Estatus2 = "Baja definitiva";
+                        break;
+                    case 5:
+                        Estatus2 = "Baja con marca de contraloria";
+                        break;
+                    default:
+                        Estatus2 = "";
+                        break;
+                }
+
+                dt.Add(new PlantillaEmpleadoModel() {
+                    NumeroEmpleado = dr[0]?.ToString() ?? "",
+                    RFC = dr[1]?.ToString() ?? "",
+                    CURP = dr[2]?.ToString() ?? "",
+                    NSS = dr[3]?.ToString() ?? "",
+                    ISSTE = dr[4]?.ToString() ?? "",
+                    PrimerApellido = dr[5]?.ToString() ?? "",
+                    SegundoApellido = dr[6]?.ToString() ?? "",
+                    Nombre = dr[7]?.ToString() ?? "",
+                    NombreCompleto = dr[8]?.ToString() ?? "",
+                    Puesto = dr[9]?.ToString() ?? "",
+                    NumeroPuesto = dr[10]?.ToString() ?? "",
+                    DescripcionPuesto = dr[11]?.ToString() ?? "",
+                    CentroTrabajo = dr[12]?.ToString() ?? "",
+                    DescripcionCentroTrabajo = dr[13]?.ToString() ?? "",
+                    CentroDistribucion = dr[14]?.ToString() ?? "",
+                    DescripcionCentroDistribucion = dr[15]?.ToString() ?? "",
+                    Estatus = Estatus1 + ", " + Estatus2 ,
+                    ur = dr[17]?.ToString() ?? "",
+                    feiinst = feiinst.ToString("dd/MM/yyyy"),
+                    feiram = feiram.ToString("dd/MM/yyyy"),
+                    fecnac = fecnac.ToString("dd/MM/yyyy"),
+                    Movimiento = Movimiento,
+                    fecham = fecham.ToString("dd/MM/yyyy"),
+                    cvepag = dr[023]?.ToString() ?? "",
+                    BaseDatos = dr[024]?.ToString() ?? "",
+                    sexo = dr[025]?.ToString() ?? "",
+                    hijos = dr[026]?.ToString() ?? "",
+                    SueldoBruto = SueldoBruto,
+                    SueldoNeto = SueldoNeto,
+                    horario = dr[029]?.ToString() ?? "",
+                    dlabi = dr[030]?.ToString() ?? "",
+                    dlabr = dr[031]?.ToString() ?? "",
+                    cluest = dr[032]?.ToString() ?? "",
+                    cluesd = dr[033]?.ToString() ?? "",
+                    uadmva = dr[034]?.ToString() ?? "",
+                    Antiguedad = ReciboNominaController.obtenerAntiguedad($"P{intDlabi}W"),
+                    //ReciboNominaController.obtenerAntiguedad($"P{intDlabi}W");
+                    //ReciboNominaController.obtenerAntiguedad($"P{intDlabr}W");
+                    tpuesto = tPto1 + ", " + tPto2 + ", " + tPto3,
+                    InstrumentoPago = dr[037]?.ToString() ?? "",
+                    CuentaBanco = dr[038]?.ToString() ?? "",
+                    PuestoSHCP = dr[039]?.ToString() ?? "",
+                    NivelAcademico = dr[40]?.ToString() ?? "",
+                    turno = dr[41]?.ToString() ?? "",
+                    Programa = dr[042]?.ToString() ?? "",
+                    MeSATCPost = dr[44]?.ToString() ?? "",
+                    SATNombre = dr[45]?.ToString() ?? "",
+                    satdice = dr[46]?.ToString() ?? "",
+                });
+            }
+
+            return Global.ToDataTable(dt);
         }
 
     }

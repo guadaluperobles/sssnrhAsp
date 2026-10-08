@@ -17,7 +17,6 @@
             new MenuItem
             {
                 Vista = "Recibo de Nómina",
-                Icono = "<i class='bi bi - receipt'></i>",
                 Controlador = "ReciboNomina"
             });
         modulos.Add(
@@ -26,6 +25,13 @@
                 Vista = "Cheques",
                 Controlador = "Cheque"
             });
+        modulos.Add(
+            new MenuItem
+            {
+                Vista = "Notas",
+                Controlador = "Notas"
+            });
+        
         modulos.Add(
         new MenuItem
         {
@@ -154,10 +160,6 @@
             Controlador = "Administracion",
             SubModulos = new List<MenuItem>
             {
-                new MenuItem    {
-                    Vista = "Notas",
-                    Controlador = "Notas"
-                },
                 new MenuItem    {
                     Vista = "Tipos Notas",
                     Controlador = "TipoNotas"

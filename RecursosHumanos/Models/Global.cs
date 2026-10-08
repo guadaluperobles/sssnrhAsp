@@ -231,6 +231,7 @@ namespace RecursosHumanos.Model {
         }
         public static DateTime ObtenerFecha(string texto) {
             string[] formatos = {
+                "yyyyMMdd",
                 "dd/MM/yyyy",
                 "dd/M/yyyy",
                 "dd/MM/yyyy HH:mm:ss",
@@ -238,6 +239,7 @@ namespace RecursosHumanos.Model {
                 "dd/MM/yyyy HH:mm:ss.fffffff",
                 "dd/M/yyyy HH:mm:ss.fffffff"
             };
+
 
             if (DateTime.TryParseExact(
                     texto,
