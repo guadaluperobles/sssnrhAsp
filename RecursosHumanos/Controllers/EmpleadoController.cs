@@ -407,7 +407,7 @@ namespace RecursosHumanos.Controllers {
                     DescripcionCentroTrabajo = dr[13]?.ToString() ?? "",
                     CentroDistribucion = dr[14]?.ToString() ?? "",
                     DescripcionCentroDistribucion = dr[15]?.ToString() ?? "",
-                    Estatus = Estatus1 + ", " + Estatus2 ,
+                    Estatus = Estatus2 ,
                     ur = dr[17]?.ToString() ?? "",
                     feiinst = feiinst.ToString("dd/MM/yyyy"),
                     feiram = feiram.ToString("dd/MM/yyyy"),

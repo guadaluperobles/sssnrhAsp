@@ -5,7 +5,7 @@ namespace RecursosHumanos.Models {
         public static string ConsultaCFDI = @"
             SELECT
                 pc.PrAno as PrAno,
-                RIGHT('0' + CAST(pc.PrQna AS VARCHAR), 2) AS PrQna,
+                RIGHT('0' + CAST(pc.PrQna AS VARCHAR), 2) AS PrQna,C
                 emp.MeRfc as MeRfc,               
                 CONCAT(emp.MeNomEmp, ' ', emp.MeNomAP, ' ', emp.MeNomAM) AS NombreEmpleado,             
                 pd.ClkPr as ClkPr,
@@ -53,12 +53,12 @@ namespace RecursosHumanos.Models {
          INNER JOIN Producto_Control AS pc ON pd.ClkPr = pc.ClkPr
 ";
         public static string PlantillaEmpleados = @"
-      SELECT 
+         SELECT
             CONVERT(VARCHAR,e.ClkDet) as NumeroEmpleado,
             e.merfc as RFC,
-            g.mecurp as CURP,
-            g.menosegs as NSS,
-            g.menoissste as ISSSTE,
+            eg.mecurp as CURP,
+            eg.menosegs as NSS,
+            eg.menoissste as ISSSTE,
             MeNomAP,
             MeNomAM,
             MeNomEmp,
@@ -67,55 +67,66 @@ namespace RecursosHumanos.Models {
             e.MeNumPto as NumeroPuesto,
             p.ptdsc1 as DescripcionPuesto,
             e.mectrab as CentroTrabajo,
-            c.ctdsc as DescripcionCentroTrabajo,
+            ct.CtDsc as DescripcionCentroTrabajo,
             e.mectrabdist as CentroDistribucion,
-            d.ctdsc as DescripcionCentroDistribucion,
+            cd.CtDsc as DescripcionCentroDistribucion,
             e.MeIndMe as Estatus,
             substring(e.meclvpag,1,7) as ur,
             e.MeFechIIst as feiinst,
             e.MeFechIRam as feiram,
-            g.MeFchNac as fecnac,
-            e.ClkMov as Movimiento,
+            eg.MeFchNac as fecnac,
+            mov.CvDsc as Movimiento,
             e.MeFchISit as fecham,
             e.MeClvPag as cvepag,
             db_name()as bd,
             e.MeSexo as sexo,
             0 as hijos,
-            e.MePerSB as bruto,
+            e.MePerGr as bruto,
             e.MeNetLG as neto,
             MeJrnda as horario,
             medlabist as dlabi,
             medlabram as dlabr,
-            c.ctclues as cluest,
-            d.ctclues as cluesd,
-            substring(c.ctclvpp,8,6)+substring(e.meuadmva,7,6) as uadmva,
+            ct.ctclues as cluest,
+            cd.ctclues as cluesd,
+            substring(ct.ctclvpp,8,6)+substring(e.meuadmva,7,6) as uadmva,
             '' as antiguedad,
             CONVERT(VARCHAR,metmbc) as tpuesto,
             i.clkinstp+' '+i.cvdsc as InstrumentoPago,
             mectabnco as CuentaBanco,
             p.PtPtoSHCP as PuestoSHCP,
-            g.ClkNME as NivelAcademico,
+            esc.EsDescCoE as NivelAcademico,
             pf.CvDsc as turno2,
-            substring(c.ctclvpp,8,12)+substring(e.meuadmva,7,6) as Programa,
+            substring(ct.ctclvpp,8,12)+substring(e.meuadmva,7,6) as Programa,
             MeDomOf as satdice,
-            g.MeSATCPost as SATCodigoPostal,
-            g.MeSATNomEmp as SATNombre
-         FROM 
-            empleado e,
-            empleado_generales g,
-            centro_trabajo c,
-            centro_trabajo d,
-            puesto p,
-            instrumento_pago i,
-            Movimiento mov,
-            puesto_funcional pf
-         WHERE e.clkdet=g.clkdet
-         AND e.clkinstp=i.clkinstp
-         AND pf.ClkPtFn=e.meptofun
-         AND c.clkct=mectrab AND c.clkctver=mevctrab
-         AND d.clkct=mectrabdist AND d.clkctver=mevctrab
-         AND p.clkpt=mepuesto AND p.clkptver=mevpuesto
-"; 
+            eg.MeSATCPost as SATCodigoPostal,
+            eg.MeSATNomEmp as SATNombre,
+            eg.ClkNME as NivAcademico,
+            e.ClkMov as Mov
+        FROM Empleado as e
+        JOIN Empleado_Generales AS eg ON e.ClkDet = eg.ClkDet
+        JOIN Centro_Trabajo AS ct ON ct.ClkCt = MeCTrab AND ct.ClkCtVer = MeVCTrab
+        JOIN Centro_Trabajo AS cd ON cd.ClkCt = mectrabdist AND cd.ClkCtVer = MeVCTrab
+        JOIN Puesto AS p ON p.clkpt = mepuesto AND p.clkptver = mevpuesto
+        JOIN Puesto_Funcional AS pf ON pf.ClkPtFn=e.meptofun
+        JOIN Instrumento_Pago AS i ON e.clkinstp = i.clkinstp
+        LEFT JOIN Escolares AS esc ON eg.ClkNME = esc.EsNME AND e.ClkDet = esc.ClkDet
+        LEFT JOIN Movimiento AS mov ON e.ClkMov = mov.ClkMov 
+";
+        public static string FaltasResponsabilidades = @"
+            SELECT 
+	            Producto_Control.PrQna, Producto_Detalle.ClkPr, Producto_Detalle.ClkDet, SUBSTRING(Producto_Detalle.PrClvPag, 1, 7) AS UR, SUBSTRING(Centro_Trabajo.CtClvPP, 8, 12) AS [Unidad Admin], Producto_Detalle.PrClvPag, PerDed_Producto.PrPDImporte, PerDed_Producto.PrPDClave, SUBSTRING(Centro_Trabajo.CtClvPP, 8, 6) AS Unidad, SUBSTRING(Producto_Detalle.PrUAdmva, 7, 6) AS Programa, Centro_Trabajo.ClkCt, Puesto.PtICat,  Producto_Detalle.PrUUID 
+            FROM Producto_Detalle
+            INNER JOIN Producto_Control ON Producto_Detalle.ClkPr = Producto_Control.ClkPr 
+            INNER JOIN PerDed_Producto ON Producto_Detalle.ClkPr = PerDed_Producto.ClkPr AND Producto_Detalle.ClkDet = PerDed_Producto.ClkDet AND Producto_Detalle.ClkSeqE = PerDed_Producto.ClkSeqE 
+            INNER JOIN Centro_Trabajo ON Producto_Detalle.PrVCTrab = Centro_Trabajo.ClkCtVer AND Producto_Detalle.PrCtrab = Centro_Trabajo.ClkCt 
+            INNER JOIN Puesto ON Producto_Detalle.PrVPuesto = Puesto.ClkPtVer AND Producto_Detalle.PrPuesto = Puesto.ClkPt 
+            WHERE (Producto_Control.PrAno = 2026) 
+	            AND (Producto_Control.PrQna BETWEEN 17 AND 18) 
+	            AND (PerDed_Producto.PrPDTipo IN (2, 4, 6)) 
+	            AND (PerDed_Producto.PrPDClave IN ('90', '29', '17', '18', 'RS')) 
+	            AND (Producto_Detalle.PrNeto <> 0) 
+	            AND (Producto_Control.PrEmit = 1) 
+            ORDER BY Producto_Control.PrQna";
 
         public static string CentrosTrabajo = @"
         WITH UltimaVersion AS

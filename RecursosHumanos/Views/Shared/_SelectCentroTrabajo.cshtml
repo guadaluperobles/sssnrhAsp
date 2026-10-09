@@ -13,7 +13,7 @@
     @foreach (DataRow row in centros.Rows)
     {
         <option value="@row["Clave"]">
-            @row["Descripcion"]
+            @($"({row["Clave"]?.ToString() ?? ""}) {row["Descripcion"]?.ToString() ?? ""}")
         </option>
     }
 </select>
