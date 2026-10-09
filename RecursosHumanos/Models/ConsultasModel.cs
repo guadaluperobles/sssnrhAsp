@@ -107,6 +107,7 @@ namespace RecursosHumanos.Models {
             centro_trabajo d,
             puesto p,
             instrumento_pago i,
+            Movimiento mov,
             puesto_funcional pf
          WHERE e.clkdet=g.clkdet
          AND e.clkinstp=i.clkinstp
