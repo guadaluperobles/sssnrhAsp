@@ -1,0 +1,40 @@
+@model IEnumerable<RecursosHumanos.Models.EnvioPlantilla>
+@{
+    ViewData["Title"] = "EnvioPlantilla - Lista";
+}
+
+<div class="row">
+    <div class="col-8"><h4>EnvioPlantilla</h4></div>
+    <div class="col-4 text-end">
+        <a class="btn btn-primary" asp-action="Create">Agregar</a>
+    </div>
+</div>
+
+<table class="table table-striped mt-3">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Correo</th>
+            <th>Título</th>
+            <th>Responsable</th>
+            <th>Creado</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach(var item in Model) {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Correo</td>
+            <td>@item.Titulo</td>
+            <td>@item.Responsable</td>
+            <td>@item.creado.ToString("g")</td>
+            <td>
+                <a class="btn btn-sm btn-info" asp-action="Edit" asp-route-id="@item.Id">Editar</a>
+                <a class="btn btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.Id">Detalles</a>
+                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

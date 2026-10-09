@@ -1,0 +1,35 @@
+@model RecursosHumanos.Models.EmpleadoEstatal
+@{
+    ViewData["Title"] = "Crear EmpleadoEstatal";
+}
+
+<div class="row">
+    <div class="col-8"><h4>Nuevo Empleado Estatal</h4></div>
+    <div class="col-4 text-end">
+        <a class="btn btn-light" asp-action="Index">Volver</a>
+    </div>
+</div>
+
+<form asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="Id" class="form-label"></label>
+        <input asp-for="Id" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="nombre" class="form-label"></label>
+        <input asp-for="nombre" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="paterno" class="form-label"></label>
+        <input asp-for="paterno" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="materno" class="form-label"></label>
+        <input asp-for="materno" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="rfc" class="form-label"></label>
+        <input asp-for="rfc" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
